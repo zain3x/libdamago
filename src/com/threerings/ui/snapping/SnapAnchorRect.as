@@ -11,10 +11,10 @@ import com.threerings.display.DisplayUtil;
 
 public class SnapAnchorRect extends SnapAnchor
 {
-    public function SnapAnchorRect (snappingObj :DisplayObject, parent :Sprite,
+    public function SnapAnchorRect (dataObj :Object, snappingObj :DisplayObject, parent :Sprite,
         snapAxis :SnapAxis, maxSnapDistance :Number = 20)
     {
-        super(SnapType.BORDER, snappingObj, maxSnapDistance);
+        super(dataObj, snappingObj, maxSnapDistance);
         _parent = parent;
         _rect = snappingObj.getRect(_parent);
         _snapAxis = snapAxis;

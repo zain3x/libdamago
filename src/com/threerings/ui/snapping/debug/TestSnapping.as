@@ -1,12 +1,11 @@
 package com.threerings.ui.snapping.debug
 {
-import com.threerings.debug.DebugUtil;
 import com.threerings.display.DisplayUtil;
 import com.threerings.ui.snapping.SnapAxis;
 import com.threerings.ui.snapping.SnapManager;
 
+import flash.display.Graphics;
 import flash.display.Sprite;
-import flash.geom.Point;
 
 
 public class TestSnapping extends Sprite
@@ -21,7 +20,7 @@ public class TestSnapping extends Sprite
         var ii :int;
         for (ii = 0; ii < 2; ++ii) {
             var blobAnchor :Sprite = new Sprite();
-            DebugUtil.drawDot(blobAnchor.graphics, 0x00ff00, 22, locX, locY);
+            drawDot(blobAnchor.graphics, 0x00ff00, 22, locX, locY);
             addChild(blobAnchor);
             snapper.addPointAnchor(blobAnchor);
             locX += gap;
@@ -29,11 +28,11 @@ public class TestSnapping extends Sprite
 
         for (ii = 0; ii < 1; ++ii) {
             var rect :Sprite = new Sprite();
-            DebugUtil.drawRect(rect, 30, 150, 0x00ff00);
+            drawRect(rect, 30, 150, 0x00ff00);
             rect.x = locX;
             rect.y = locY;
             addChild(rect);
-            snapper.addRectAnchor(rect, SnapAxis.X_AND_Y);
+            snapper.addRectAnchor(rect);
             locX += gap;
 
         }
@@ -43,8 +42,8 @@ public class TestSnapping extends Sprite
         blob.y = 10;
         var outerblob :Sprite = new Sprite();
         outerblob.addChild(blob);
-        DebugUtil.drawDot(blob.graphics, 0xffffff, 20);
-        DebugUtil.drawDot(outerblob.graphics, 0x00ffff, 25);
+        drawDot(blob.graphics, 0xffffff, 20);
+        drawDot(outerblob.graphics, 0x00ffff, 25);
         outerblob.x = 300;
         outerblob.y = 300;
         addChild(outerblob);
@@ -57,12 +56,37 @@ public class TestSnapping extends Sprite
         var s :Sprite = new Sprite();
         var rect :Sprite = new Sprite();
 
-        DebugUtil.fillRect(rect, size, size);
+        fillRect(rect, size, size);
         s.addChild(rect);
         DisplayUtil.positionBoundsRelative(rect, s, -size / 2, -size / 2);
         s.x = locX;
         s.y = locY;
         return s;
+    }
+
+    public static function drawDot (g :Graphics, color :int = 0x00ffff, r :Number = 10,
+        x :int = 0, y :int = 0) :void
+    {
+        g.beginFill(color);
+        g.drawCircle(x,y,r);
+        g.endFill();
+    }
+
+    public static function drawRect (layer :Sprite, width :int, height :int, color :int = 0x000000,
+        alpha :Number = 1) :void
+    {
+        var g :Graphics = layer.graphics;
+        g.lineStyle(1, color, alpha);
+        g.drawRect(0, 0, width, height);
+    }
+
+    public static function fillRect (layer :Sprite, width :int, height :int, color :int = 0x000000,
+        alpha :Number = 1) :void
+    {
+        var g :Graphics = layer.graphics;
+        g.beginFill(color, alpha);
+        g.drawRect(0, 0, width, height);
+        g.endFill();
     }
 }
 }
