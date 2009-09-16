@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>libdamago-google</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>com.adobe.flexbuilder.project.flexbuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>com.adobe.flexbuilder.project.actionscriptnature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>[source path] actionscript</name>
+			<type>2</type>
+			<locationURI>AS%33_EXT_LIBS/facebook/source/actionscript</locationURI>
+		</link>
+		<link>
+			<name>[source path] whirled-src-as</name>
+			<type>2</type>
+			<locationURI>EXPORT_ROOT/whirled/libraries/whirled/src/as</locationURI>
+		</link>
+		<link>
+			<name>[source path] uravatar-src</name>
+			<type>2</type>
+			<locationURI>EXPORT_ROOT/whirled/projects/avatars/uravatar/src</locationURI>
+		</link>
+		<link>
+			<name>[source path] flash-utils-src-as</name>
+			<type>2</type>
+			<locationURI>EXPORT_ROOT/whirled/libraries/flash-utils/src/as</locationURI>
+		</link>
+		<link>
+			<name>[source path] narya-src-as</name>
+			<type>2</type>
+			<locationURI>EXPORT_ROOT/whirled/libraries/narya/src/as</locationURI>
+		</link>
+		<link>
+			<name>[source path] gaforflash-src</name>
+			<type>2</type>
+			<locationURI>AS%33_EXT_LIBS/gaforflash/src</locationURI>
+		</link>
+		<link>
+			<name>[source path] nenya-src-as</name>
+			<type>2</type>
+			<locationURI>EXPORT_ROOT/whirled/libraries/nenya/src/as</locationURI>
+		</link>
+		<link>
+			<name>[source path] vilya-src-as</name>
+			<type>2</type>
+			<locationURI>EXPORT_ROOT/whirled/libraries/vilya/src/as</locationURI>
+		</link>
+		<link>
+			<name>[source path] whirled-contrib-src-as</name>
+			<type>2</type>
+			<locationURI>AS%33_EXT_LIBS/whirled-contrib/src/as</locationURI>
+		</link>
+		<link>
+			<name>[source path] libaduros-src</name>
+			<type>2</type>
+			<locationURI>AS%33_EXT_LIBS/libaduros/src</locationURI>
+		</link>
+	</linkedResources>
+</projectDescription>

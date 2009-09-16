@@ -14,7 +14,7 @@ import flash.geom.Rectangle;
 
 public class DebugUtil
 {
-    public static function drawDot (g :Graphics, color :int = 0x00ffff, r :Number = 10,
+    public static function drawDot (g :Graphics, color :int = 0xff0000, r :Number = 10,
         x :int = 0, y :int = 0) :void
     {
         g.beginFill(color);

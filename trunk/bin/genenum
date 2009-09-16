@@ -1,0 +1,72 @@
+#!/bin/bash
+
+#Actionscript Enum generating script.
+#Written by <nathan@threerings.net>
+
+if [ "$1" == "" ]; then
+    echo "$0 full classname"
+    echo "    example: $0 vampire.item.WeaponType"
+    exit 0
+fi
+
+package=""
+class=""
+pushd src > /dev/null
+for arg in `echo $1 | tr '.' ' '`; do
+    if [ "$class" != "" ]; then
+        cd $class;
+    fi
+
+    if [ "$package" != "" ]; then
+        package=$package"."$class;
+    elif [ "$class" != "" ]; then
+        package=$class;
+    fi
+    class=$arg;
+done;
+
+echo "Creating $package.$class...";
+cat > $class.as <<ENUMBOILERPLATE
+//
+// \$Id$
+
+package $package {
+
+import com.threerings.util.Enum;
+
+/**
+ * $class enum.
+ */
+public final class $class extends Enum
+{
+    // DEFINE MEMBERS HERE
+    finishedEnumerating($class);
+
+    /**
+     * Get the values of the $class enum
+     */
+    public static function values () :Array
+    {
+        return Enum.values($class);
+    }
+
+    /**
+     * Get the value of the $class enum that corresponds to the specified string.
+     * If the value requested does not exist, an ArgumentError will be thrown.
+     */
+    public static function valueOf (name :String) :$class
+    {
+        return Enum.valueOf($class, name) as $class;
+    }
+
+    /** @private */
+    public function $class (name :String)
+    {
+        super(name);
+    }
+}
+}
+ENUMBOILERPLATE
+
+popd > /dev/null
+exit 0
