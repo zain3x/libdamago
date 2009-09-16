@@ -16,19 +16,14 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>[source path] actionscript</name>
+			<name>[source path] src</name>
 			<type>2</type>
-			<locationURI>AS%33_EXT_LIBS/facebook/source/actionscript</locationURI>
+			<locationURI>EXPORT_ROOT/whirled/projects/avatars/uravatar/src</locationURI>
 		</link>
 		<link>
 			<name>[source path] whirled-src-as</name>
 			<type>2</type>
 			<locationURI>EXPORT_ROOT/whirled/libraries/whirled/src/as</locationURI>
-		</link>
-		<link>
-			<name>[source path] uravatar-src</name>
-			<type>2</type>
-			<locationURI>EXPORT_ROOT/whirled/projects/avatars/uravatar/src</locationURI>
 		</link>
 		<link>
 			<name>[source path] flash-utils-src-as</name>
@@ -41,9 +36,9 @@
 			<locationURI>EXPORT_ROOT/whirled/libraries/narya/src/as</locationURI>
 		</link>
 		<link>
-			<name>[source path] gaforflash-src</name>
+			<name>[source path] contrib-src-as</name>
 			<type>2</type>
-			<locationURI>AS%33_EXT_LIBS/gaforflash/src</locationURI>
+			<locationURI>EXPORT_ROOT/whirled/contrib/src/as</locationURI>
 		</link>
 		<link>
 			<name>[source path] nenya-src-as</name>
@@ -54,16 +49,6 @@
 			<name>[source path] vilya-src-as</name>
 			<type>2</type>
 			<locationURI>EXPORT_ROOT/whirled/libraries/vilya/src/as</locationURI>
-		</link>
-		<link>
-			<name>[source path] whirled-contrib-src-as</name>
-			<type>2</type>
-			<locationURI>AS%33_EXT_LIBS/whirled-contrib/src/as</locationURI>
-		</link>
-		<link>
-			<name>[source path] libaduros-src</name>
-			<type>2</type>
-			<locationURI>AS%33_EXT_LIBS/libaduros/src</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
