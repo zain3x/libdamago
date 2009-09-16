@@ -1,11 +1,13 @@
+//
+// $Id$
+
 package com.threerings.ui.snapping
 {
-import com.threerings.display.DisplayUtil;
-
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import com.threerings.display.DisplayUtil;
 
 public class SnapAnchorRect extends SnapAnchor
 {
@@ -93,8 +95,8 @@ public class SnapAnchorRect extends SnapAnchor
         return p;
     }
 
+    protected var _parent :Sprite;
     protected var _rect :Rectangle;
     protected var _snapAxis :SnapAxis;
-    protected var _parent :Sprite;
 }
 }

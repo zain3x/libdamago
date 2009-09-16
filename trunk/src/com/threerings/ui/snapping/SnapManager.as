@@ -1,21 +1,21 @@
+//
+// $Id$
+
 package com.threerings.ui.snapping
 {
-import aduros.util.F;
-
-import com.threerings.display.DisplayUtil;
-import com.threerings.util.ArrayUtil;
-import com.threerings.util.Map;
-import com.threerings.util.Maps;
-import com.threerings.util.ValueEvent;
-import com.whirled.contrib.EventHandlerManager;
-
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.MouseEvent;
 import flash.geom.Point;
-
+import com.whirled.contrib.EventHandlerManager;
+import com.threerings.display.DisplayUtil;
+import com.threerings.util.ArrayUtil;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
+import com.threerings.util.ValueEvent;
+import aduros.util.F;
 /**
  * Adds "snapping" to display objects when close enough to snap anchors.
  *
@@ -41,6 +41,16 @@ public class SnapManager extends EventDispatcher
         _allowedAnchorsFunction = allowedAnchors;
     }
 
+    public function addPointAnchor (d :DisplayObject) :void
+    {
+        addAnchor(new SnapAnchorPoint(d, _parent));
+    }
+
+    public function addRectAnchor (d :DisplayObject, snapAxis :SnapAxis) :void
+    {
+        addAnchor(new SnapAnchorRect(d, _parent, snapAxis));
+    }
+
     public function addSnappable (boundsObj :DisplayObject, rootLayer :DisplayObject = null) :void
     {
         var snappable :SnappingObject = new SnappingObject(boundsObj, rootLayer);
@@ -59,16 +69,6 @@ public class SnapManager extends EventDispatcher
         }
         _snappableObjects.remove(boundsObj);
         dispatchEvent(new ValueEvent(EVENT_OBJECT_SNAPPING_REMOVED, boundsObj));
-    }
-
-    public function addPointAnchor (d :DisplayObject) :void
-    {
-        addAnchor(new SnapAnchorPoint(d, _parent));
-    }
-
-    public function addRectAnchor (d :DisplayObject, snapAxis :SnapAxis) :void
-    {
-        addAnchor(new SnapAnchorRect(d, _parent, snapAxis));
     }
 
     public function shutdown () :void
@@ -92,13 +92,43 @@ public class SnapManager extends EventDispatcher
         }
         _target = snapper;
         _events.registerListener(_parent, Event.ENTER_FRAME, handleEnterFrame);
-        _events.registerListener(snapper.rootLayer, MouseEvent.MOUSE_UP, F.callback(endSnapping, snapper));
+        _events.registerListener(snapper.rootLayer, MouseEvent.MOUSE_UP,
+            function (...ignored) :void {
+                endSnapping(snapper);
+            });
     }
 
     protected function endSnapping (snapper :SnappingObject = null) :void
     {
         _events.freeAllHandlers();
         _target = null;
+    }
+
+    protected function getClosestAnchorToTarget () :SnapAnchor
+    {
+        if (_target == null) {
+            return null;
+        }
+        var closestAnchor :SnapAnchor = null;
+        var closestDistance :Number = Number.MAX_VALUE;
+        var distance :Number;
+        var allowedAnchors :Array = _snapAnchors;
+        if (_allowedAnchorsFunction != null) {
+            var allowedAnchorDisplayObjects :Array = _allowedAnchorsFunction(_target.boundsDisplay);
+            allowedAnchors = allowedAnchors.filter(
+                function (anchor :SnapAnchor, ...ignored) :Boolean {
+                    return ArrayUtil.contains(allowedAnchorDisplayObjects, anchor.displayObject);
+                });
+        }
+
+        for each (var anchor :SnapAnchor in _snapAnchors) {
+            distance = anchor.getSnappableDistance(_target);
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestAnchor = anchor;
+            }
+        }
+        return closestAnchor;
     }
 
     protected function handleEnterFrame (...ignored) :void
@@ -139,41 +169,14 @@ public class SnapManager extends EventDispatcher
         snapper.snapCenterOfBoundsToPoint(p);
     }
 
-    protected function getClosestAnchorToTarget () :SnapAnchor
-    {
-        if (_target == null) {
-            return null;
-        }
-        var closestAnchor :SnapAnchor = null;
-        var closestDistance :Number = Number.MAX_VALUE;
-        var distance :Number;
-        var allowedAnchors :Array = _snapAnchors;
-        if (_allowedAnchorsFunction != null) {
-            var allowedAnchorDisplayObjects :Array = _allowedAnchorsFunction(_target.boundsDisplay);
-            allowedAnchors = allowedAnchors.filter(
-                function (anchor :SnapAnchor, ...ignored) :Boolean {
-                    return ArrayUtil.contains(allowedAnchorDisplayObjects, anchor.displayObject);
-                });
-        }
-
-        for each (var anchor :SnapAnchor in _snapAnchors) {
-            distance = anchor.getSnappableDistance(_target);
-            if (distance < closestDistance) {
-                closestDistance = distance;
-                closestAnchor = anchor;
-            }
-        }
-        return closestAnchor;
-    }
-
-    protected var _parent :Sprite;
-    protected var _target :SnappingObject;
-    protected var _snappableObjects :Map = Maps.newMapOf(DisplayObject);
-    protected var _snapAnchors :Array = [];
-    protected var _currentSnapAnchor :SnapAnchor;
     protected var _allowedAnchorsFunction :Function;
+    protected var _currentSnapAnchor :SnapAnchor;
     protected var _events :EventHandlerManager = new EventHandlerManager();
     protected var _mouseDownEvents :EventHandlerManager = new EventHandlerManager();
 
+    protected var _parent :Sprite;
+    protected var _snapAnchors :Array = [];
+    protected var _snappableObjects :Map = Maps.newMapOf(DisplayObject);
+    protected var _target :SnappingObject;
 }
 }

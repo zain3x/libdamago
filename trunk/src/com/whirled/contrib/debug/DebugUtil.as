@@ -76,6 +76,7 @@ public class DebugUtil
     public static function fillRect (g :Graphics, width :int, height :int, color :int = 0x000000,
         alpha :Number = 1) :void
     {
+        g.lineStyle(0, 0, 0);
         g.beginFill(color, alpha);
         g.drawRect(0, 0, width, height);
         g.endFill();

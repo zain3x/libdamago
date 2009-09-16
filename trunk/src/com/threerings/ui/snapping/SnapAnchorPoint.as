@@ -1,12 +1,14 @@
+//
+// $Id$
+
 package com.threerings.ui.snapping
 {
-import com.threerings.ui.DisplayUtils;
-import com.threerings.util.MathUtil;
-
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import com.threerings.ui.DisplayUtils;
+import com.threerings.util.MathUtil;
 
 public class SnapAnchorPoint extends SnapAnchor
 {
@@ -27,12 +29,10 @@ public class SnapAnchorPoint extends SnapAnchor
 
     override internal function getSnapToPoint (d :SnappingObject) :Point
     {
-//        var bounds :Rectangle = d.boundsDisplay.getBounds(_parent);
-//        var offset :Point = DisplayUtils.getCenterOffset(d.rootLayer);
-        return _point;//.clone().add(offset);
+        return _point;
     }
 
-    protected var _point :Point;
     protected var _parent :Sprite;
+    protected var _point :Point;
 }
 }
