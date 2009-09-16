@@ -8,10 +8,12 @@
 <compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/whirled/libraries/nenya/src/as"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/whirled/libraries/vilya/src/as"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/whirled/libraries/whirled/src/as"/>
-<compilerSourcePathEntry kind="1" linkType="1" path="${AS3_EXT_LIBS}/whirled-contrib/src/as"/>
-<compilerSourcePathEntry kind="1" linkType="1" path="${AS3_EXT_LIBS}/libaduros/src"/>
-<compilerSourcePathEntry kind="1" linkType="1" path="${AS3_EXT_LIBS}/gaforflash/src"/>
-<compilerSourcePathEntry kind="1" linkType="1" path="${AS3_EXT_LIBS}/facebook/source/actionscript"/>
+<compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/whirled/contrib/src/as"/>
+<compilerSourcePathEntry kind="1" linkType="1" path="lib/box2dflash/Source"/>
+<compilerSourcePathEntry kind="1" linkType="1" path="lib/facebook/source/actionscript"/>
+<compilerSourcePathEntry kind="1" linkType="1" path="lib/libaduros/src"/>
+<compilerSourcePathEntry kind="1" linkType="1" path="lib/monsterdebugger/example"/>
+<compilerSourcePathEntry kind="1" linkType="1" path="lib/printf/src"/>
 </compilerSourcePath>
 <libraryPath defaultLinkType="1">
 <libraryPathEntry kind="4" path="">
