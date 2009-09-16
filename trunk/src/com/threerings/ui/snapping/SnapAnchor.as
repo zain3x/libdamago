@@ -7,9 +7,11 @@ import flash.display.DisplayObject;
 import flash.geom.Point;
 public /*abstract*/ class SnapAnchor
 {
-    public function SnapAnchor (type :SnapType, displayObject : DisplayObject, maxSnapDistance :Number = 20)
+    public function SnapAnchor (dataObj :Object, displayObject : DisplayObject,
+        maxSnapDistance :Number = 20)
     {
-//        _snapType = type;
+        _dataObj = dataObj;
+//        _snapType = type;type :SnapType,
         _displayObject = displayObject;
         _maxSnapDistance = maxSnapDistance;
     }
@@ -34,6 +36,12 @@ public /*abstract*/ class SnapAnchor
         return getSnappableDistance(snappable) <= _maxSnapDistance;
     }
 
+    internal function get dataObj () :Object
+    {
+        return _dataObj;
+    }
+
+    protected var _dataObj :Object;
     protected var _displayObject :DisplayObject;
     protected var _maxSnapDistance :Number;
 //    protected var _snapType :SnapType;

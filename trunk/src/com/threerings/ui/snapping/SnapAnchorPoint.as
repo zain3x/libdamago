@@ -3,18 +3,19 @@
 
 package com.threerings.ui.snapping
 {
+import com.threerings.ui.DisplayUtils;
+import com.threerings.util.MathUtil;
+
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-import com.threerings.ui.DisplayUtils;
-import com.threerings.util.MathUtil;
 
 public class SnapAnchorPoint extends SnapAnchor
 {
-    public function SnapAnchorPoint (d :DisplayObject, parent :Sprite)
+    public function SnapAnchorPoint (anchorObj :Object, d :DisplayObject, parent :Sprite)
     {
-        super(SnapType.POINT, d);
+        super(anchorObj, d);
         _point = DisplayUtils.getBoundsCenterRelativeTo(d, parent);
         _parent = parent;
     }
@@ -31,6 +32,7 @@ public class SnapAnchorPoint extends SnapAnchor
     {
         return _point;
     }
+
 
     protected var _parent :Sprite;
     protected var _point :Point;

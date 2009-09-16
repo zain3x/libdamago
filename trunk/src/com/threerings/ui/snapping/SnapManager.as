@@ -3,19 +3,19 @@
 
 package com.threerings.ui.snapping
 {
+import com.threerings.display.DisplayUtil;
+import com.threerings.util.ArrayUtil;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
+import com.threerings.util.ValueEvent;
+import com.whirled.contrib.EventHandlerManager;
+
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.MouseEvent;
 import flash.geom.Point;
-import com.whirled.contrib.EventHandlerManager;
-import com.threerings.display.DisplayUtil;
-import com.threerings.util.ArrayUtil;
-import com.threerings.util.Map;
-import com.threerings.util.Maps;
-import com.threerings.util.ValueEvent;
-import aduros.util.F;
 /**
  * Adds "snapping" to display objects when close enough to snap anchors.
  *
@@ -23,32 +23,33 @@ import aduros.util.F;
  * var snapManager :SnapManager = new SnapManager(someRootLayerSprite);
  * snapManager.addPointAnchor(holeGraphic);
  * snapManager.addRectAnchor(someOtherGraphic);
- *
+ * <br/>
  * //When the user creates an object that can snap into the anchors
  * snapManager.addSnappable(someSprite);
- *
+ * <br/>
+ * When you don't want the object snapping anymore, use
+ * snapManager.removeSnappable(someSprite);
+ * <br/>
  * That's it.
  *
  */
+[Event(name="snapEvent", type="com.threerings.ui.snapping.SnapEvent")]
 public class SnapManager extends EventDispatcher
 {
-    public static const EVENT_OBJECT_SNAPPED :String = "objectSnapped";
-    public static const EVENT_OBJECT_SNAPPING_REMOVED :String = "objectSnappingRemoved";
-
     public function SnapManager (parent :Sprite, allowedAnchors :Function = null)
     {
         _parent = parent;
         _allowedAnchorsFunction = allowedAnchors;
     }
 
-    public function addPointAnchor (d :DisplayObject) :void
+    public function addPointAnchor (d :DisplayObject, anchorObj :Object = null) :void
     {
-        addAnchor(new SnapAnchorPoint(d, _parent));
+        addAnchor(new SnapAnchorPoint(anchorObj, d, _parent));
     }
 
-    public function addRectAnchor (d :DisplayObject, snapAxis :SnapAxis) :void
+    public function addRectAnchor (d :DisplayObject, anchorObj :Object = null) :void
     {
-        addAnchor(new SnapAnchorRect(d, _parent, snapAxis));
+        addAnchor(new SnapAnchorRect(anchorObj, d, _parent, SnapAxis.X_AND_Y));
     }
 
     public function addSnappable (boundsObj :DisplayObject, rootLayer :DisplayObject = null) :void
@@ -68,7 +69,6 @@ public class SnapManager extends EventDispatcher
             endSnapping();
         }
         _snappableObjects.remove(boundsObj);
-        dispatchEvent(new ValueEvent(EVENT_OBJECT_SNAPPING_REMOVED, boundsObj));
     }
 
     public function shutdown () :void
@@ -163,7 +163,7 @@ public class SnapManager extends EventDispatcher
     {
         var d :DisplayObject = snapper.rootLayer;
         if (d.x != p.x && d.y != p.y) {
-            dispatchEvent(new ValueEvent(EVENT_OBJECT_SNAPPED, [d, anchor]));
+            dispatchEvent(new SnapEvent(SnapAxis.X_AND_Y, anchor.dataObj, snapper.dataObj));
         }
 
         snapper.snapCenterOfBoundsToPoint(p);
