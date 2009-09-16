@@ -1,13 +1,15 @@
+//
+// $Id$
+
 package com.threerings.ui.snapping
 {
 import flash.display.DisplayObject;
 import flash.geom.Point;
-
 public /*abstract*/ class SnapAnchor
 {
     public function SnapAnchor (type :SnapType, displayObject : DisplayObject, maxSnapDistance :Number = 20)
     {
-        _snapType = type;
+//        _snapType = type;
         _displayObject = displayObject;
         _maxSnapDistance = maxSnapDistance;
     }
@@ -33,7 +35,8 @@ public /*abstract*/ class SnapAnchor
     }
 
     protected var _displayObject :DisplayObject;
-    protected var _snapType :SnapType;
     protected var _maxSnapDistance :Number;
+//    protected var _snapType :SnapType;
+
 }
 }

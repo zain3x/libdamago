@@ -1,8 +1,9 @@
 //
 // $Id: FramerateView.as 4934 2009-09-04 17:47:44Z tim $
 
-package com.threerings.debug{
+package com.whirled.contrib.simplegame.debug{
 
+import com.threerings.ui.TextBits;
 import com.whirled.contrib.Framerate;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 
@@ -10,14 +11,11 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.text.TextField;
 
-import com.threerings.biteme.client.util.SpriteUtil;
-import com.threerings.biteme.client.util.TextBits;
-
 public class FramerateView extends SceneObject
 {
     public function FramerateView ()
     {
-        _sprite = SpriteUtil.createSprite();
+        _sprite = new Sprite();
 
         _framerate = new Framerate(_sprite, 1000);
 

@@ -13,7 +13,7 @@ import flash.events.MouseEvent;
 [SWF(width="500", height="500", frameRate="30")]
 public class SimpleGameRunner extends Sprite
 {
-    public function SimpleGameRunner(mode :AppMode = null)
+    public function SimpleGameRunner (mode :AppMode = null)
     {
         addChild(_bottomLayer);
         addChild(_topLayer);
@@ -22,7 +22,7 @@ public class SimpleGameRunner extends Sprite
         }
     }
 
-    public function queueAppMode(mode :AppMode) :void
+    public function queueAppMode (mode :AppMode) :void
     {
         _queuedModes.push(mode);
         if (_currentMode == null) {
@@ -30,16 +30,20 @@ public class SimpleGameRunner extends Sprite
         }
     }
 
-    protected function runNextMode() :void
+    protected function runNextMode () :void
     {
         if (_queuedModes.length == 0) {
             return;
         }
         var mode :AppMode = _queuedModes.pop() as AppMode;
         _currentMode = mode;
+        var fr :FramerateView = new FramerateView();
+        fr.x = 100;
+        fr.y = 50;
         var game :SimpleGame = new SimpleGame();
         game.ctx.mainLoop.pushMode(mode);
         game.run(_bottomLayer);
+//        mode.addSceneObject(new FramerateView());
 
         var closeButton :SimpleTextButton = new SimpleTextButton("Close/Next");
         _topLayer.addChild(closeButton);
