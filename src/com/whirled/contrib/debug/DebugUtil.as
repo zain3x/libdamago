@@ -1,7 +1,7 @@
 //
 // $Id: DebugUtil.as 4934 2009-09-04 17:47:44Z tim $
 
-package com.threerings.debug{
+package com.whirled.contrib.debug{
 
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Util;
