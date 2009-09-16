@@ -36,6 +36,7 @@ public class SimpleGameRunner extends Sprite
             return;
         }
         var mode :AppMode = _queuedModes.pop() as AppMode;
+        _currentMode = mode;
         var game :SimpleGame = new SimpleGame();
         game.ctx.mainLoop.pushMode(mode);
         game.run(_bottomLayer);
