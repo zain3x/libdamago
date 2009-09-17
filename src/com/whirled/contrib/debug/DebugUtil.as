@@ -78,6 +78,7 @@ public class DebugUtil
         alpha :Number = 1) :void
     {
         var g :Graphics = layer.graphics;
+        g.lineStyle(0,0,0);
         g.beginFill(color, alpha);
         g.drawRect(0, 0, width, height);
         g.endFill();

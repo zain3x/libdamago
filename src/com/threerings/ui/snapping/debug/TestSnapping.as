@@ -1,8 +1,8 @@
 package com.threerings.ui.snapping.debug
 {
 import com.threerings.display.DisplayUtil;
-import com.threerings.ui.snapping.SnapAxis;
 import com.threerings.ui.snapping.SnapManager;
+import com.threerings.ui.snapping.SnappingObject;
 
 import flash.display.Graphics;
 import flash.display.Sprite;
@@ -18,9 +18,12 @@ public class TestSnapping extends Sprite
         var locY :Number = 100;
         var gap :Number = 100;
         var ii :int;
+        var size :int = 22;
         for (ii = 0; ii < 2; ++ii) {
             var blobAnchor :Sprite = new Sprite();
-            drawDot(blobAnchor.graphics, 0x00ff00, 22, locX, locY);
+            blobAnchor.x = locX;
+            blobAnchor.y = locY;
+            drawDot(blobAnchor.graphics, 0x00ff00, size, 0, 0);
             addChild(blobAnchor);
             snapper.addPointAnchor(blobAnchor);
             locX += gap;
@@ -47,7 +50,7 @@ public class TestSnapping extends Sprite
         outerblob.x = 300;
         outerblob.y = 300;
         addChild(outerblob);
-        snapper.addSnappable(blob, outerblob);
+        snapper.addSnappable(new SnappingObject(blob, outerblob));
     }
 
     protected static function createRect (locX :Number = 0, locY :Number = 0) :Sprite

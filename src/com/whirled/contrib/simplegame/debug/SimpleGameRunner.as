@@ -37,13 +37,13 @@ public class SimpleGameRunner extends Sprite
         }
         var mode :AppMode = _queuedModes.pop() as AppMode;
         _currentMode = mode;
-        var fr :FramerateView = new FramerateView();
-        fr.x = 100;
-        fr.y = 50;
+
+        var framerate :FramerateView = new FramerateView();
+        framerate.x = 100;
+        mode.addSceneObject(framerate);
         var game :SimpleGame = new SimpleGame();
         game.ctx.mainLoop.pushMode(mode);
         game.run(_bottomLayer);
-//        mode.addSceneObject(new FramerateView());
 
         var closeButton :SimpleTextButton = new SimpleTextButton("Close/Next");
         _topLayer.addChild(closeButton);

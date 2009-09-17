@@ -3,38 +3,27 @@
 
 package com.threerings.ui.snapping
 {
-import com.threerings.ui.DisplayUtils;
-import com.threerings.util.MathUtil;
-
-import flash.display.DisplayObject;
-import flash.display.Sprite;
+import flash.display.DisplayObjectContainer;
 import flash.geom.Point;
-import flash.geom.Rectangle;
 
 public class SnapAnchorPoint extends SnapAnchor
 {
-    public function SnapAnchorPoint (anchorObj :Object, d :DisplayObject, parent :Sprite)
+    public function SnapAnchorPoint (d :DisplayObjectContainer, offset :Point = null)
     {
-        super(anchorObj, d);
-        _point = DisplayUtils.getBoundsCenterRelativeTo(d, parent);
-        _parent = parent;
+        super(d);
+        _offset = offset == null ? new Point() : offset;
     }
 
-    override internal function getSnappableDistance (d :SnappingObject) :Number
+    override public function getSnappableDistance (d :ISnappingObject) :Number
     {
-        var bounds :Rectangle = d.boundsDisplay.getBounds(_parent);
-        var centerX :Number = bounds.left + bounds.width / 2;
-        var centerY :Number = bounds.top + bounds.height / 2;
-        return MathUtil.distance(_point.x, _point.y, centerX, centerY);
+        return SnapUtil.getSnappableDistanceFromSnapPointAnchor(this, d, _offset);
     }
 
-    override internal function getSnapToPoint (d :SnappingObject) :Point
+    override protected function getGlobalSnapToPoint (d :ISnappingObject) :Point
     {
-        return _point;
+        return displayObject.localToGlobal(_offset);
     }
 
-
-    protected var _parent :Sprite;
-    protected var _point :Point;
+    protected var _offset :Point;
 }
 }

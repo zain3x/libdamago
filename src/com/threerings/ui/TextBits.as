@@ -59,7 +59,7 @@ public class TextBits
         tf.scaleY = textScale;
         // If this is not set to true, modifying the TextField's alpha won't work
         // But it cannot be set to true if we're using the built-in fonts
-        tf.embedFonts = true;
+//        tf.embedFonts = true;
         tf.antiAliasType = AntiAliasType.ADVANCED;
 
         if (wordWrap) {
