@@ -15,6 +15,7 @@ import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.MouseEvent;
 import flash.geom.Point;
+import flash.geom.Rectangle;
 /**
  * Adds "snapping" to display objects when close enough to snap anchors.
  *
@@ -48,7 +49,7 @@ public class SnapManager extends EventDispatcher
 
     public function addRectAnchor (d :DisplayObjectContainer) :void
     {
-        addAnchor(new SnapAnchorRect(d, SnapAxis.X_AND_Y));
+        addAnchor(new SnapAnchorRect(d, SnapDirection.X_AND_Y));
     }
 
     public function addSnappable (snappable :ISnappingObject) :void
@@ -136,11 +137,18 @@ public class SnapManager extends EventDispatcher
             return;
         }
 
+        var stage :DisplayObject = _target.displayObject.stage;
         //First move it to the mouse coords
-        var parentMousePoint :Point = DisplayUtil.transformPoint(
-            new Point(_target.displayObject.mouseX, _target.displayObject.mouseY), _target.displayObject, _parent);
-        _target.displayObject.x = parentMousePoint.x;
-        _target.displayObject.y = parentMousePoint.y;
+        var globalMouseLoc :Point = _target.displayObject.localToGlobal(
+            new Point(_target.displayObject.mouseX, _target.displayObject.mouseY));
+
+
+        var boundsLoc :Rectangle = _target.boundsDisplayObject.getBounds(stage);
+        var centerX :Number = boundsLoc.left + boundsLoc.width / 2;
+        var centerY :Number = boundsLoc.top + boundsLoc.height / 2;
+
+        _target.displayObject.x += globalMouseLoc.x - centerX;
+        _target.displayObject.y += globalMouseLoc.y - centerY;
 
         //Then maybe snap, if a snap anchor is close enough.
         var closestAnchor :ISnapAnchor = getClosestAnchorToTarget();
@@ -150,25 +158,7 @@ public class SnapManager extends EventDispatcher
         }
 
         closestAnchor.snapObject(_target)
-
-//        var snapPoint :Point = closestAnchor.getSnapToPoint(_target);
-//        snapToPoint(_target, snapPoint, closestAnchor);
-//        _currentSnapAnchor = closestAnchor;
-
     }
-
-//    /**
-//     * Fire an event when the object is snapped to the anchor.
-//     */
-//    protected function snapToPoint (snapper :SnappingObject, p :Point, anchor :SnapAnchor) :void
-//    {
-//        var d :DisplayObject = snapper.rootLayer;
-//        if (d.x != p.x && d.y != p.y) {
-//            dispatchEvent(new SnapEvent(SnapAxis.X_AND_Y, anchor.dataObj, snapper.dataObj));
-//        }
-//
-//        snapper.snapCenterOfBoundsToPoint(p);
-//    }
 
     protected var _currentSnapAnchor :ISnapAnchor;
     protected var _events :EventHandlerManager = new EventHandlerManager();

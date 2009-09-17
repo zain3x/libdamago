@@ -4,7 +4,7 @@ import flash.events.Event;
 
 public class SnapEvent extends Event
 {
-    public function SnapEvent (axis :SnapAxis, anchor :Object, snapped :Object)
+    public function SnapEvent (axis :SnapDirection, anchor :Object, snapped :Object)
     {
         super(SNAP_EVENT, false, false);
         this.anchor = anchor;
@@ -14,7 +14,7 @@ public class SnapEvent extends Event
 
     public var anchor :Object;
     public var snapped :Object;
-    public var axis :SnapAxis;
+    public var axis :SnapDirection;
 
     public static const SNAP_EVENT :String = "snapEvent";
 }

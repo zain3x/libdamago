@@ -47,7 +47,7 @@ for fileName in fileSet:
                 lines[i] = "package " + filePackage
                 
                 if line.find("{") >= 0:
-                    lines[i] = lines[i] + "{"
+                    lines[i] = lines[i] + " {"
                 if line[-1] == "\n":
                     lines[i] = lines[i] + "\n"
                 print fileName +": " + packageString + " -> " + filePackage
