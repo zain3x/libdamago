@@ -9,7 +9,7 @@ import flash.geom.Rectangle;
 
 public class SnapAnchorRect extends SnapAnchor
 {
-    public function SnapAnchorRect (snappingObj :DisplayObjectContainer, snapAxis :SnapAxis,
+    public function SnapAnchorRect (snappingObj :DisplayObjectContainer, snapAxis :SnapDirection,
         maxSnapDistance :Number = 20)
     {
         super(snappingObj, maxSnapDistance);
@@ -29,6 +29,6 @@ public class SnapAnchorRect extends SnapAnchor
         return SnapUtil.getGlobalSnapToPointFromRectOuter(this, d, _snapAxis, _maxSnapDistance);
     }
 
-    protected var _snapAxis :SnapAxis;
+    protected var _snapAxis :SnapDirection;
 }
 }

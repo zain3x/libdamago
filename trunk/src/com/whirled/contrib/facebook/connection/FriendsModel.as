@@ -34,9 +34,9 @@ public class FriendsModel extends EventDispatcher
         return _instance;
     }
 
-    public static function getFriend (uid:int) :FacebookUser
+    public static function getFriend (uid:String) :FacebookUser
     {
-        return getInstance().getFriend(uid + "");
+        return getInstance().getFriend(uid);
     }
 
     public static function set loggedInUserID (value:String) :void

@@ -26,14 +26,14 @@
 			<locationURI>EXPORT_ROOT/whirled/libraries/whirled/src/as</locationURI>
 		</link>
 		<link>
-			<name>[source path] flash-utils-src-as</name>
-			<type>2</type>
-			<locationURI>EXPORT_ROOT/whirled/libraries/flash-utils/src/as</locationURI>
-		</link>
-		<link>
 			<name>[source path] narya-src-as</name>
 			<type>2</type>
 			<locationURI>EXPORT_ROOT/whirled/libraries/narya/src/as</locationURI>
+		</link>
+		<link>
+			<name>[source path] flash-utils-src-as</name>
+			<type>2</type>
+			<locationURI>EXPORT_ROOT/whirled/libraries/flash-utils/src/as</locationURI>
 		</link>
 		<link>
 			<name>[source path] contrib-src-as</name>

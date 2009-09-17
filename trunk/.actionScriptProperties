@@ -14,6 +14,7 @@
 <compilerSourcePathEntry kind="1" linkType="1" path="lib/libaduros/src"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="lib/monsterdebugger/example"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="lib/printf/src"/>
+<compilerSourcePathEntry kind="1" linkType="1" path="lib/flexlib"/>
 </compilerSourcePath>
 <libraryPath defaultLinkType="1">
 <libraryPathEntry kind="4" path="">
@@ -31,6 +32,8 @@
 <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/framework.swc" useDefaultLinkType="false"/>
 </excludedEntries>
 </libraryPathEntry>
+<libraryPathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/msoy/lib/flex_sdk/frameworks/libs/air"/>
+<libraryPathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/msoy/lib/flex_sdk/frameworks/libs"/>
 </libraryPath>
 <sourceAttachmentPath/>
 </compiler>

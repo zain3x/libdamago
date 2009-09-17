@@ -17,6 +17,7 @@ import com.threerings.util.Util;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.DelayUtil;
 import com.whirled.contrib.EventHandlerBase;
+import com.whirled.contrib.ManagedTimer;
 import com.whirled.contrib.TimerManager;
 
 import flash.net.*;
@@ -63,7 +64,7 @@ public class FacebookConnection extends EventHandlerBase
         return instance.facebook.uid;
     }
 
-    public static function getFriend (uid :int) :FacebookUser
+    public static function getFriend (uid :String) :FacebookUser
     {
         return FriendsModel.getFriend(uid);
     }
@@ -205,31 +206,47 @@ public class FacebookConnection extends EventHandlerBase
         _session.addEventListener(FacebookEvent.WAITING_FOR_LOGIN, handleWaitingForLogin);
         _facebook = _session.facebook;
 
+        var selfref :FacebookConnection = this;
         //If we're a DesktopSession, try logging in
         if (_session.activeSession is DesktopSession) {
             if (!_facebook.is_connected && !_facebook.waiting_for_login) {
                 login();
 
-                _timerManager.runUntil(REATTEMPT_LOGIN_INTERVAL_MS, F.adapt(login),
-                function () :Boolean {
-                    return !selfref.isConnected;
-                });
+                runUntil(_timerManager, REATTEMPT_LOGIN_INTERVAL_MS, F.adapt(login),
+                    function () :Boolean {
+                        return !selfref.isConnected;
+                    });
+
+//                _timerManager.runUntil(REATTEMPT_LOGIN_INTERVAL_MS, F.adapt(login),
+//                function () :Boolean {
+//                    return !selfref.isConnected;
+//                });
 
             }
-            var selfref :FacebookConnection = this;
             function callback () :void {
                 _facebook.refreshSession();
             }
-            _timerManager.runUntil(REFRESH_SESSION_INTERVAL_MS, F.adapt(callback),
+            runUntil(_timerManager, REFRESH_SESSION_INTERVAL_MS, F.adapt(callback),
+                function () :Boolean {
+                    return !selfref.isConnected;
+                }, F.adapt(loadFriends));
+//            _timerManager.runUntil(REFRESH_SESSION_INTERVAL_MS, F.adapt(callback),
+//                function () :Boolean {
+//                    return !selfref.isConnected;
+//                }, F.adapt(loadFriends));
+
+        } else {
+
+            runUntil(_timerManager, REFRESH_SESSION_INTERVAL_MS, _session.verifySession,
                 function () :Boolean {
                     return !selfref.isConnected;
                 }, F.adapt(loadFriends));
 
-        } else {
-            _timerManager.runUntil(REFRESH_SESSION_INTERVAL_MS, _session.verifySession,
-                function () :Boolean {
-                    return !selfref.isConnected;
-                }, F.adapt(loadFriends));
+
+//            _timerManager.runUntil(REFRESH_SESSION_INTERVAL_MS, _session.verifySession,
+//                function () :Boolean {
+//                    return !selfref.isConnected;
+//                }, F.adapt(loadFriends));
 
             _session.verifySession();
         }
@@ -258,6 +275,26 @@ public class FacebookConnection extends EventHandlerBase
                 _facebook.refreshSession();
             });
         }
+    }
+
+    public static function runUntil (timer :TimerManager, delay :Number, callback :Function,
+        check :Function, completeCallback :Function = null) :void
+    {
+        if (!check()) {
+            return;
+        }
+        var timerMod :ManagedTimer = timer.runForever(delay, modCallback);
+        function modCallback () :void {
+            if (check()) {
+                callback();
+            } else {
+                timerMod.cancel();
+                if (completeCallback != null) {
+                    completeCallback();
+                }
+            }
+        }
+
     }
 
     protected var _timerManager :TimerManager = new TimerManager();

@@ -15,7 +15,7 @@ public class SimpleScrollableArrayView extends ScrollableArrayView
 
         var elementContainer :Sprite = new Sprite();
         container.addChild(elementContainer);
-        DebugUtil.drawRect(elementContainer.graphics, panelWidth, panelHeight, 0xffffff);
+        DebugUtil.drawRect(elementContainer, panelWidth, panelHeight, 0xffffff);
 
         var buttonSize :int = type == OrientationType.HORIZONTAL ? panelHeight : panelWidth;
         var buttonColor :uint = 0x4281ff;
@@ -51,8 +51,8 @@ public class SimpleScrollableArrayView extends ScrollableArrayView
         var buttonHeight :Number = type == OrientationType.HORIZONTAL ? panelHeight : buttonSize / 3;
         var hardLeftButton :Sprite = new Sprite();
         var hardRightButton :Sprite = new Sprite();
-        DebugUtil.fillRect(hardLeftButton.graphics, buttonWidth, buttonHeight, buttonColor);
-        DebugUtil.fillRect(hardRightButton.graphics, buttonWidth, buttonHeight, buttonColor);
+        DebugUtil.fillRect(hardLeftButton, buttonWidth, buttonHeight, buttonColor);
+        DebugUtil.fillRect(hardRightButton, buttonWidth, buttonHeight, buttonColor);
         if (type == OrientationType.HORIZONTAL) {
             DisplayUtil.positionBoundsRelative(hardLeftButton, container, -leftUpButton.width - 1 - scrollLeftUp1PageButton.width - hardLeftButton.width, 0);
             DisplayUtil.positionBoundsRelative(hardRightButton, container, panelWidth + 1 + rightDownButton.width + scrollRightDown1PageButton.width, 0);

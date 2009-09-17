@@ -42,7 +42,7 @@ public class SnapUtil
     }
 
     public static function getSnappableDistanceFromSnapRect (anchor :ISnapAnchor,
-        d :ISnappingObject, snapAxis :SnapAxis, maxSnapDistance :Number = 20) :Number
+        d :ISnappingObject, snapAxis :SnapDirection, maxSnapDistance :Number = 20) :Number
     {
         var anchorGlobalBounds :Rectangle =
             anchor.displayObject.getBounds(anchor.displayObject.stage);
@@ -66,9 +66,9 @@ public class SnapUtil
             return maxDistance;
         }
 
-        if (snapAxis == SnapAxis.X) {
+        if (snapAxis == SnapDirection.X) {
             return Math.min(leftDistance, rightDistance);
-        } else if (snapAxis == SnapAxis.Y) {
+        } else if (snapAxis == SnapDirection.Y) {
             return Math.min(topDistance, bottomDistance);
         }
 
@@ -76,7 +76,7 @@ public class SnapUtil
     }
 
     public static function getGlobalSnapToPointFromRectOuter (anchor :ISnapAnchor,
-        d :ISnappingObject, snapAxis :SnapAxis, maxSnapDistance :Number = 20) :Point
+        d :ISnappingObject, snapAxis :SnapDirection, maxSnapDistance :Number = 20) :Point
     {
         var stage :DisplayObject = anchor.displayObject.stage;
         var anchorGlobalBounds :Rectangle = anchor.displayObject.getBounds(stage);
@@ -96,20 +96,71 @@ public class SnapUtil
         var yAxisWithinBounds :Boolean = tRect.top > anchorGlobalBounds.top - buffer &&
             tRect.bottom < anchorGlobalBounds.bottom + buffer;
 
-        if (snapAxis == SnapAxis.X) {
+        if (snapAxis == SnapDirection.X) {
             if (leftDistance <= maxSnapDistance) {
                 p.x = anchorGlobalBounds.left - tRect.width / 2;
             } else if (rightDistance <= maxSnapDistance){
                 p.x = anchorGlobalBounds.right + tRect.width / 2;
             }
-        } else if (snapAxis == SnapAxis.Y) {
+        } else if (snapAxis == SnapDirection.Y) {
             if (topDistance <= maxSnapDistance) {
                 p.y = anchorGlobalBounds.top - tRect.height / 2;
             } else if (bottomDistance <= maxSnapDistance){
                 p.y = anchorGlobalBounds.bottom + tRect.height / 2;
             }
 
-        } else if (snapAxis == SnapAxis.X_AND_Y){
+        } else if (snapAxis == SnapDirection.X_AND_Y){
+            if (leftDistance <= maxSnapDistance && yAxisWithinBounds) {
+                p.x = anchorGlobalBounds.left - tRect.width / 2;
+            } else if (rightDistance <= maxSnapDistance && yAxisWithinBounds){
+                p.x = anchorGlobalBounds.right + tRect.width / 2;
+            }
+
+            if (topDistance <= maxSnapDistance && xAxisWithinBounds) {
+                p.y = anchorGlobalBounds.top - tRect.height / 2;
+            } else if (bottomDistance <= maxSnapDistance && xAxisWithinBounds){
+                p.y = anchorGlobalBounds.bottom + tRect.height / 2;
+            }
+        }
+
+        return p;
+    }
+    
+    public static function getGlobalSnapToPointFromPolygonBounds (anchor :ISnapAnchor,
+        d :ISnappingObject, snapAxis :SnapDirection, maxSnapDistance :Number = 20) :Point
+    {
+        var stage :DisplayObject = anchor.displayObject.stage;
+        var anchorGlobalBounds :Rectangle = anchor.displayObject.getBounds(stage);
+
+        var tRect :Rectangle = d.boundsDisplayObject.getBounds(stage);
+        var leftDistance :Number = Math.abs(anchorGlobalBounds.left - tRect.right);
+        var rightDistance :Number = Math.abs(anchorGlobalBounds.right - tRect.left);
+        var topDistance :Number = Math.abs(anchorGlobalBounds.top - tRect.bottom);
+        var bottomDistance :Number = Math.abs(anchorGlobalBounds.bottom - tRect.top);
+
+        var p :Point = DisplayUtil.transformPoint(new Point(d.boundsDisplayObject.x,
+            d.boundsDisplayObject.y), d.boundsDisplayObject, stage);
+
+        var buffer :Number = maxSnapDistance * 2;
+        var xAxisWithinBounds :Boolean = tRect.left > anchorGlobalBounds.left - buffer &&
+            tRect.right < anchorGlobalBounds.right + buffer;
+        var yAxisWithinBounds :Boolean = tRect.top > anchorGlobalBounds.top - buffer &&
+            tRect.bottom < anchorGlobalBounds.bottom + buffer;
+
+        if (snapAxis == SnapDirection.X) {
+            if (leftDistance <= maxSnapDistance) {
+                p.x = anchorGlobalBounds.left - tRect.width / 2;
+            } else if (rightDistance <= maxSnapDistance){
+                p.x = anchorGlobalBounds.right + tRect.width / 2;
+            }
+        } else if (snapAxis == SnapDirection.Y) {
+            if (topDistance <= maxSnapDistance) {
+                p.y = anchorGlobalBounds.top - tRect.height / 2;
+            } else if (bottomDistance <= maxSnapDistance){
+                p.y = anchorGlobalBounds.bottom + tRect.height / 2;
+            }
+
+        } else if (snapAxis == SnapDirection.X_AND_Y){
             if (leftDistance <= maxSnapDistance && yAxisWithinBounds) {
                 p.x = anchorGlobalBounds.left - tRect.width / 2;
             } else if (rightDistance <= maxSnapDistance && yAxisWithinBounds){
