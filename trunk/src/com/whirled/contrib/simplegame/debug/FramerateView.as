@@ -3,9 +3,9 @@
 
 package com.whirled.contrib.simplegame.debug{
 
-import com.threerings.debug.DebugUtil;
 import com.threerings.ui.TextBits;
 import com.whirled.contrib.Framerate;
+import com.whirled.contrib.debug.DebugUtil;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 
 import flash.display.DisplayObject;
@@ -17,7 +17,6 @@ public class FramerateView extends SceneObject
     public function FramerateView ()
     {
         _sprite = new Sprite();
-        DebugUtil
 
         _framerate = new Framerate(_sprite, 1000);
 

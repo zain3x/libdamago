@@ -4,45 +4,62 @@
 package com.threerings.ui.snapping
 {
 import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 import flash.geom.Point;
 public /*abstract*/ class SnapAnchor
+    implements ISnapAnchor
 {
-    public function SnapAnchor (dataObj :Object, displayObject : DisplayObject,
+    public function SnapAnchor (displayObject : DisplayObjectContainer,
         maxSnapDistance :Number = 20)
     {
-        _dataObj = dataObj;
-//        _snapType = type;type :SnapType,
         _displayObject = displayObject;
         _maxSnapDistance = maxSnapDistance;
     }
 
-    internal function get displayObject () :DisplayObject
+    public function get displayObject () :DisplayObject
     {
         return _displayObject;
     }
 
-    internal function getSnappableDistance (d :SnappingObject) :Number
+    public function get displayContainer () :DisplayObjectContainer
+    {
+        return _displayObject;
+    }
+
+    public function getSnappableDistance (d :ISnappingObject) :Number
     {
         throw new Error("Abstract method");
     }
 
-    internal function getSnapToPoint (d :SnappingObject) :Point
+    protected function getGlobalSnapToPoint (d :ISnappingObject) :Point
     {
         throw new Error("Abstract method");
     }
 
-    internal function isSnappable (snappable :SnappingObject) :Boolean
+    public function isSnappable (snappable :ISnappingObject) :Boolean
+    {
+        return true;
+    }
+
+    public function isWithinSnappingDistance (snappable :ISnappingObject) :Boolean
     {
         return getSnappableDistance(snappable) <= _maxSnapDistance;
     }
 
-    internal function get dataObj () :Object
+    public function snapObject (snappable :ISnappingObject) :void
     {
-        return _dataObj;
+        var snapPoint :Point = getGlobalSnapToPoint(snappable);
+        SnapUtil.snapCenterOfBoundsToGlobalPoint(snappable, snapPoint);
+//        snappable.snapCenterOfBoundsToPoint(snapPoint);
     }
 
-    protected var _dataObj :Object;
-    protected var _displayObject :DisplayObject;
+//    internal function get dataObj () :Object
+//    {
+//        return _dataObj;
+//    }
+
+//    protected var _dataObj :Object;
+    protected var _displayObject :DisplayObjectContainer;
     protected var _maxSnapDistance :Number;
 //    protected var _snapType :SnapType;
 
