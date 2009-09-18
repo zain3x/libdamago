@@ -61,6 +61,11 @@ public class BoundsPolygon extends Bounds
         }
     }
 
+    override public function distance (p :Point) :Number
+    {
+        return _polygon.distToPolygonEdge(Vector2.fromPoint(p));
+    }
+
     protected var _polygon :Polygon;
 }
 }

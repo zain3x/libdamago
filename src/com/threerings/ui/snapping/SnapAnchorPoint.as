@@ -3,27 +3,26 @@
 
 package com.threerings.ui.snapping
 {
-import flash.display.DisplayObjectContainer;
+import com.threerings.ui.bounds.BoundsPoint;
+
 import flash.geom.Point;
 
-public class SnapAnchorPoint extends SnapAnchor
+public class SnapAnchorPoint extends SnapAnchorBounded
 {
-    public function SnapAnchorPoint (d :DisplayObjectContainer, offset :Point = null)
+    public function SnapAnchorPoint (p :Point)
     {
-        super(d);
-        _offset = offset == null ? new Point() : offset;
+        super(SnapType.CENTER, new BoundsPoint(p));
     }
 
-    override public function getSnappableDistance (d :ISnappingObject) :Number
-    {
-        return SnapUtil.getSnappableDistanceFromSnapPointAnchor(this, d, _offset);
-    }
+//    override public function getSnappableDistance (d :ISnappingObject) :Number
+//    {
+//        return SnapUtil.getSnappableDistanceFromSnapPointAnchor(this, d, _offset);
+//    }
+//
+//    override protected function getGlobalSnapToPoint (d :ISnappingObject) :Point
+//    {
+//        return globalBounds.localToGlobal(_offset);
+//    }
 
-    override protected function getGlobalSnapToPoint (d :ISnappingObject) :Point
-    {
-        return displayObject.localToGlobal(_offset);
-    }
-
-    protected var _offset :Point;
 }
 }

@@ -3,28 +3,28 @@
 
 package com.threerings.ui.snapping
 {
-import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.geom.Point;
+import flash.geom.Rectangle;
 public /*abstract*/ class SnapAnchor
     implements ISnapAnchor
 {
-    public function SnapAnchor (displayObject : DisplayObjectContainer,
-        maxSnapDistance :Number = 20)
+    public function SnapAnchor (type :SnapType, maxSnapDistance :Number = 20)
     {
-        _displayObject = displayObject;
+        _snapType = type;
+//        _displayObject = displayObject;
         _maxSnapDistance = maxSnapDistance;
     }
 
-    public function get displayObject () :DisplayObject
-    {
-        return _displayObject;
-    }
+//    public function get globalBounds () :Rectangle
+//    {
+//        return _displayObject;
+//    }
 
-    public function get displayContainer () :DisplayObjectContainer
-    {
-        return _displayObject;
-    }
+//    public function get displayContainer () :DisplayObjectContainer
+//    {
+//        return _displayObject;
+//    }
 
     public function getSnappableDistance (d :ISnappingObject) :Number
     {
@@ -53,15 +53,30 @@ public /*abstract*/ class SnapAnchor
 //        snappable.snapCenterOfBoundsToPoint(snapPoint);
     }
 
+    public function get type () :SnapType
+    {
+        return _snapType;
+    }
+
+    public function get provider () :Object
+    {
+        return _provider;
+    }
+
+    public function set provider (val :Object) :void
+    {
+        _provider = val;
+    }
+
 //    internal function get dataObj () :Object
 //    {
 //        return _dataObj;
 //    }
 
-//    protected var _dataObj :Object;
-    protected var _displayObject :DisplayObjectContainer;
+    protected var _provider :Object;
+    protected var _displayObject :Rectangle;
     protected var _maxSnapDistance :Number;
-//    protected var _snapType :SnapType;
+    protected var _snapType :SnapType;
 
 }
 }

@@ -10,8 +10,11 @@ import com.threerings.util.Enum;
  */
 public final class SnapType extends Enum
 {
-    public static const FIXED :SnapType = new SnapType("FIXED");
-    public static const SLIDING :SnapType = new SnapType("SLIDING");
+    public static const NULL :SnapType = new SnapType("NULL");
+    public static const CENTER :SnapType = new SnapType("CENTER");
+    public static const PERIMETER_OUTER :SnapType = new SnapType("PERIMETER_OUTER");
+    public static const PERIMETER_INNER :SnapType = new SnapType("PERIMETER_INNER");
+    public static const PERIMETER_CENTERED :SnapType = new SnapType("PERIMETER_CENTERED");
     finishedEnumerating(SnapType);
 
     /**

@@ -4,8 +4,6 @@
 package com.threerings.ui.snapping
 {
 import flash.display.DisplayObject;
-import flash.geom.Point;
-import flash.geom.Rectangle;
 
 /**
  *
