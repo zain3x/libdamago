@@ -1,10 +1,14 @@
 package libdamago.geometry
 {
 import com.threerings.geom.Vector2;
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.threerings.util.MathUtil;
 import com.threerings.util.Set;
 import com.threerings.util.Sets;
+import com.threerings.util.Util;
 
 import flash.geom.Rectangle;
 
@@ -154,10 +158,39 @@ public class VectorUtil
     {
         var v :Vector2;
         var bounds :Rectangle = new Polygon(Polygon.convexHullFromPoints(initialLocations)).boundingBox;
+        log.debug("sortVectorsBySweep", "bounds", bounds);
+
         var maxFormationRadius :Number = Math.max(bounds.width, bounds.height) * Math.SQRT2;
+
+        log.debug("sortVectorsBySweep", "maxFormationRadius", maxFormationRadius);
 
         var center :Vector2 = new Vector2(bounds.x + bounds.width / 2,
                                             bounds.y + bounds.height / 2);
+
+        //New simpler sorting
+        //Rotate so the angle is zero
+        var vvMap :Map = Maps.newMapOf(Vector2);
+        initialLocations.forEach(function (v :Vector2, ...ignored) :void {
+            vvMap.put(v.subtract(center), v);
+        } );
+        var relVs :Array = vvMap.keys();
+        relVs.forEach(function (v :Vector2, ...ignored) :void {
+            v.rotateLocal(initialAngle);
+        });
+        ArrayUtil.stableSort(relVs, function (v1 :Vector2, v2 :Vector2) :int {
+            return (v1.x > v2.x ? -1 : 1);
+        });
+
+        return relVs.map(Util.adapt(vvMap.get));
+
+
+
+
+
+
+
+
+
 
 
         var smallestRadius :Number = Number.MAX_VALUE;
@@ -167,6 +200,8 @@ public class VectorUtil
                 smallestRadius = radius;
             }
         });
+
+        log.debug("sortVectorsBySweep", "smallestRadius", smallestRadius);
 
         //Starting from in front of the front-most unit, move a line backwards.  As the units
         //touch the line, they are added to the squad in that order.  Thus, it gives a
