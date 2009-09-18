@@ -42,15 +42,15 @@ public class SnapManager extends EventDispatcher
         _parent = parent;
     }
 
-    public function addPointAnchor (d :DisplayObjectContainer) :void
-    {
-        addAnchor(new SnapAnchorPoint(d));
-    }
-
-    public function addRectAnchor (d :DisplayObjectContainer) :void
-    {
-        addAnchor(new SnapAnchorRect(d, SnapDirection.X_AND_Y));
-    }
+//    public function addPointAnchor (d :DisplayObjectContainer) :void
+//    {
+//        addAnchor(new SnapAnchorPoint(d));
+//    }
+//
+//    public function addRectAnchor (d :DisplayObjectContainer) :void
+//    {
+//        addAnchor(new SnapAnchorRect(d, SnapAxis.X_AND_Y));
+//    }
 
     public function addSnappable (snappable :ISnappingObject) :void
     {
@@ -59,7 +59,7 @@ public class SnapManager extends EventDispatcher
             function (...ignored) :void {
                 beginSnapping(snappable);
             });
-        _snappableObjects.put(snappable, null);
+//        _snappableObjects.put(snappable, null);
     }
 
     public function removeSnappable (snappable :ISnappingObject) :void
@@ -68,16 +68,22 @@ public class SnapManager extends EventDispatcher
         if (_target == snappable) {
             endSnapping();
         }
-        _snappableObjects.remove(snappable);
+//        _snappableObjects.remove(snappable);
     }
 
     public function shutdown () :void
     {
+        clear();
+        _parent = null;
+    }
+
+    public function clear () :void
+    {
         _mouseDownEvents.freeAllHandlers();
         _events.freeAllHandlers();
         _snapAnchors = [];
-        _parent = null;
         _target = null;
+//        _snappableObjects.clear();
     }
 
     public function addAnchor (anchor :ISnapAnchor) :void
@@ -85,20 +91,17 @@ public class SnapManager extends EventDispatcher
         _snapAnchors.push(anchor);
     }
 
-    protected function beginSnapping (snapper :ISnappingObject) :void
+    public function beginSnapping (snapper :ISnappingObject) :void
     {
         if (_target != null) {
             endSnapping(_target);
         }
         _target = snapper;
         _events.registerListener(_parent, Event.ENTER_FRAME, handleEnterFrame);
-        _events.registerListener(snapper.displayObject, MouseEvent.MOUSE_UP,
-            function (...ignored) :void {
-                endSnapping(snapper);
-            });
+
     }
 
-    protected function endSnapping (snapper :ISnappingObject = null) :void
+    public function endSnapping (snapper :ISnappingObject = null) :void
     {
         _events.freeAllHandlers();
         _target = null;
@@ -157,7 +160,8 @@ public class SnapManager extends EventDispatcher
             return;
         }
 
-        closestAnchor.snapObject(_target)
+        closestAnchor.snapObject(_target);
+        dispatchEvent(new SnapEvent(closestAnchor, _target));
     }
 
     protected var _currentSnapAnchor :ISnapAnchor;
@@ -166,7 +170,7 @@ public class SnapManager extends EventDispatcher
 
     protected var _parent :Sprite;
     protected var _snapAnchors :Array = [];
-    protected var _snappableObjects :Map = Maps.newMapOf(DisplayObject);
+//    protected var _snappableObjects :Map = Maps.newMapOf(DisplayObject);
     protected var _target :ISnappingObject;
 }
 }

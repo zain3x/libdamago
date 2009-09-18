@@ -28,5 +28,10 @@ public class Bounds
     {
         throw new Error("Abstract method");
     }
+
+    public function distance (p :Point) :Number
+    {
+        throw new Error("Abstract method");
+    }
 }
 }
