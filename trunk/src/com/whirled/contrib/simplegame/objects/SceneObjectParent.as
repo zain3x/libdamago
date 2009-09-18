@@ -3,8 +3,8 @@
 
 package com.whirled.contrib.simplegame.objects{
 
+import com.threerings.ui.DisplayUtils;
 import com.threerings.util.ArrayUtil;
-import com.whirled.contrib.DisplayUtils;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.components.SceneComponent;
 

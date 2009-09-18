@@ -6,7 +6,7 @@ import flash.display.DisplayObjectContainer;
 
 public class SnapAnchorBounds extends SnapAnchor
 {
-    public function SnapAnchorBounds(displayObject:DisplayObjectContainer, bounds :Bounds,
+    public function SnapAnchorBounds (displayObject:DisplayObjectContainer, bounds :Bounds,
         maxSnapDistance :Number = 20)
     {
         super(displayObject, maxSnapDistance);
