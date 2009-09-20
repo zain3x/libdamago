@@ -9,20 +9,9 @@ import flash.geom.Point;
 
 public class SnapAnchorPoint extends SnapAnchorBounded
 {
-    public function SnapAnchorPoint (p :Point)
+    public function SnapAnchorPoint (p :Point, index :int = 0)
     {
-        super(SnapType.CENTER, new BoundsPoint(p));
+        super(SnapType.CENTER, new BoundsPoint(p.x, p.y), index);
     }
-
-//    override public function getSnappableDistance (d :ISnappingObject) :Number
-//    {
-//        return SnapUtil.getSnappableDistanceFromSnapPointAnchor(this, d, _offset);
-//    }
-//
-//    override protected function getGlobalSnapToPoint (d :ISnappingObject) :Point
-//    {
-//        return globalBounds.localToGlobal(_offset);
-//    }
-
 }
 }
