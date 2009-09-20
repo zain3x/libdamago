@@ -8,14 +8,14 @@ import flash.geom.Point;
 
 public class BoundsPoint extends Bounds
 {
-    public function BoundsPoint (p :Point)
+    public function BoundsPoint (x :Number, y :Number)
     {
-        _point = p;
+        _point = new Point(x, y);
     }
 
     override public function debugDraw (g :Graphics) :void
     {
-        DebugUtil.drawDot(g, 0, 0xff0000, 4);
+        DebugUtil.drawDot(g, 0xff0000, 4, _point.x, _point.y);
     }
 
     override public function getBoundedPoint (x :Number, y :Number) :Point

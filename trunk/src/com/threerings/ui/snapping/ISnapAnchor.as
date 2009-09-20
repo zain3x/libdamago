@@ -17,6 +17,10 @@ public interface ISnapAnchor
 
     function get provider () :Object;
 
+    function get index () :int;
+    
+    
+
 
 }
 }

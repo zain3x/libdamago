@@ -63,7 +63,7 @@ public class TestSnapping extends Sprite
         outerblob.x = 300;
         outerblob.y = 300;
         addChild(outerblob);
-        snapper.addSnappable(new SnappingObject(blob, outerblob));
+        snapper.beginSnapping(new SnappingObject(blob, outerblob));
     }
 
     protected static function createRect (locX :Number = 0, locY :Number = 0) :Sprite

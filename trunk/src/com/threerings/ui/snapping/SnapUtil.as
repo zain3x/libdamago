@@ -1,11 +1,12 @@
 package com.threerings.ui.snapping {
-import com.threerings.display.DisplayUtil;
-import com.threerings.util.MathUtil;
+import com.threerings.util.ArrayUtil;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+
+import libdamago.util.SortingUtil;
 
 public class SnapUtil
 {
@@ -196,6 +197,15 @@ public class SnapUtil
         var centerX :Number = bounds.left + bounds.width / 2;
         var centerY :Number = bounds.top + bounds.height / 2;
         return parent.localToGlobal(new Point(centerX, centerY));
+    }
+
+    public static function getClosestAnchorIndex (anchors :Array, obj :SnappingObject) :int
+    {
+        var copy :Array = anchors.slice();
+        SortingUtil.sortOnNumberFromFunction(copy, function (anc :ISnapAnchor) :Number {
+            return anc.getSnappableDistance(obj);
+        });
+        return ArrayUtil.indexOf(anchors, copy[0]);
     }
 }
 }

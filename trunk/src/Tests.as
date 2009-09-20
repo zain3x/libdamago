@@ -5,9 +5,9 @@ import com.threerings.ui.snapping.debug.TestSnapping;
 import flash.display.Sprite;
 
 [SWF(width="800", height="800", frameRate="30")]
-public class Main extends Sprite
+public class Tests extends Sprite
 {
-    public function Main()
+    public function Tests()
     {
         //addChild(new TestFacebookDesktopSession());
         addChild(new TestSnapping());

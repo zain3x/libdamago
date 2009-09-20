@@ -3,17 +3,12 @@
 
 package com.threerings.ui.snapping
 {
-import com.threerings.display.DisplayUtil;
-import com.threerings.util.Map;
-import com.threerings.util.Maps;
 import com.whirled.contrib.EventHandlerManager;
 
 import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.EventDispatcher;
-import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 /**
@@ -42,35 +37,6 @@ public class SnapManager extends EventDispatcher
         _parent = parent;
     }
 
-//    public function addPointAnchor (d :DisplayObjectContainer) :void
-//    {
-//        addAnchor(new SnapAnchorPoint(d));
-//    }
-//
-//    public function addRectAnchor (d :DisplayObjectContainer) :void
-//    {
-//        addAnchor(new SnapAnchorRect(d, SnapAxis.X_AND_Y));
-//    }
-
-    public function addSnappable (snappable :ISnappingObject) :void
-    {
-//        var snappable :SnappingObject = new SnappingObject(boundsObj, rootLayer);
-        _mouseDownEvents.registerListener(snappable.displayObject, MouseEvent.MOUSE_DOWN,
-            function (...ignored) :void {
-                beginSnapping(snappable);
-            });
-//        _snappableObjects.put(snappable, null);
-    }
-
-    public function removeSnappable (snappable :ISnappingObject) :void
-    {
-        _mouseDownEvents.freeAllOn(snappable.boundsDisplayObject);
-        if (_target == snappable) {
-            endSnapping();
-        }
-//        _snappableObjects.remove(snappable);
-    }
-
     public function shutdown () :void
     {
         clear();
@@ -79,11 +45,11 @@ public class SnapManager extends EventDispatcher
 
     public function clear () :void
     {
+        endSnapping();
         _mouseDownEvents.freeAllHandlers();
         _events.freeAllHandlers();
         _snapAnchors = [];
         _target = null;
-//        _snappableObjects.clear();
     }
 
     public function addAnchor (anchor :ISnapAnchor) :void
@@ -99,12 +65,23 @@ public class SnapManager extends EventDispatcher
         _target = snapper;
         _events.registerListener(_parent, Event.ENTER_FRAME, handleEnterFrame);
 
+        if (DEBUG_DRAW) {
+            _debugLayer.graphics.clear();
+            _parent.addChildAt(_debugLayer, _parent.numChildren);
+            for each (var anc :SnapAnchorBounded in _snapAnchors) {
+                if (anc == null) {
+                    continue;
+                }
+                anc._boundsGlobal.debugDraw(_debugLayer.graphics);
+            }
+        }
     }
 
     public function endSnapping (snapper :ISnappingObject = null) :void
     {
         _events.freeAllHandlers();
         _target = null;
+        _debugLayer.graphics.clear();
     }
 
     protected function getClosestAnchorToTarget () :ISnapAnchor
@@ -115,17 +92,10 @@ public class SnapManager extends EventDispatcher
         var closestAnchor :ISnapAnchor = null;
         var closestDistance :Number = Number.MAX_VALUE;
         var distance :Number;
-        var allowedAnchors :Array = _snapAnchors;
-//        if (_allowedAnchorsFunction != null) {
-//            var allowedAnchorDisplayObjects :Array = _allowedAnchorsFunction(_target.boundsDisplay);
-//            allowedAnchors = allowedAnchors.filter(
-//                function (anchor :ISnapAnchor, ...ignored) :Boolean {
-//                    return ArrayUtil.contains(allowedAnchorDisplayObjects, anchor.displayObject);
-//                });
-//        }
 
         for each (var anchor :ISnapAnchor in _snapAnchors) {
             distance = anchor.getSnappableDistance(_target);
+            trace(anchor + " distance=" + distance);
             if (distance < closestDistance) {
                 closestDistance = distance;
                 closestAnchor = anchor;
@@ -153,24 +123,31 @@ public class SnapManager extends EventDispatcher
         _target.displayObject.x += globalMouseLoc.x - centerX;
         _target.displayObject.y += globalMouseLoc.y - centerY;
 
-        //Then maybe snap, if a snap anchor is close enough.
-        var closestAnchor :ISnapAnchor = getClosestAnchorToTarget();
-        if (closestAnchor == null || !closestAnchor.isWithinSnappingDistance(_target)) {
-            _currentSnapAnchor = null;
-            return;
+        //Snap to all anchors close enough
+        var snapped :Boolean = false;
+        for each (var anc :ISnapAnchor in _snapAnchors) {
+            if (anc.isWithinSnappingDistance(_target)) {
+                anc.snapObject(_target);
+                //Dispatch event whether we snap or not to indicate snapping/no snapping
+                dispatchEvent(new SnapEvent(anc, _target));
+                snapped = true;
+            }
         }
 
-        closestAnchor.snapObject(_target);
-        dispatchEvent(new SnapEvent(closestAnchor, _target));
+        //If nothing is snapped, inform listeners of this
+        if (!snapped) {
+            dispatchEvent(new SnapEvent(null, _target));
+        }
     }
 
-    protected var _currentSnapAnchor :ISnapAnchor;
     protected var _events :EventHandlerManager = new EventHandlerManager();
     protected var _mouseDownEvents :EventHandlerManager = new EventHandlerManager();
 
     protected var _parent :Sprite;
     protected var _snapAnchors :Array = [];
-//    protected var _snappableObjects :Map = Maps.newMapOf(DisplayObject);
     protected var _target :ISnappingObject;
+
+    public static const DEBUG_DRAW :Boolean = true;
+    protected var _debugLayer :Sprite = new Sprite();
 }
 }

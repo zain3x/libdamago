@@ -47,6 +47,7 @@ public class SimpleGameRunner extends Sprite
 
         var closeButton :SimpleTextButton = new SimpleTextButton("Close/Next");
         _topLayer.addChild(closeButton);
+        closeButton.x = this.stage.stageWidth - closeButton.width;
         closeButton.addEventListener(MouseEvent.CLICK, F.justOnce(function() :void {
                 game.shutdown();
                 DisplayUtils.detach(closeButton);
