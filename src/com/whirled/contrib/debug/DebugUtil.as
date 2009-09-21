@@ -14,12 +14,20 @@ import flash.geom.Rectangle;
 
 public class DebugUtil
 {
-    public static function drawDot (g :Graphics, color :int = 0x00ffff, r :Number = 10,
+    public static function fillDot (g :Graphics, color :int = 0x00ffff, r :Number = 10,
         x :int = 0, y :int = 0) :void
     {
         g.beginFill(color);
         g.drawCircle(x,y,r);
         g.endFill();
+    }
+
+    public static function drawDot (g :Graphics, color :int = 0x00ffff, r :Number = 10,
+        x :int = 0, y :int = 0) :void
+    {
+        g.lineStyle(1, color);
+        g.drawCircle(x,y,r);
+        g.lineStyle(0, 0, 0);
     }
 
     public static function traceDisplayChildren (d :DisplayObjectContainer,
