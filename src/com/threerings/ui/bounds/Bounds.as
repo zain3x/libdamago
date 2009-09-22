@@ -3,6 +3,7 @@ package com.threerings.ui.bounds
 import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.geom.Point;
+import flash.geom.Rectangle;
 
 public class Bounds
 {
@@ -42,5 +43,21 @@ public class Bounds
     {
         throw new Error("Abstract method");
     }
+
+    public function translate (x :Number, y :Number) :Bounds
+    {
+        throw new Error("Abstract method");
+    }
+
+    public function boundingRect () :Rectangle
+    {
+        throw new Error("Abstract method");
+    }
+
+    public function contains (x :Number, y :Number) :Boolean
+    {
+        throw new Error("Abstract method");
+    }
+
 }
 }

@@ -1,5 +1,6 @@
 package com.threerings.ui.bounds
 {
+import com.threerings.geom.Vector2;
 import com.threerings.util.MathUtil;
 import com.whirled.contrib.debug.DebugUtil;
 
@@ -10,7 +11,7 @@ public class BoundsPoint extends Bounds
 {
     public function BoundsPoint (x :Number, y :Number)
     {
-        _point = new Point(x, y);
+        _point = new Vector2(x, y);
     }
 
     override public function debugDraw (g :Graphics) :void
@@ -20,13 +21,13 @@ public class BoundsPoint extends Bounds
 
     override public function getBoundedPoint (x :Number, y :Number) :Point
     {
-        return _point;
+        return _point.toPoint();
     }
 
     override public function getBoundedPointFromMove (originX :Number, originY :Number, targetX :Number,
         targetY :Number) :Point
     {
-        return _point;
+        return _point.toPoint();
     }
 
     override public function distance (p :Point) :Number
@@ -43,7 +44,17 @@ public class BoundsPoint extends Bounds
         return 0;
     }
 
-    protected var _point :Point;
+    override public function translate (dx :Number, dy :Number) :Bounds
+    {
+        return new BoundsPoint(_point.x + dx, _point.y + dy);
+    }
+
+    override public function contains (x :Number, y :Number) :Boolean
+    {
+        return _point.x == x && _point.y == y;
+    }
+
+    protected var _point :Vector2;
 
 }
 }

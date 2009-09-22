@@ -10,6 +10,11 @@ import libdamago.geometry.Polygon;
 
 public class BoundsRectangle extends BoundsPolygon
 {
+    public static function fromRectangle (rect :Rectangle) :BoundsRectangle
+    {
+        return new BoundsRectangle(rect.x, rect.y, rect.width, rect.height);
+    }
+
     public function BoundsRectangle (x :Number, y :Number, w :Number, h :Number)
     {
         _rect = new Rectangle(x, y, w, h);

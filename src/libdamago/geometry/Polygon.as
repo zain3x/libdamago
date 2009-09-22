@@ -1,12 +1,15 @@
 package libdamago.geometry
 {
-import flash.geom.Rectangle;
+import aduros.util.F;
+
 import com.threerings.geom.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MathUtil;
 import com.threerings.util.Util;
-import aduros.util.F;
+
+import flash.display.Graphics;
+import flash.geom.Rectangle;
 
 public class Polygon
 {
@@ -562,14 +565,26 @@ public class Polygon
         return closestLine;
     }
 
-    public function closestPoint (P :Vector2) :Vector2
+    public function closestPoint (v :Vector2) :Vector2
     {
-        return closestPointOnPolygon(P, _vertices);
+        return closestPointOnPolygon(v, _vertices);
     }
 
     public function closestPointOnPerimeter (v :Vector2) :Vector2
     {
-        return closestPointOnPolygon(v, _vertices);
+        var p :Vector2;
+        var closestDistanceSq :Number = Number.MAX_VALUE;
+        var i :int = 1;
+        for each (var line :LineSegment in _edges) {
+            trace("checking line", i++);
+            var distanceSq :Number = line.distSq(v);
+            if (distanceSq < closestDistanceSq) {
+                closestDistanceSq = distanceSq;
+                p = line.closestPointTo(v);
+            }
+        }
+        return p;
+//        return closestPointOnPolygon(v, _vertices);
     }
 
     /**
@@ -594,13 +609,38 @@ public class Polygon
 
     public function distToPolygonEdge (P :Vector2) :Number
     {
-        var minDistance :Number = Number.MAX_VALUE;
+        var closestDistance :Number = Number.MAX_VALUE;
         var distance :Number;
-        for(var i :int = 0; i < polygon.length - 1; i++) {
-            distance = LineSegment.distToLineSegment(polygon[i], polygon[i + 1], P);
-            minDistance = Math.min(minDistance, distance);
+        for each (var line :LineSegment in _edges) {
+            distance = line.distSq(P);
+            if (distance < closestDistance) {
+                closestDistance = distance;
+            }
         }
-        return minDistance;
+        return Math.sqrt(closestDistance);
+    }
+
+    public function draw (g :Graphics, color :uint = 0) :void
+    {
+        g.lineStyle(1, color);
+        edges.forEach(Util.adapt(function (line :LineSegment) :void {
+            g.moveTo(line.a.x, line.a.y);
+            g.lineTo(line.b.x, line.b.y);
+        }));
+    }
+
+    public function fill (g :Graphics, color :uint = 0) :void
+    {
+        g.beginFill(color);
+        var firstVertex :Vector2 = Vector2(vertices[0]);
+        g.moveTo(firstVertex.x, firstVertex.y);
+
+        vertices.slice(1).forEach(Util.adapt(function (v :Vector2) :void {
+            g.lineTo(v.x, v.y);
+        }));
+
+        g.lineTo(firstVertex.x, firstVertex.y);
+        g.endFill();
     }
 
     public function getClosestPoint (P :Vector2) :Vector2
@@ -931,6 +971,11 @@ public class Polygon
     public function toString () :String
     {
         return "\nPolygon[" + _vertices.join(",    ") + "]";
+    }
+
+    public function translate (dx :Number, dy :Number) :Polygon
+    {
+        return this.clone().translateLocal(dx, dy);
     }
 
     public function translateLocal (dx :Number, dy :Number) :Polygon

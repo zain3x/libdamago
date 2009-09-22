@@ -18,12 +18,16 @@ public class BoundsPolygon extends Bounds
 
     override public function getBoundedPoint (targetX :Number, targetY :Number) :Point
     {
+        trace("getBoundedPoint");
+        trace("distance=", distance(new Point(targetX, targetY)));
         if (_polygon.isPointInside(new Vector2(targetX, targetY))) {
+            trace("inside");
             return new Point(targetX, targetY);
         }
 
         var closestPoint :Vector2 = _polygon.closestPointOnPerimeter(
             new Vector2(targetX, targetY));
+        trace("closestPointOnPerimeter=", closestPoint);
         return closestPoint.toPoint();
     }
 
@@ -73,6 +77,28 @@ public class BoundsPolygon extends Bounds
     override public function get height () :Number
     {
         return _polygon.boundingBox.height;
+    }
+
+    override public function translate (dx :Number, dy :Number) :Bounds
+    {
+        var p :Polygon = _polygon.translate(dx, dy);
+        return new BoundsPolygon(p);
+    }
+
+    override public function contains (x :Number, y :Number) :Boolean
+    {
+        var p :Vector2 = new Vector2(x, y);
+        return _polygon.isPointInside(p) || _polygon.isPointOnEdge(p);
+    }
+
+    public function get polygon () :Polygon
+    {
+        return _polygon;
+    }
+
+    override public function boundingRect () :Rectangle
+    {
+        return _polygon.boundingBox;
     }
 
     protected var _polygon :Polygon;
