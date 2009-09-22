@@ -18,16 +18,12 @@ public class BoundsPolygon extends Bounds
 
     override public function getBoundedPoint (targetX :Number, targetY :Number) :Point
     {
-        trace("getBoundedPoint");
-        trace("distance=", distance(new Point(targetX, targetY)));
         if (_polygon.isPointInside(new Vector2(targetX, targetY))) {
-            trace("inside");
             return new Point(targetX, targetY);
         }
 
         var closestPoint :Vector2 = _polygon.closestPointOnPerimeter(
             new Vector2(targetX, targetY));
-        trace("closestPointOnPerimeter=", closestPoint);
         return closestPoint.toPoint();
     }
 
