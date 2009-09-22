@@ -18,7 +18,7 @@ public class SpriteUtil
         return sprite;
     }
 
-    public static function createFilledSprite (w :Number, h :Number, color :uint,
+    public static function createFilledSprite (w :Number, h :Number, color :uint, alpha :Number,
         mouseChildren :Boolean = false, mouseEnabled :Boolean = false) :Sprite
     {
         var sprite :Sprite = new Sprite();

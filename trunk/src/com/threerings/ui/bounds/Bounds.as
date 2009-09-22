@@ -33,5 +33,14 @@ public class Bounds
     {
         throw new Error("Abstract method");
     }
+
+    public function get width () :Number
+    {
+        throw new Error("Abstract method");
+    }
+    public function get height () :Number
+    {
+        throw new Error("Abstract method");
+    }
 }
 }

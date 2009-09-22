@@ -34,6 +34,15 @@ public class BoundsPoint extends Bounds
         return MathUtil.distance(p.x, p.y, _point.x, _point.y);
     }
 
+    override public function get width () :Number
+    {
+        return 0;
+    }
+    override public function get height () :Number
+    {
+        return 0;
+    }
+
     protected var _point :Point;
 
 }

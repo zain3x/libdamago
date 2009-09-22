@@ -12,8 +12,8 @@ public final class SnapType extends Enum
 {
     public static const NULL :SnapType = new SnapType("NULL");
     public static const CENTER :SnapType = new SnapType("CENTER");
-    public static const PERIMETER_OUTER :SnapType = new SnapType("PERIMETER_OUTER");
-    public static const PERIMETER_INNER :SnapType = new SnapType("PERIMETER_INNER");
+    public static const RECT_PERIMETER_OUTER :SnapType = new SnapType("RECT_PERIMETER_OUTER");
+    public static const RECT_PERIMETER_INNER :SnapType = new SnapType("RECT_PERIMETER_INNER");
     public static const PERIMETER_CENTERED :SnapType = new SnapType("PERIMETER_CENTERED");
     public static const LINE :SnapType = new SnapType("LINE");
     finishedEnumerating(SnapType);
