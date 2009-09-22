@@ -66,6 +66,15 @@ public class BoundsPolygon extends Bounds
         return _polygon.distToPolygonEdge(Vector2.fromPoint(p));
     }
 
+    override public function get width () :Number
+    {
+        return _polygon.boundingBox.width;
+    }
+    override public function get height () :Number
+    {
+        return _polygon.boundingBox.height;
+    }
+
     protected var _polygon :Polygon;
 }
 }

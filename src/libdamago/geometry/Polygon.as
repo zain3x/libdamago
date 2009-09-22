@@ -10,6 +10,11 @@ import aduros.util.F;
 
 public class Polygon
 {
+    public static function fromRect (rect :Rectangle) :Polygon
+    {
+        return new Polygon([new Vector2(rect.left, rect.top), new Vector2(rect.right, rect.top),
+            new Vector2(rect.right, rect.bottom), new Vector2(rect.left, rect.bottom)]);
+    }
 
     public static function closestPointWithinPoints (P:Vector2, arrayOfPolygonPoints :Array) :Vector2
     {

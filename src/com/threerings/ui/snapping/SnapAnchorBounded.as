@@ -25,8 +25,18 @@ public class SnapAnchorBounded extends SnapAnchor
     override protected function getGlobalSnapToPoint (d :ISnappingObject) :Point
     {
         //TODO handle more than points
+
         var globalCenter :Point = SnapUtil.getGlobalCenter(d.boundsDisplayObject);
         var boundedPoint :Point = _boundsGlobal.getBoundedPoint(globalCenter.x, globalCenter.y);
+        switch (_snapType) {
+            case SnapType.RECT_PERIMETER_INNER:
+
+            break;
+
+            case SnapType.RECT_PERIMETER_OUTER:
+            break;
+
+        }
         return boundedPoint;
     }
 

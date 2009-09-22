@@ -3,6 +3,7 @@
 
 package com.threerings.ui.snapping
 {
+import com.threerings.util.ClassUtil;
 import com.whirled.contrib.EventHandlerManager;
 
 import flash.display.DisplayObject;
@@ -32,24 +33,11 @@ import flash.geom.Rectangle;
 public class SnapManager extends EventDispatcher
 {
 
+    public static const DEBUG_DRAW :Boolean = true;
+
     public function SnapManager (parent :Sprite)
     {
         _parent = parent;
-    }
-
-    public function shutdown () :void
-    {
-        clear();
-        _parent = null;
-    }
-
-    public function clear () :void
-    {
-        endSnapping();
-        _mouseDownEvents.freeAllHandlers();
-        _events.freeAllHandlers();
-        _snapAnchors = [];
-        _target = null;
     }
 
     public function addAnchor (anchor :ISnapAnchor) :void
@@ -77,11 +65,32 @@ public class SnapManager extends EventDispatcher
         }
     }
 
+    public function clear () :void
+    {
+        endSnapping();
+//        _mouseDownEvents.freeAllHandlers();
+        _events.freeAllHandlers();
+        _snapAnchors = [];
+        _target = null;
+    }
+
     public function endSnapping (snapper :ISnappingObject = null) :void
     {
         _events.freeAllHandlers();
         _target = null;
         _debugLayer.graphics.clear();
+    }
+
+    public function shutdown () :void
+    {
+        clear();
+        _parent = null;
+    }
+
+    override public function toString () :String
+    {
+        return ClassUtil.tinyClassName(this) + " snapAnchors(" + _snapAnchors.length + ")=" +
+            _snapAnchors;
     }
 
     protected function getClosestAnchorToTarget () :ISnapAnchor
@@ -95,7 +104,6 @@ public class SnapManager extends EventDispatcher
 
         for each (var anchor :ISnapAnchor in _snapAnchors) {
             distance = anchor.getSnappableDistance(_target);
-            trace(anchor + " distance=" + distance);
             if (distance < closestDistance) {
                 closestDistance = distance;
                 closestAnchor = anchor;
@@ -139,15 +147,13 @@ public class SnapManager extends EventDispatcher
             dispatchEvent(new SnapEvent(null, _target));
         }
     }
+    protected var _debugLayer :Sprite = new Sprite();
 
     protected var _events :EventHandlerManager = new EventHandlerManager();
-    protected var _mouseDownEvents :EventHandlerManager = new EventHandlerManager();
+//    protected var _mouseDownEvents :EventHandlerManager = new EventHandlerManager();
 
     protected var _parent :Sprite;
     protected var _snapAnchors :Array = [];
     protected var _target :ISnappingObject;
-
-    public static const DEBUG_DRAW :Boolean = true;
-    protected var _debugLayer :Sprite = new Sprite();
 }
 }
