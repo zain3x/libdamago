@@ -1,5 +1,7 @@
 package com.threerings.ui.snapping
 {
+import com.threerings.util.StringUtil;
+
 import flash.events.Event;
 
 public class SnapEvent extends Event
@@ -11,6 +13,11 @@ public class SnapEvent extends Event
         this.anchor = anchor;
         this.snapped = snapped;
         this.axis = axis;
+    }
+
+    override public function toString () :String
+    {
+        return StringUtil.simpleToString(this, ["anchor", "snapped"]);
     }
 
     public var anchor :ISnapAnchor;

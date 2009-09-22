@@ -576,7 +576,6 @@ public class Polygon
         var closestDistanceSq :Number = Number.MAX_VALUE;
         var i :int = 1;
         for each (var line :LineSegment in _edges) {
-            trace("checking line", i++);
             var distanceSq :Number = line.distSq(v);
             if (distanceSq < closestDistanceSq) {
                 closestDistanceSq = distanceSq;
@@ -584,7 +583,6 @@ public class Polygon
             }
         }
         return p;
-//        return closestPointOnPolygon(v, _vertices);
     }
 
     /**

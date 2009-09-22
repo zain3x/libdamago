@@ -30,6 +30,9 @@ public class SnapAnchorBounded extends SnapAnchor
         //TODO handle more than points
 
         var globalCenter :Point = SnapUtil.getGlobalCenter(d.boundsDisplayObject);
+        //Round so as to remove weird 'wobbles'
+        globalCenter.x = Math.round(globalCenter.x);
+        globalCenter.y = Math.round(globalCenter.y);
         var boundedPoint :Point = _boundsGlobal.getBoundedPoint(globalCenter.x, globalCenter.y);
         switch (_snapType) {
             case SnapType.RECT_PERIMETER_INNER:
