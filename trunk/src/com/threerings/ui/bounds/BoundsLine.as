@@ -39,6 +39,16 @@ public class BoundsLine extends Bounds
         return LineSegment.distToLineSegment(_p1, _p2, Vector2.fromPoint(p));
     }
 
+    override public function translate (dx :Number, dy :Number) :Bounds
+    {
+        return new BoundsLine(_p1.x + dx, _p1.y + dy, _p2.x + dx, _p2.y + dy);
+    }
+
+    override public function contains (x :Number, y :Number) :Boolean
+    {
+        return LineSegment.distToLineSegment(_p1, _p2, new Vector2(x, y)) == 0;
+    }
+
     protected var _p1 :Vector2;
     protected var _p2 :Vector2;
 

@@ -4,6 +4,9 @@ import com.threerings.ui.bounds.Bounds;
 
 import flash.geom.Point;
 
+/**
+ * This class also notifies the
+ */
 public class SnapAnchorBounded extends SnapAnchor
 {
     public function SnapAnchorBounded (type :SnapType, globalBounds :Bounds, idx :int = 0,
