@@ -1,5 +1,5 @@
 package com.threerings.ui.snapping {
-import flash.geom.Rectangle;
+import com.threerings.ui.bounds.Bounds;
 
 public interface ISnapAnchor
 {
@@ -18,8 +18,8 @@ public interface ISnapAnchor
     function get provider () :Object;
 
     function get index () :int;
-    
-    
+
+    function get bounds () :Bounds;
 
 
 }

@@ -36,9 +36,10 @@ public class BoundsPolygon extends Bounds
             return contains(BoundsPoint(b).point.x, BoundsPoint(b).point.y);
         } else if (b is BoundsLine) {
             var line :LineSegment = BoundsLine(b).lineSegment;
-        return contains(line.a.x, line.a.y) && contains(line.b.x, line.b.y);
+            return contains(line.a.x, line.a.y) && contains(line.b.x, line.b.y);
         } else if (b is BoundsPolygon) {
-            return _polygon.contains(BoundsPolygon(b).polygon);
+//            return _polygon.contains(BoundsPolygon(b).polygon);
+            return contains(BoundsPolygon(b).polygon.center.x, BoundsPolygon(b).polygon.center.y);
         }
         throw new Error("containsBounds not implemented between " + ClassUtil.tinyClassName(this) +
             " and " + ClassUtil.tinyClassName(b));
@@ -78,7 +79,7 @@ public class BoundsPolygon extends Bounds
         if (b is BoundsPoint) {
             return distanceToPoint(BoundsPoint(b).point);
         } else if (b is BoundsPolygon) {
-            return _polygon.distance(BoundsPolygon(b).polygon);
+            return distanceToPoint(BoundsPolygon(b).polygon.center);
         } else if (b is BoundsLine) {
             return _polygon.distanceToLine(BoundsLine(b).lineSegment);
         }

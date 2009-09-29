@@ -3,6 +3,7 @@
 
 package com.threerings.ui.snapping
 {
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 
 import flash.display.DisplayObject;
@@ -10,7 +11,6 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.geom.Point;
-import flash.geom.Rectangle;
 /**
  * Adds "snapping" to display objects when close enough to snap anchors.
  *
@@ -53,18 +53,7 @@ public class SnapManager extends EventDispatcher
         _parent.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
 //        _events.registerListener(_parent, Event.ENTER_FRAME, handleEnterFrame);
 
-        if (DEBUG_DRAW) {
-            _debugLayer.graphics.clear();
-            _parent.addChildAt(_debugLayer, _parent.numChildren);
-            var translate :Point = _debugLayer.globalToLocal(new Point(0,0));
-            for each (var anc :SnapAnchorBounded in _snapAnchors) {
-                if (anc == null) {
-                    continue;
-                }
-                anc._boundsGlobal.translate(translate.x, translate.y).debugDraw(_debugLayer.graphics);
 
-            }
-        }
     }
 
     public function clear () :void
@@ -127,7 +116,11 @@ public class SnapManager extends EventDispatcher
 
         //Snap to all anchors close enough
         var snapped :Boolean = false;
-        for each (var anc :ISnapAnchor in _snapAnchors) {
+        var anc :ISnapAnchor;
+        ArrayUtil.stableSort(_snapAnchors, function (anc1 :ISnapAnchor, anc2 :ISnapAnchor) :int {
+           return anc1.getSnappableDistance(_target) > anc2.getSnappableDistance(_target) ? -1 : 1;
+        });
+        for each (anc in _snapAnchors) {
             if (anc.isWithinSnappingDistance(_target)) {
                 anc.snapObject(_target);
                 //Dispatch event whether we snap or not to indicate snapping/no snapping
@@ -139,6 +132,21 @@ public class SnapManager extends EventDispatcher
         //If nothing is snapped, inform listeners of this
         if (!snapped) {
             dispatchEvent(new SnapEvent(null, _target));
+        }
+
+        if (DEBUG_DRAW) {
+            _debugLayer.graphics.clear();
+            _parent.addChildAt(_debugLayer, _parent.numChildren);
+            var translate :Point = _debugLayer.globalToLocal(new Point(0,0));
+            for each (anc in _snapAnchors) {
+                if (anc == null) {
+                    continue;
+                }
+                anc.bounds.translate(translate.x, translate.y).debugDraw(_debugLayer.graphics);
+//                anc._boundsGlobal.translate(translate.x, translate.y).debugDraw(_debugLayer.graphics);
+
+            }
+            _target.globalBounds.translate(translate.x, translate.y).debugDraw(_debugLayer.graphics);
         }
     }
     protected var _debugLayer :Sprite = new Sprite();

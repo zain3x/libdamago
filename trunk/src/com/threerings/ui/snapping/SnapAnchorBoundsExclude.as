@@ -14,9 +14,9 @@ import libdamago.geometry.VectorUtil;
 public class SnapAnchorBoundsExclude extends SnapAnchorBounded
 {
     public function SnapAnchorBoundsExclude (globalBounds :BoundsPolygon,
-        idx :int = 0, maxSnapDistance :Number = 20)
+        idx :int = -1, maxSnapDistance :Number = 20)
     {
-        super(SnapType.RECT_PERIMETER_OUTER, globalBounds, idx, maxSnapDistance);
+        super(globalBounds, idx, maxSnapDistance);
     }
 
     override public function snapObject (snappable :ISnappingObject) :void
