@@ -13,5 +13,7 @@ public class SnapAnchorPoint extends SnapAnchorBounded
     {
         super(SnapType.CENTER, new BoundsPoint(p.x, p.y), index);
     }
+
+
 }
 }

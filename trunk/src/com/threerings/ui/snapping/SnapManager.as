@@ -4,7 +4,6 @@
 package com.threerings.ui.snapping
 {
 import com.threerings.util.ClassUtil;
-import com.whirled.contrib.EventHandlerManager;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
@@ -51,16 +50,19 @@ public class SnapManager extends EventDispatcher
             endSnapping(_target);
         }
         _target = snapper;
-        _events.registerListener(_parent, Event.ENTER_FRAME, handleEnterFrame);
+        _parent.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
+//        _events.registerListener(_parent, Event.ENTER_FRAME, handleEnterFrame);
 
         if (DEBUG_DRAW) {
             _debugLayer.graphics.clear();
             _parent.addChildAt(_debugLayer, _parent.numChildren);
+            var translate :Point = _debugLayer.globalToLocal(new Point(0,0));
             for each (var anc :SnapAnchorBounded in _snapAnchors) {
                 if (anc == null) {
                     continue;
                 }
-                anc._boundsGlobal.debugDraw(_debugLayer.graphics);
+                anc._boundsGlobal.translate(translate.x, translate.y).debugDraw(_debugLayer.graphics);
+
             }
         }
     }
@@ -69,14 +71,15 @@ public class SnapManager extends EventDispatcher
     {
         endSnapping();
 //        _mouseDownEvents.freeAllHandlers();
-        _events.freeAllHandlers();
+//        _events.freeAllHandlers();
         _snapAnchors = [];
         _target = null;
     }
 
     public function endSnapping (snapper :ISnappingObject = null) :void
     {
-        _events.freeAllHandlers();
+//        _events.freeAllHandlers();
+        _parent.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
         _target = null;
         _debugLayer.graphics.clear();
     }
@@ -118,18 +121,9 @@ public class SnapManager extends EventDispatcher
             return;
         }
 
-        var stage :DisplayObject = _target.displayObject.stage;
+        var stage :DisplayObject = _parent.stage;
         //First move it to the mouse coords
-        var globalMouseLoc :Point = _target.displayObject.localToGlobal(
-            new Point(_target.displayObject.mouseX, _target.displayObject.mouseY));
-
-
-        var boundsLoc :Rectangle = _target.boundsDisplayObject.getBounds(stage);
-        var centerX :Number = boundsLoc.left + boundsLoc.width / 2;
-        var centerY :Number = boundsLoc.top + boundsLoc.height / 2;
-
-        _target.displayObject.x += globalMouseLoc.x - centerX;
-        _target.displayObject.y += globalMouseLoc.y - centerY;
+        SnapUtil.snapCenterOfBoundsToGlobalPoint(_target, new Point(stage.mouseX, stage.mouseY));
 
         //Snap to all anchors close enough
         var snapped :Boolean = false;
@@ -149,7 +143,7 @@ public class SnapManager extends EventDispatcher
     }
     protected var _debugLayer :Sprite = new Sprite();
 
-    protected var _events :EventHandlerManager = new EventHandlerManager();
+//    protected var _events :EventHandlerManager = new EventHandlerManager();
 //    protected var _mouseDownEvents :EventHandlerManager = new EventHandlerManager();
 
     protected var _parent :Sprite;

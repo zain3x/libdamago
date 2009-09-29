@@ -19,6 +19,19 @@ public class Polygon
             new Vector2(rect.right, rect.bottom), new Vector2(rect.left, rect.bottom)]);
     }
 
+    public static function createPolygon (sides :int, radius :Number) :Polygon
+    {
+        if (sides < 3) {
+            throw new Error("A polygon needs at least 3 sides");
+        }
+
+        var vertices :Array = [];
+        for (var ii :int = 0; ii < sides; ++ii) {
+            vertices.push(Vector2.fromAngle(((Math.PI*2) / sides) * ii, radius));
+        }
+        return new Polygon(vertices);
+    }
+
     public static function closestPointWithinPoints (P:Vector2, arrayOfPolygonPoints :Array) :Vector2
     {
         var distance :Number = Number.MAX_VALUE;
@@ -33,6 +46,14 @@ public class Polygon
         }
         return closestVector;
 
+    }
+
+    public function computeTranslateToMovePolygonSoNoIntersection (stationary :Polygon,
+        moveable :Polygon) :Vector2
+    {
+        var translate :Vector2 = new Vector2();
+
+        return translate;
     }
 
 //    public function setMaxX (X :Number) :void
@@ -166,7 +187,7 @@ public class Polygon
      * @return an Array containing all points contained in the other polygon and all intersection points.
      *
      */
-    public static function getIntersectionBoundingBox_ (p1 :Array, p2 :Array) :Array
+    public static function getIntersection (p1 :Array, p2 :Array) :Array
     {
         var containedPoints :Array = new Array();
         var v :Vector2;
@@ -175,14 +196,14 @@ public class Polygon
 
         //Get the vertices within the other polygon
         for(k = 0; k < p1.length - 1; k++) {
-            v = p1[k] as Vector2;
-            if(Polygon.isPointInPolygon(v, p2) && !ArrayUtil.contains(containedPoints, v) && v != null) {
+            v = Vector2(p1[k]);
+            if(Polygon.isPointInPolygon2(v, p2) && !ArrayUtil.contains(containedPoints, v) && v != null) {
                 containedPoints.push(v);
             }
         }
         for(k = 0; k < p2.length - 1; k++) {
-            v = p2[k] as Vector2;
-            if(Polygon.isPointInPolygon(v, p1) && !ArrayUtil.contains(containedPoints, v) && v != null) {
+            v = Vector2(p2[k]);
+            if(Polygon.isPointInPolygon2(v, p1) && !ArrayUtil.contains(containedPoints, v) && v != null) {
                 containedPoints.push(v);
             }
         }
@@ -304,6 +325,7 @@ public class Polygon
      */
     public static function isPointInPolygon (P :Vector2, arrayOfPolygonPoints :Array) :Boolean
     {
+        throw new Error("This method is buggy, use isPointInPolygon2 for now (until I fix it)");
         //First check if the point is one of the vertices
         for each (var v :Vector2 in arrayOfPolygonPoints) {
             if(P.x == v.x && P.y == v.y) {
@@ -359,7 +381,28 @@ public class Polygon
                 intersectionsCount++;
             }
         }
+//        trace("intersectionsCount=" + intersectionsCount);
         return !(intersectionsCount % 2 == 0);
+    }
+
+    public static function isPointInPolygon2 (p :Vector2, poly :Array) :Boolean
+    {
+        var polySides :int = poly.length;
+        var i :int = polySides - 1;
+        var j :int = i;
+        var oddNodes :Boolean = false;
+
+        for (i = 0; i < polySides; i++) {
+            if (Vector2(poly[i]).y < p.y && Vector2(poly[j]).y >= p.y ||  Vector2(poly[j]).y < p.y && Vector2(poly[i]).y >= p.y) {
+                if (Vector2(poly[i]).x + (p.y - Vector2(poly[i]).y) / (Vector2(poly[j]).y - Vector2(poly[i]).y) * (Vector2(poly[j]).x - Vector2(poly[i]).x) < p.x) {
+                    oddNodes = !oddNodes;
+                }
+            }
+            j = i;
+        }
+
+        return oddNodes;
+
     }
 
     public static function polygonFromBoundingBox (rect :Rectangle) :Polygon
@@ -442,7 +485,7 @@ public class Polygon
                 }
             }
 
-            if (!Polygon.isPointInPolygon(A, otherPoly)) {
+            if (!Polygon.isPointInPolygon2(A, otherPoly)) {
                 union.push(A);
             }
 
@@ -453,7 +496,7 @@ public class Polygon
                 var idxB2 :int = ArrayUtil.indexOf(otherPoly, B2);
 //                trace("  idxB2=" + idxB2 + ", B2=" + B2);
 //                trace("  intersection " + closestIntersection + " found between " + [A, B, A2, B2]);
-                if (Polygon.isPointInPolygon(B2, currentPoly)) {
+                if (Polygon.isPointInPolygon2(B2, currentPoly)) {
                     if (isCurrentPoly1) {
                         p1Idx = p1Idx + 1 >= poly1.length ? 0 : p1Idx + 1;
                     } else {
@@ -550,13 +593,13 @@ public class Polygon
         var closestLine :LineSegment;
         for each (var line :LineSegment in _edges) {
             distance = line.dist(P);
-            trace(line + " d=" + distance);
-            trace("   distance between points=" + VectorUtil.distance(line.a, P), VectorUtil.distance(line.b, P));
+//            trace(line + " d=" + distance);
+//            trace("   distance between points=" + VectorUtil.distance(line.a, P), VectorUtil.distance(line.b, P));
             var closestPoint :Vector2 = new Vector2();
-            trace("   d again=" + LineSegment.distToLineSegment(line.a, line.b, P, closestPoint));
-            trace("   closest point=" + closestPoint);
-            trace("   P=" + P);
-            trace("   line=" + line);
+//            trace("   d again=" + LineSegment.distToLineSegment(line.a, line.b, P, closestPoint));
+//            trace("   closest point=" + closestPoint);
+//            trace("   P=" + P);
+//            trace("   line=" + line);
             if (distance < smallestDistance) {
                 smallestDistance = distance;
                 closestLine = line;
@@ -585,6 +628,16 @@ public class Polygon
         return p;
     }
 
+    public function contains (P :Polygon) :Boolean
+    {
+        for each (var v :Vector2 in P._vertices) {
+            if (isPointInPolygon2(v, _vertices)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Assumes polygons are not overlapping.
      * Could be made more efficient with sorting of vertices.
@@ -600,6 +653,24 @@ public class Polygon
                 if (distance < closestDistance) {
                     closestDistance = distance;
                 }
+            }
+        }
+        return Math.sqrt(closestDistance);
+    }
+
+    /**
+     * Assumes polygons are not overlapping.
+     * Could be made more efficient with sorting of vertices.
+     * Untested.
+     */
+    public function distanceToLine (line1 :LineSegment) :Number
+    {
+        var closestDistance :Number = Number.MAX_VALUE;
+        var distance :Number;
+        for each (var line2 :LineSegment in edges) {
+            distance = line1.distanceToLineSq(line2);
+            if (distance < closestDistance) {
+                closestDistance = distance;
             }
         }
         return Math.sqrt(closestDistance);
@@ -656,9 +727,10 @@ public class Polygon
         return closestVector;
     }
 
-    public function getIntersectionBoundingBox (p :Polygon) :Polygon
+    public function getIntersectionPolygon (p :Polygon) :Polygon
     {
-        var vs :Array = getIntersectionBoundingBox_(_vertices, p.vertices);
+        var vs :Array = getIntersection(_vertices, p.vertices);
+//        vs = convexHullFromPoints(vs);
         if (vs != null && vs.length > 2) {
             return new Polygon(vs);
         }
@@ -784,12 +856,12 @@ public class Polygon
 
 //        var v :Vector2;
 //        for each (v in P1) {
-//            if (isPointInPolygon(v, P2)) {
+//            if (isPointInPolygon2(v, P2)) {
 //                return true;
 //            }
 //        }
 //        for each (v in P2) {
-//            if (isPointInPolygon(v, P1)) {
+//            if (isPointInPolygon2(v, P1)) {
 //                return true;
 //            }
 //        }
@@ -811,11 +883,20 @@ public class Polygon
             }
 
             if (line.isIntersected(v1, v2)) {
-//                trace(v1, v2, " intersects ", line);
                 return true;
             }
         }
         return false;
+    }
+
+    public function getFirstIntersectingEdge (line :LineSegment) :LineSegment
+    {
+        for each (var ln :LineSegment in _edges) {
+            if (ln.isIntersectedByLine(line)) {
+                return ln;
+            }
+        }
+        return null;
     }
 
     /**
@@ -839,7 +920,7 @@ public class Polygon
 
     public function isPointInside (P :Vector2) :Boolean
     {
-        return isPointInPolygon(P, _vertices);
+        return isPointInPolygon2(P, _vertices);
     }
 
     public function isPointOnEdge (P :Vector2) :Boolean

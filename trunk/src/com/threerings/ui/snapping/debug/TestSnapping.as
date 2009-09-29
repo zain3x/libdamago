@@ -1,7 +1,10 @@
 package com.threerings.ui.snapping.debug
 {
 import com.threerings.display.DisplayUtil;
+import com.threerings.ui.bounds.BoundsPolygon;
+import com.threerings.ui.bounds.BoundsRectangle;
 import com.threerings.ui.snapping.ISnapAnchor;
+import com.threerings.ui.snapping.SnapAnchorBoundsExclude;
 import com.threerings.ui.snapping.SnapAnchorPoint;
 import com.threerings.ui.snapping.SnapAnchorRect;
 import com.threerings.ui.snapping.SnapManager;
@@ -12,6 +15,8 @@ import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+
+import libdamago.geometry.Polygon;
 
 
 public class TestSnapping extends Sprite
@@ -26,7 +31,7 @@ public class TestSnapping extends Sprite
         var ii :int;
         var size :int = 22;
         var anc :ISnapAnchor;
-        for (ii = 0; ii < 2; ++ii) {
+        for (ii = 0; ii < 1; ++ii) {
             var blobAnchor :Sprite = new Sprite();
             blobAnchor.x = locX;
             blobAnchor.y = locY;
@@ -34,24 +39,32 @@ public class TestSnapping extends Sprite
             addChild(blobAnchor);
             anc = new SnapAnchorPoint(new Point(locX, locY));
             snapper.addAnchor(anc);
-//            snapper.addPointAnchor(blobAnchor);
+            locX += gap + 100;
+        }
+
+        for (ii = 0; ii < 1; ++ii) {
+            var rect :Sprite = new Sprite();
+            drawRect(rect, 200, 200, 0x00ff00);
+            rect.x = locX;
+            rect.y = locY;
+            addChild(rect);
+            anc = new SnapAnchorRect(SnapType.PERIMETER_CENTERED,
+                new Rectangle(locX, locY, rect.width, rect.height));
+            snapper.addAnchor(anc);
+            locX += gap + 300;
+        }
+
+        for (ii = 0; ii < 1; ++ii) {
+            var poly :Polygon = Polygon.createPolygon(5, 60);
+            poly.translateLocal(locX, locY);
+            poly.draw(this.graphics, 0x00ff00);
+            anc = new SnapAnchorBoundsExclude(new BoundsPolygon(poly));
+            snapper.addAnchor(anc);
             locX += gap;
         }
 
-//        for (ii = 0; ii < 1; ++ii) {
-//            var rect :Sprite = new Sprite();
-//            drawRect(rect, 30, 150, 0x00ff00);
-//            rect.x = locX;
-//            rect.y = locY;
-//            addChild(rect);
-//
-//            anc = new SnapAnchorRect(SnapType.PERIMETER_CENTERED,
-//                new Rectangle(locX, locY, rect.width, rect.height));
-//            snapper.addAnchor(anc);
-//
-//            locX += gap;
-//
-//        }
+
+
 
         var blob :Sprite = new Sprite();
         blob.x = 10;
@@ -59,11 +72,16 @@ public class TestSnapping extends Sprite
         var outerblob :Sprite = new Sprite();
         outerblob.addChild(blob);
         drawDot(blob.graphics, 0xffffff, 20);
-        drawDot(outerblob.graphics, 0x00ffff, 25);
+        drawDot(outerblob.graphics, 0x00ffff, 25, 20, 20);
         outerblob.x = 300;
         outerblob.y = 300;
         addChild(outerblob);
-        snapper.beginSnapping(new SnappingObject(blob, outerblob));
+        var snapping :SnappingObject = new SnappingObject(outerblob, BoundsRectangle.fromRectangle(
+            blob.getBounds(outerblob)));
+        snapping.localBounds.debugDraw((snapping.displayObject as Sprite).graphics);
+
+        snapper.beginSnapping(snapping);
+
     }
 
     protected static function createRect (locX :Number = 0, locY :Number = 0) :Sprite

@@ -28,6 +28,16 @@ public class DebugUtil
         g.lineStyle(1, color);
         g.drawCircle(x,y,r);
         g.lineStyle(0, 0, 0);
+
+    }
+
+    public static function drawLine (g :Graphics, x1 :Number, y1 :Number, x2 :Number,
+        y2 :Number, color :int = 0x000000, linethickness :Number = 1, alpha :Number = 1) :void
+    {
+        g.lineStyle(linethickness, color, alpha);
+        g.moveTo(x1, y1);
+        g.lineTo(x2, y2);
+//        g.lineStyle(0, 0, 0);
     }
 
     public static function traceDisplayChildren (d :DisplayObjectContainer,
@@ -82,7 +92,7 @@ public class DebugUtil
         g.drawRect(0, 0, width, height);
     }
 
-    public static function fillRect (layer :Sprite, width :int, height :int, color :int = 0x000000,
+    public static function fillRect (layer :Object, width :int, height :int, color :int = 0x000000,
         alpha :Number = 1) :void
     {
         var g :Graphics = layer.graphics;

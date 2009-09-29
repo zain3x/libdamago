@@ -2,7 +2,6 @@ package com.threerings.ui.snapping {
 import com.threerings.util.ArrayUtil;
 
 import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
@@ -11,17 +10,14 @@ import libdamago.util.SortingUtil;
 public class SnapUtil
 {
     public static function snapCenterOfBoundsToGlobalPoint (sn :ISnappingObject,
-        globalTarget :Point) :void
+        globalPoint :Point) :void
     {
-        var localTarget :Point = sn.displayObject.parent.globalToLocal(globalTarget);
-        var parent :DisplayObject = sn.displayObject.parent;
-        var boundsBounds :Rectangle = sn.boundsDisplayObject.getBounds(parent);
-
-        var boundsCenterX :Number = boundsBounds.left + boundsBounds.width / 2;
-        var boundsCenterY :Number = boundsBounds.top + boundsBounds.height / 2;
-
-        sn.displayObject.x = sn.displayObject.x + (localTarget.x - boundsCenterX);
-        sn.displayObject.y = sn.displayObject.y + (localTarget.y - boundsCenterY);
+        var localPoint :Point = sn.displayObject.parent.globalToLocal(globalPoint);
+        var bounds :Rectangle = sn.localBounds.boundingRect();
+        var boundsCenterX :Number = bounds.left + bounds.width / 2;
+        var boundsCenterY :Number = bounds.top + bounds.height / 2;
+        sn.displayObject.x = localPoint.x - boundsCenterX;
+        sn.displayObject.y = localPoint.y - boundsCenterY;
     }
 
 //    public static function getSnappableDistanceFromSnapPointAnchor (anchor :ISnapAnchor,
@@ -192,11 +188,10 @@ public class SnapUtil
 
     public static function getGlobalCenter (d :DisplayObject) :Point
     {
-        var parent :DisplayObjectContainer = d.parent;
-        var bounds :Rectangle = d.getBounds(parent);
+        var bounds :Rectangle = d.getBounds(d.stage);
         var centerX :Number = bounds.left + bounds.width / 2;
         var centerY :Number = bounds.top + bounds.height / 2;
-        return parent.localToGlobal(new Point(centerX, centerY));
+        return new Point(centerX, centerY);
     }
 
     public static function getClosestAnchorIndex (anchors :Array, obj :SnappingObject) :int

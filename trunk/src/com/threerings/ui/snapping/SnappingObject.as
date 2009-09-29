@@ -3,6 +3,9 @@
 
 package com.threerings.ui.snapping
 {
+import com.threerings.ui.bounds.Bounds;
+import com.threerings.ui.bounds.BoundsRectangle;
+
 import flash.display.DisplayObject;
 
 /**
@@ -18,52 +21,83 @@ public class SnappingObject
      * @param rootLayer The root display container.  If the snapping bounds are not the same
      *                  as the visual bounds, supply this parameter.
      */
-    public function SnappingObject (boundsObject :DisplayObject, rootLayer :DisplayObject = null)
+    public function SnappingObject (disp :DisplayObject, bounds :Bounds = null)
     {
-        _boundsDisplay = boundsObject;
-        _rootLayer = rootLayer == null ? _boundsDisplay : rootLayer;
+        if (disp == null) {
+            throw new Error("Missing disp");
+        }
+        _disp = disp;
+        _bounds = bounds;
+        if (_bounds == null) {//Use the display bounds if none is supplied
+            _bounds = BoundsRectangle.fromRectangle(disp.getBounds(disp));
+        }
+//        _rootLayer = rootLayer == null ? _boundsDisplay : rootLayer;
     }
 
-    public function get boundsDisplayObject () :DisplayObject
-    {
-        return _boundsDisplay;
-    }
-
+//    public function get boundsDisplayObject () :DisplayObject
+//    {
+//        return _boundsDisplay;
+//    }
+//
     public function get displayObject () :DisplayObject
     {
-        return _rootLayer;
+        return _disp;
     }
 
-    internal function shutdown () :void
-    {
-        _boundsDisplay = null;
-        _rootLayer = null;
-    }
-
-//    public function snapCenterOfBoundsToPoint (target :Point) :void
+//    internal function shutdown () :void
 //    {
-//        var parent :DisplayObject = _rootLayer.parent;
-//        var boundsBounds :Rectangle = _boundsDisplay.getBounds(parent);
-//        var rootBounds :Rectangle = _rootLayer.getBounds(parent);
-//
-//        var boundsCenterX :Number = boundsBounds.left + boundsBounds.width / 2;
-//        var boundsCenterY :Number = boundsBounds.top + boundsBounds.height / 2;
-//
-//        _rootLayer.x = _rootLayer.x + (target.x - boundsCenterX);
-//        _rootLayer.y = _rootLayer.y + (target.y - boundsCenterY);
+//        _boundsDisplay = null;
+//        _rootLayer = null;
 //    }
 
+    public function get globalBounds () :Bounds
+    {
+        return Bounds.convertToGlobal(_bounds, _disp);
+    }
+
+    public function get localBounds () :Bounds
+    {
+        return _bounds
+    }
+
+//    public function get x () :Number
+//    {
+//        return _disp.x;
+//    }
+//    public function get y () :Number
+//    {
+//        return _disp.y;
+//    }
+//
+//    public function set x (val :Number) :void
+//    {
+//        _disp.x = val;
+//    }
+//    public function set y (val :Number) :void
+//    {
+//        _disp.y = val;
+//    }
+
+//    public function centerOn (globalPoint :Point) :void
+//    {
+//        var localPoint :Point = _disp.parent.globalToLocal(globalPoint);
+//
+//        DisplayUtil.positionBoundsRelative(_disp, _disp.parent,
+//            localPoint.x - _disp.width / 2, localPoint.y - _disp.height / 2);
+//    }
 
     /**
      *
      * @default
      */
-    protected var _boundsDisplay :DisplayObject;
+    protected var _disp :DisplayObject;
     /**
      *
      * @default
      */
-    protected var _rootLayer :DisplayObject;
+    protected var _bounds :Bounds;
+
+//    protected var _rootLayer :DisplayObject;
 
 }
 }
