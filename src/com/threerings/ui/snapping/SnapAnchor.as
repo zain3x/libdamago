@@ -8,7 +8,7 @@ import flash.geom.Point;
 public /*abstract*/ class SnapAnchor
     implements ISnapAnchor
 {
-    public function SnapAnchor (type :SnapType, idx :int = 0, maxSnapDistance :Number = 20)
+    public function SnapAnchor (type :SnapType, idx :int = 0, maxSnapDistance :Number = 30)
     {
         _idx = idx;
         _snapType = type;

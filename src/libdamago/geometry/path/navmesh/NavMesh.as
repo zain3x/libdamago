@@ -623,7 +623,7 @@ package libdamago.geometry.path.navmesh
                     p1Original = _paddedPolygon2Polygon.get(p1) as NavMeshPolygon;
                     p2Original = _paddedPolygon2Polygon.get(p2) as NavMeshPolygon;
 
-                    var intersectionPolygon :Polygon = p1.getIntersectionBoundingBox(p2);
+                    var intersectionPolygon :Polygon = p1.getIntersectionPolygon(p2);
 //                    trace("intersectionPolygon=" + intersectionPolygon);
                     if (intersectionPolygon == null) {// || Geometry.boundingBoxOfVerticesWidth(intersectionPolygon) <= 2 || Geometry.boundingBoxOfVerticesHeight(intersectionPolygon) <= 2) {
                         continue;
@@ -748,7 +748,7 @@ package libdamago.geometry.path.navmesh
                                                         return false;
                                                     }
 
-                                                    var intersectionPolygon :Polygon = paddedPolygon1.getIntersectionBoundingBox(paddedPolygon2);
+                                                    var intersectionPolygon :Polygon = paddedPolygon1.getIntersectionPolygon(paddedPolygon2);
                                                     var bounds :Rectangle = intersectionPolygon == null ? new Rectangle() : intersectionPolygon.boundingBox;
 
                                                     var maxSize :Number = Math.max(bounds.height, bounds.width);
@@ -810,7 +810,7 @@ package libdamago.geometry.path.navmesh
         public function shrinkPolygonSidesSoTheyDoNotTouch(p1 :NavMeshPolygon, p2 :NavMeshPolygon, bufferReduction :Number) :void
         {
 
-            var intersectionPolygon :Polygon = p1.getIntersectionBoundingBox(p2);
+            var intersectionPolygon :Polygon = p1.getIntersectionPolygon(p2);
             var middleNode :Vector2 = intersectionPolygon.center;
 
             //Check intersections of original (unpadded) polygons.

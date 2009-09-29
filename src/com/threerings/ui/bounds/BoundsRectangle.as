@@ -22,12 +22,6 @@ public class BoundsRectangle extends BoundsPolygon
             new Vector2(_rect.right, _rect.bottom), new Vector2(_rect.left, _rect.bottom)]));
     }
 
-    override public function getBoundedPoint (x :Number, y :Number) :Point
-    {
-        return new Point(MathUtil.clamp(x, _rect.left, _rect.right),
-            MathUtil.clamp(y, _rect.top, _rect.bottom));
-    }
-
     protected var _rect :Rectangle;
 }
 }
