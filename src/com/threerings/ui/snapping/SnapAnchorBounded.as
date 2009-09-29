@@ -13,10 +13,10 @@ import libdamago.geometry.Polygon;
  */
 public class SnapAnchorBounded extends SnapAnchor
 {
-    public function SnapAnchorBounded (type :SnapType, globalBounds :Bounds, idx :int = 0,
+    public function SnapAnchorBounded (globalBounds :Bounds, idx :int = -1,
         maxSnapDistance :Number = 20)
     {
-        super(type, idx, maxSnapDistance);
+        super(idx, maxSnapDistance);
         _boundsGlobal = globalBounds;
     }
 
@@ -51,7 +51,7 @@ public class SnapAnchorBounded extends SnapAnchor
         return boundedPoint;
     }
 
-    protected function get bounds () :Bounds
+    override public function get bounds () :Bounds
     {
         return _boundsGlobal;
     }

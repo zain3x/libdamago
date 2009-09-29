@@ -48,8 +48,7 @@ public class TestSnapping extends Sprite
             rect.x = locX;
             rect.y = locY;
             addChild(rect);
-            anc = new SnapAnchorRect(SnapType.PERIMETER_CENTERED,
-                new Rectangle(locX, locY, rect.width, rect.height));
+            anc = new SnapAnchorRect(new Rectangle(locX, locY, rect.width, rect.height));
             snapper.addAnchor(anc);
             locX += gap + 300;
         }

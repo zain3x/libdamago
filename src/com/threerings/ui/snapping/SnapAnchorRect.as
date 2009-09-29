@@ -10,9 +10,9 @@ import flash.geom.Rectangle;
 
 public class SnapAnchorRect extends SnapAnchorBounded
 {
-    public function SnapAnchorRect (type :SnapType, rect :Rectangle)
+    public function SnapAnchorRect (rect :Rectangle)
     {
-        super(type, new BoundsRectangle(rect.left, rect.top, rect.width, rect.height));
+        super(new BoundsRectangle(rect.left, rect.top, rect.width, rect.height));
 //        _snapAxis = snapAxis;
     }
 
