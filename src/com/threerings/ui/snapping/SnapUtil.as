@@ -18,6 +18,8 @@ public class SnapUtil
         var boundsCenterY :Number = bounds.top + bounds.height / 2;
         sn.displayObject.x = localPoint.x - boundsCenterX;
         sn.displayObject.y = localPoint.y - boundsCenterY;
+//        sn.displayObject.x = localPoint.x;
+//        sn.displayObject.y = localPoint.y + 10;
     }
 
 //    public static function getSnappableDistanceFromSnapPointAnchor (anchor :ISnapAnchor,

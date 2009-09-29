@@ -1,6 +1,9 @@
 package libdamago.geometry.path
 {
+import com.threerings.geom.Vector2;
 import com.threerings.util.MathUtil;
+
+import flash.geom.Rectangle;
 
 import libdamago.geometry.Geometry;
 
@@ -16,6 +19,11 @@ public class GeometryUtil
             radians = Geometry.PI_2 - radians;
         }
         return radians;
+    }
+
+    public static function rectCenter (rect :Rectangle) :Vector2
+    {
+        return new Vector2(rect.left + rect.width / 2, rect.top + rect.height / 2);
     }
 }
 }

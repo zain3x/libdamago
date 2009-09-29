@@ -1,5 +1,6 @@
 package com.threerings.ui.snapping {
 import com.threerings.geom.Vector2;
+import com.threerings.ui.bounds.Bounds;
 import com.threerings.ui.bounds.BoundsLine;
 import com.threerings.ui.bounds.BoundsPoint;
 import com.threerings.ui.bounds.BoundsPolygon;
@@ -19,8 +20,26 @@ public class SnapAnchorBoundsExclude extends SnapAnchorBounded
         super(globalBounds, idx, maxSnapDistance);
     }
 
+    override public function getSnappableDistance (snappable :ISnappingObject) :Number
+    {
+        var rectAnchor :Rectangle = bounds.boundingRect();
+        var objRect :Rectangle = snappable.globalBounds.boundingRect();
+
+        if (rectAnchor.intersects(objRect)) {
+            return 0;
+        }
+//        var globalCenter :Point = SnapUtil.getGlobalCenter(d.boundsDisplayObject);
+        return _boundsGlobal.distance(snappable.globalBounds);
+    }
+
     override public function snapObject (snappable :ISnappingObject) :void
     {
+
+        snapBoundingBoxes(snappable, this.bounds);
+        return;
+
+        /*
+        //Arbitrary Polygon bounds excluding doesn't work yet.
         if (snappable.localBounds is BoundsPoint || snappable.localBounds is BoundsLine) {
             super.snapObject(snappable);
         }
@@ -30,6 +49,50 @@ public class SnapAnchorBoundsExclude extends SnapAnchorBounded
 
         snappable.displayObject.x += translate.x;
         snappable.displayObject.y += translate.y;
+        */
+    }
+
+    protected static function snapBoundingBoxes (snappable :ISnappingObject, bounds :Bounds) :void
+    {
+        var rectAnchor :Rectangle = bounds.boundingRect();
+        var objRect :Rectangle = snappable.globalBounds.boundingRect();
+
+        function snapRight (snap :Boolean = false) :Number {
+            if (snap && objRect.left < rectAnchor.right) {
+                snappable.displayObject.x += rectAnchor.right - objRect.left;
+            }
+            return Math.abs(rectAnchor.right - objRect.left);
+        }
+        function snapLeft (snap :Boolean = false) :Number {
+            if (snap && objRect.right > rectAnchor.left) {
+                snappable.displayObject.x -= objRect.right - rectAnchor.left;
+            }
+            return Math.abs(objRect.right - rectAnchor.left);
+        }
+
+        function snapTop (snap :Boolean = false) :Number {
+            if (snap && objRect.bottom > rectAnchor.top) {
+                snappable.displayObject.y -= objRect.bottom - rectAnchor.top;
+            }
+            return Math.abs(objRect.bottom - rectAnchor.top);
+        }
+        function snapBottom (snap :Boolean = false) :Number {
+            if (snap && objRect.top < rectAnchor.bottom) {
+                snappable.displayObject.y += rectAnchor.bottom - objRect.top;
+            }
+            return Math.abs(rectAnchor.bottom - objRect.top);
+        }
+
+        var fWithSmallestMove :Function = snapRight;
+        var smallestDistance :Number = fWithSmallestMove();
+        for each (var distF :Function in [snapRight, snapLeft, snapTop, snapBottom]) {
+            if (distF() < smallestDistance) {
+                smallestDistance = distF();
+                fWithSmallestMove = distF;
+            }
+        }
+
+        fWithSmallestMove(true);
     }
 
 

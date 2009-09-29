@@ -45,7 +45,8 @@ public class BoundsPoint extends Bounds
         if (b is BoundsPoint) {
             return distanceToPoint(BoundsPoint(b).point);
         } else if (b is BoundsPolygon) {
-            return BoundsPolygon(b).polygon.distToPolygonEdge(_point);
+//            return BoundsPolygon(b).polygon.distToPolygonEdge(_point);
+            return distanceToPoint(BoundsPolygon(b).polygon.center);
         } else if (b is BoundsLine) {
             return BoundsLine(b).lineSegment.dist(_point);
         }
