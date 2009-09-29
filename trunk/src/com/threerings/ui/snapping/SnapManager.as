@@ -3,6 +3,7 @@
 
 package com.threerings.ui.snapping
 {
+import com.threerings.ui.bounds.BoundsRectangle;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 
@@ -37,6 +38,8 @@ public class SnapManager extends EventDispatcher
     public function SnapManager (parent :Sprite)
     {
         _parent = parent;
+        _debugLayer.mouseEnabled = false;
+        _debugLayer.mouseChildren = false;
     }
 
     public function addAnchor (anchor :ISnapAnchor) :void
@@ -51,16 +54,11 @@ public class SnapManager extends EventDispatcher
         }
         _target = snapper;
         _parent.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
-//        _events.registerListener(_parent, Event.ENTER_FRAME, handleEnterFrame);
-
-
     }
 
     public function clear () :void
     {
         endSnapping();
-//        _mouseDownEvents.freeAllHandlers();
-//        _events.freeAllHandlers();
         _snapAnchors = [];
         _target = null;
     }
@@ -114,12 +112,24 @@ public class SnapManager extends EventDispatcher
         //First move it to the mouse coords
         SnapUtil.snapCenterOfBoundsToGlobalPoint(_target, new Point(stage.mouseX, stage.mouseY));
 
-        //Snap to all anchors close enough
         var snapped :Boolean = false;
         var anc :ISnapAnchor;
+        //Sort snap anchors by distance to target, so that the closest anchor snaps last
         ArrayUtil.stableSort(_snapAnchors, function (anc1 :ISnapAnchor, anc2 :ISnapAnchor) :int {
-           return anc1.getSnappableDistance(_target) > anc2.getSnappableDistance(_target) ? -1 : 1;
+           return anc1.getSnappableDistance(_target) < anc2.getSnappableDistance(_target) ? 1 : -1;
         });
+
+//        if (_snapAnchors.length > 0) {
+//            anc = ISnapAnchor(_snapAnchors[0]);
+//            if (anc.isWithinSnappingDistance(_target)) {
+//                anc.snapObject(_target);
+//                //Dispatch event whether we snap or not to indicate snapping/no snapping
+//                dispatchEvent(new SnapEvent(anc, _target));
+//                snapped = true;
+//            }
+//        }
+
+        //Snap to all anchors close enough
         for each (anc in _snapAnchors) {
             if (anc.isWithinSnappingDistance(_target)) {
                 anc.snapObject(_target);
@@ -143,16 +153,16 @@ public class SnapManager extends EventDispatcher
                     continue;
                 }
                 anc.bounds.translate(translate.x, translate.y).debugDraw(_debugLayer.graphics);
-//                anc._boundsGlobal.translate(translate.x, translate.y).debugDraw(_debugLayer.graphics);
+                BoundsRectangle.fromRectangle(anc.bounds.translate(translate.x,
+                    translate.y).boundingRect()).debugDraw(_debugLayer.graphics);
 
             }
+            BoundsRectangle.fromRectangle(_target.globalBounds.translate(translate.x,
+                translate.y).boundingRect()).debugDraw(_debugLayer.graphics);
             _target.globalBounds.translate(translate.x, translate.y).debugDraw(_debugLayer.graphics);
         }
     }
     protected var _debugLayer :Sprite = new Sprite();
-
-//    protected var _events :EventHandlerManager = new EventHandlerManager();
-//    protected var _mouseDownEvents :EventHandlerManager = new EventHandlerManager();
 
     protected var _parent :Sprite;
     protected var _snapAnchors :Array = [];

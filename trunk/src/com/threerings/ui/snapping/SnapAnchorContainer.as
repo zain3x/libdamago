@@ -19,7 +19,7 @@ public class SnapAnchorContainer extends SnapAnchorBounded
     {
         trace("getSnappableDistance, contains?=", BoundsPolygon(_boundsGlobal).containsBounds(d.globalBounds));
         if (BoundsPolygon(_boundsGlobal).containsBounds(d.globalBounds)) {
-            return 0;
+            return _maxSnapDistance;
         }
 //        var globalCenter :Point = SnapUtil.getGlobalCenter(d.boundsDisplayObject);
 //        if (_boundsGlobal.contains(globalCenter.x, globalCenter.y)) {
