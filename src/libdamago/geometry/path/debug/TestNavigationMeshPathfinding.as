@@ -1,10 +1,11 @@
 package libdamago.geometry.path.debug
 {
 import com.threerings.display.GraphicsUtil;
-import com.threerings.ui.SimpleTextButton;
-import com.threerings.text.TextFieldUtil;
 import com.threerings.geom.Vector2;
-import com.threerings.util.HashSet;
+import com.threerings.text.TextFieldUtil;
+import com.threerings.ui.SimpleTextButton;
+import com.threerings.util.Set;
+import com.threerings.util.Sets;
 import com.threerings.util.Util;
 import com.whirled.contrib.simplegame.AppMode;
 
@@ -119,7 +120,7 @@ public class TestNavigationMeshPathfinding extends AppMode
 
     public static function drawNavigationMesh(sprite :Sprite, mesh :NavMesh, path :Array = null) :void
     {
-        var drawnNodePairs :HashSet = new HashSet();
+        var drawnNodePairs :Set = Sets.newSetOf(Object);
         var k :int;
 
         //Draw bounds

@@ -17,14 +17,9 @@ public class SnapAnchorContainer extends SnapAnchorBounded
 
     override public function getSnappableDistance (d :ISnappingObject) :Number
     {
-        trace("getSnappableDistance, contains?=", BoundsPolygon(_boundsGlobal).containsBounds(d.globalBounds));
         if (BoundsPolygon(_boundsGlobal).containsBounds(d.globalBounds)) {
             return _maxSnapDistance;
         }
-//        var globalCenter :Point = SnapUtil.getGlobalCenter(d.boundsDisplayObject);
-//        if (_boundsGlobal.contains(globalCenter.x, globalCenter.y)) {
-//            return 0;
-//        }
         return super.getSnappableDistance(d);
     }
 

@@ -1,9 +1,10 @@
 package libdamago.geometry.path.navmesh
 {
-    import com.threerings.util.MathUtil;
     import com.threerings.geom.Vector2;
     import com.threerings.util.ArrayUtil;
-    import com.threerings.util.HashMap;
+    import com.threerings.util.Map;
+    import com.threerings.util.Maps;
+    import com.threerings.util.MathUtil;
     import com.threerings.util.StringBuilder;
 
     import flash.geom.Rectangle;
@@ -22,13 +23,13 @@ package libdamago.geometry.path.navmesh
 
         public var _nodes :Array;
         public var _polygonsAll :Array;
-        public var _polygon2PaddedPolygon :HashMap = new HashMap();
-        public var _paddedPolygon2Polygon :HashMap = new HashMap();
+        public var _polygon2PaddedPolygon :Map = Maps.newMapOf(Polygon);
+        public var _paddedPolygon2Polygon :Map = Maps.newMapOf(Polygon);
 
         public var _bounds :Rectangle;
         public var _boundsPolygon :Polygon;
 
-        public var _distances :HashMap = new HashMap();;
+        public var _distances :Map = Maps.newMapOf(Polygon);
 
         protected var _nextId :int = 0;
 
