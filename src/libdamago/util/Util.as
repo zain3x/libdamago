@@ -3,8 +3,7 @@
 
 package libdamago.util{
 
-import com.threerings.util.ArrayUtil;
-import com.threerings.util.HashMap;
+import com.threerings.util.Map;
 import com.threerings.util.StringBuilder;
 
 import flash.utils.*;
@@ -49,15 +48,6 @@ public class Util
         }
 
         return hash;
-    }
-
-    public static function hashmapToString (h :HashMap) :String
-    {
-        var sb :StringBuilder = new StringBuilder();
-        for each (var key :String in h.keys()) {
-            sb.append("\n" + key + "=" + h.get(key));
-        }
-        return sb.toString();
     }
 
     public static function obfuscateInt (value :int) :String
