@@ -4,6 +4,7 @@
 package com.whirled.contrib.debug{
 
 import com.threerings.util.ClassUtil;
+import com.threerings.util.Map;
 import com.threerings.util.Util;
 
 import flash.display.DisplayObject;
@@ -119,6 +120,15 @@ public class DebugUtil
         return arr.map(Util.adapt(function (obj :Object) :Object {
             return obj[propName];
         }));
+    }
+
+    public static function mapToString (h :Map) :String
+    {
+        var sb :String = "";
+        for each (var key :String in h.keys()) {
+            sb += "\n" + key + "=" + h.get(key);
+        }
+        return sb;
     }
 }
 }
