@@ -1,5 +1,6 @@
 package
 {
+import com.threerings.ui.SimpleButtonPanel;
 import com.threerings.ui.snapping.debug.TestSnapping;
 
 import flash.display.Sprite;
@@ -11,6 +12,7 @@ public class Tests extends Sprite
     {
         //addChild(new TestFacebookDesktopSession());
         addChild(new TestSnapping());
+        SimpleButtonPanel
     }
 }
 }
