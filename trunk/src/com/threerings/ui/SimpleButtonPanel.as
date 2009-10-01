@@ -6,29 +6,30 @@ import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.SpriteUtil;
 import com.whirled.contrib.debug.DebugUtil;
 
+import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 
-public class SimpleButtonPanel extends ArrayView
+public class SimpleButtonPanel
 {
     public function SimpleButtonPanel (type :OrientationType, parent :DisplayObjectContainer = null,
         locX :Number = 0, locY :Number = 0)
     {
-        super(type);
+        _arrayView = new ArrayView(type);
         if (parent != null) {
-            parent.addChild(this);
+            parent.addChild(_arrayView);
         }
-        this.x = locX;
-        this.y = locY;
+        _arrayView.x = locX;
+        _arrayView.y = locY;
     }
 
     public function createAndAddButton (name :String, onClick :Function) :SimpleTextButton
     {
         var b :SimpleTextButton = new SimpleTextButton(name);
         _events.registerListener(b, MouseEvent.CLICK, F.adapt(onClick));
-        super.add(b);
+        _arrayView.add(b);
         return b;
     }
 
@@ -45,17 +46,22 @@ public class SimpleButtonPanel extends ArrayView
 
         b.addChild(TextBits.createText(name));
         _events.registerListener(b, MouseEvent.MOUSE_DOWN, F.adapt(onMouseDown));
-        super.add(b);
+        _arrayView.add(b);
         return b;
     }
 
     public function shutdown () :void
     {
         _events.freeAllHandlers();
-        _elements = null;
+        _arrayView.shutdown();
+    }
+
+    public function get display () :DisplayObject
+    {
+        return _arrayView;
     }
 
     protected var _events :EventHandlerManager = new EventHandlerManager();
-
+    protected var _arrayView :ArrayView;
 }
 }

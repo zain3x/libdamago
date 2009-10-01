@@ -58,6 +58,12 @@ public class ArrayView extends Sprite
 
     }
 
+    public function shutdown () :void
+    {
+        DisplayUtils.removeAllChildren(this);
+        _elements.splice(0);
+    }
+
     protected var _type :OrientationType;
     protected var _elements :Array = [];
 }
