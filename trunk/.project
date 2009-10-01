@@ -6,6 +6,11 @@
 	</projects>
 	<buildSpec>
 		<buildCommand>
+			<name>org.python.pydev.PyDevBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
 			<name>com.adobe.flexbuilder.project.flexbuilder</name>
 			<arguments>
 			</arguments>
@@ -13,6 +18,7 @@
 	</buildSpec>
 	<natures>
 		<nature>com.adobe.flexbuilder.project.actionscriptnature</nature>
+		<nature>org.python.pydev.pythonNature</nature>
 	</natures>
 	<linkedResources>
 		<link>
@@ -26,14 +32,14 @@
 			<locationURI>EXPORT_ROOT/whirled/libraries/whirled/src/as</locationURI>
 		</link>
 		<link>
-			<name>[source path] flash-utils-src-as</name>
-			<type>2</type>
-			<locationURI>EXPORT_ROOT/whirled/libraries/flash-utils/src/as</locationURI>
-		</link>
-		<link>
 			<name>[source path] narya-src-as</name>
 			<type>2</type>
 			<locationURI>EXPORT_ROOT/whirled/libraries/narya/src/as</locationURI>
+		</link>
+		<link>
+			<name>[source path] flash-utils-src-as</name>
+			<type>2</type>
+			<locationURI>EXPORT_ROOT/whirled/libraries/flash-utils/src/as</locationURI>
 		</link>
 		<link>
 			<name>[source path] contrib-src-as</name>
