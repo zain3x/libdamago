@@ -20,32 +20,34 @@ path = os.path.join(path, "")
 def packageFromFileName (fileName):
     tokens = fileName.strip().split("/")[0:-1]
     return string.join(tokens, ".")
-    
-fileSet = set() 
+
+fileSet = set()
 
 for root, dirs, files in os.walk(path):
     for fileName in files:
         if fileName.endswith(".as"):
             fileSet.add( os.path.join( root[len(path):], fileName ))
-     
+
 for fileName in fileSet:
     correctedFileName = os.path.join(path, fileName)
     f = open(correctedFileName, 'r')
     lines = f.readlines()
     f.close()
-    
+
     write = False
     for i in range(len(lines)):
         line = lines[i]
         if pattern.match(line):
-            packageString = line.split("package")[-1].strip()
-            packageString = packageString.strip("{")
+            packageString = line.replace("package", "")
+            packageString = packageString.replace("{", "")
+            packageString = packageString.strip()
+
             filePackage = packageFromFileName(fileName)
-            
+
             if packageString != filePackage:
                 write = True
                 lines[i] = "package " + filePackage
-                
+
                 if line.find("{") >= 0:
                     lines[i] = lines[i] + " {"
                 if line[-1] == "\n":
@@ -57,5 +59,4 @@ for fileName in fileSet:
         for line in lines:
             f.write(line)
         f.close()
-                
 
