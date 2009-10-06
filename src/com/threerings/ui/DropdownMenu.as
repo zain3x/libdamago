@@ -1,7 +1,7 @@
 package com.threerings.ui {
+import com.threerings.util.EventHandlerManager;
 import com.threerings.util.Log;
 import com.threerings.util.Util;
-import com.whirled.contrib.EventHandlerManager;
 
 import flash.display.Graphics;
 import flash.display.SimpleButton;

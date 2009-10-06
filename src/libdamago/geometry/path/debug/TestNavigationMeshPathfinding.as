@@ -1,13 +1,13 @@
 package libdamago.geometry.path.debug
 {
 import com.threerings.display.GraphicsUtil;
+import com.threerings.flashbang.AppMode;
 import com.threerings.geom.Vector2;
 import com.threerings.text.TextFieldUtil;
 import com.threerings.ui.SimpleTextButton;
 import com.threerings.util.Set;
 import com.threerings.util.Sets;
 import com.threerings.util.Util;
-import com.whirled.contrib.simplegame.AppMode;
 
 import flash.display.Sprite;
 import flash.events.MouseEvent;

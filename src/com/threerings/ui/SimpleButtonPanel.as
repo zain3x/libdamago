@@ -2,7 +2,7 @@ package com.threerings.ui
 {
 import aduros.util.F;
 
-import com.whirled.contrib.EventHandlerManager;
+import com.threerings.util.EventHandlerManager;
 import com.whirled.contrib.SpriteUtil;
 import com.whirled.contrib.debug.DebugUtil;
 

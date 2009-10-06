@@ -5,7 +5,6 @@ package libdamago.geometry.path.navmesh
     import com.threerings.util.Map;
     import com.threerings.util.Maps;
     import com.threerings.util.MathUtil;
-    import com.threerings.util.StringBuilder;
 
     import flash.geom.Rectangle;
 
@@ -1310,11 +1309,11 @@ package libdamago.geometry.path.navmesh
 
                     for(var modifiedPathEndIndex :int = modifiedPathStartIndex + 2; modifiedPathEndIndex < modifiedPath.length; modifiedPathEndIndex++) {
 
-                        var sb :StringBuilder = new StringBuilder("\n[");
-                        for (var iii :int = modifiedPathStartIndex; iii <= modifiedPathEndIndex; iii++) {
-                            sb.append(path[modifiedPath[iii]] + ", ");
-                        }
-                        sb.append("]");
+//                        var sb :StringBuilder = new StringBuilder("\n[");
+//                        for (var iii :int = modifiedPathStartIndex; iii <= modifiedPathEndIndex; iii++) {
+//                            sb.append(path[modifiedPath[iii]] + ", ");
+//                        }
+//                        sb.append("]");
 //                        trace(sb.toString());
 
 //                        trace("path=" + modifiedPath);
@@ -1922,18 +1921,18 @@ package libdamago.geometry.path.navmesh
 
         public function toString () :String
         {
-            var sb :StringBuilder = new StringBuilder();
+            var sb :String = new String();
 
-            sb.append("Navmesh:");
-            sb.append("\n   Polygons=" + _polygonsAll.length);
-            sb.append("\n   Nodes=" + _nodes.length);
-            for each(var node :NavMeshNode in _nodes) {
-                sb.append("\n      " + node);
-                sb.append("\n          neighbours=" + node.getNeighbors());
-            }
+            sb += "Navmesh:";
+            sb += "\n   Polygons=" + _polygonsAll.length;
+            sb += "\n   Nodes=" + _nodes.length;
+            _nodes.map(function (n :NavMeshNode, ...ignored) :String {
+                return "\n      " + n + "\n          neighbours=" + n.getNeighbors();
+            });
+            sb += _nodes.join();
 
 
-            return sb.toString();
+            return sb;
         }
 
     }

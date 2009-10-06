@@ -1,13 +1,11 @@
 package libdamago.geometry.path.debug
 {
+import com.threerings.flashbang.Config;
+import com.threerings.flashbang.FlashbangApp;
 import com.threerings.util.Log;
-import com.whirled.contrib.simplegame.Config;
-import com.whirled.contrib.simplegame.SimpleGame;
 
 import flash.display.Sprite;
 import flash.events.Event;
-
-import libdamago.geometry.Geometry;
 
 /**
 * Tests classes visually.  Each Appmode is a test
@@ -23,7 +21,7 @@ public class Tester extends Sprite
         addEventListener(Event.UNLOAD, unload);
 
         var gameConfig :Config = new Config();
-        _game = new SimpleGame(gameConfig);
+        _game = new FlashbangApp(gameConfig);
 
         _game.ctx.mainLoop.setup();
         _game.ctx.mainLoop.run(this);
@@ -39,13 +37,12 @@ public class Tester extends Sprite
         _game.shutdown();
     }
 
-    protected var _game :SimpleGame;
+    protected var _game :FlashbangApp;
 }
 }
-
-import com.whirled.contrib.simplegame.AppMode;
 
 import flash.system.fscommand;
+import com.threerings.flashbang.AppMode;
 
 class QuitAppMode extends AppMode
 {
