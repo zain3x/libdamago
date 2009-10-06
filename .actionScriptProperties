@@ -8,7 +8,6 @@
 <compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/ooo-libs/nenya/src/as"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/ooo-libs/vilya/src/as"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/ooo-libs/whirled/src/as"/>
-<compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/ooo-libs/riposte/src/as"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="${AS3_EXT_LIBS}/flashbang/src"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="${AS3_EXT_LIBS}/libaduros/src"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="${AS3_EXT_LIBS}/gaforflash/src"/>
