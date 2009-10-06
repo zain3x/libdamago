@@ -93,7 +93,7 @@ public class DebugUtil
         g.drawRect(0, 0, width, height);
     }
 
-    public static function fillRect (layer :Object, width :int, height :int, color :int = 0x000000,
+    public static function fillRect (layer :Sprite, width :int, height :int, color :int = 0x000000,
         alpha :Number = 1) :void
     {
         var g :Graphics = layer.graphics;
