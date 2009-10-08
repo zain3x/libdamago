@@ -7,6 +7,7 @@ import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import flash.display.Sprite;
 public class Bounds
 {
 
@@ -52,7 +53,7 @@ public class Bounds
         throw new Error("Abstract method");
     }
 
-    public function debugDraw (g :Graphics) :void
+    public function debugDraw (s :Sprite) :void
     {
         throw new Error("Abstract method");
     }

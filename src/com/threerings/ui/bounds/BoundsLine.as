@@ -3,7 +3,7 @@ package com.threerings.ui.bounds
 import com.threerings.geom.Vector2;
 import com.threerings.util.ClassUtil;
 
-import flash.display.Graphics;
+import flash.display.Sprite;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
@@ -31,11 +31,11 @@ public class BoundsLine extends Bounds
         return LineSegment.distToLineSegment(_p1, _p2, new Vector2(x, y)) == 0;
     }
 
-    override public function debugDraw (g :Graphics) :void
+    override public function debugDraw (s :Sprite) :void
     {
-        g.lineStyle(2, 0xff0000);
-        g.moveTo(_p1.x, _p1.y);
-        g.lineTo(_p2.x, _p2.y);
+        s.graphics.lineStyle(2, 0xff0000);
+        s.graphics.moveTo(_p1.x, _p1.y);
+        s.graphics.lineTo(_p2.x, _p2.y);
     }
 
     override public function distanceToPoint (p :Vector2) :Number

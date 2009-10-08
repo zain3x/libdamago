@@ -30,11 +30,11 @@ public class TestArrayView extends Sprite
     {
         var size :Number = 16;
         var s :Sprite = new Sprite();
-        DebugUtil.fillDot(s.graphics, 0xffffff, size, size/2, size/2);
+        DebugUtil.fillDot(s, 0xffffff, size, size/2, size/2);
         var tf :TextField = TextFieldUtil.createField(idx + "", {textColor:0, autoSize:TextFieldAutoSize.LEFT});
         s.addChild(tf);
         DisplayUtil.positionBounds(tf, 0, 0);
-        DebugUtil.drawRect(s.graphics, s.width, s.height);
+        DebugUtil.drawRect(s, s.width, s.height);
         return s;
     }
 

@@ -6,7 +6,7 @@ import com.threerings.util.Log;
 import com.threerings.util.MathUtil;
 import com.whirled.contrib.debug.DebugUtil;
 
-import flash.display.Graphics;
+import flash.display.Sprite;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
@@ -17,9 +17,9 @@ public class BoundsPoint extends Bounds
         _point = new Vector2(x, y);
     }
 
-    override public function debugDraw (g :Graphics) :void
+    override public function debugDraw (s :Sprite) :void
     {
-        DebugUtil.drawDot(g, 0xff0000, 4, _point.x, _point.y);
+        DebugUtil.drawDot(s, 0xff0000, 4, _point.x, _point.y);
     }
 
     override public function getBoundedPoint (x :Number, y :Number) :Point
