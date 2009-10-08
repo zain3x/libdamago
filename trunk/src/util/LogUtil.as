@@ -16,12 +16,12 @@ public class LogUtil
     public static function functionName (func :Function, clazzObj :Object) :String
     {
 
-        ReflectionUtil.getAccessorNames(
-        for (var a :String in clazzObj) {
-            if (func == clazzObj[a]) {
-                return a;
-            }
-        }
+//        ReflectionUtil.getAccessorNames(
+//        for (var a :String in clazzObj) {
+//            if (func == clazzObj[a]) {
+//                return a;
+//            }
+//        }
         return null;
     }
 
