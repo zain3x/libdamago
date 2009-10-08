@@ -1,12 +1,15 @@
 package com.threerings.ui.bounds
 {
-import flash.display.Graphics;
-import flash.geom.Point;
-import flash.geom.Rectangle;
 import com.threerings.geom.Vector2;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MathUtil;
+
+import flash.display.Graphics;
+import flash.display.Sprite;
+import flash.geom.Point;
+import flash.geom.Rectangle;
+
 import libdamago.geometry.LineSegment;
 import libdamago.geometry.Polygon;
 public class BoundsPolygon extends Bounds
@@ -61,8 +64,9 @@ public class BoundsPolygon extends Bounds
         return _polygon.isPointInside(p) || _polygon.isPointOnEdge(p);
     }
 
-    override public function debugDraw (g :Graphics) :void
+    override public function debugDraw (s :Sprite) :void
     {
+        var g :Graphics = s.graphics;
         g.lineStyle(2, 0xff0000);
         var points :Array = _polygon.vertices.slice();
         points.push(_polygon.vertices[0]);

@@ -10,9 +10,10 @@ public class Tests extends Sprite
 {
     public function Tests()
     {
-        //addChild(new TestFacebookDesktopSession());
+//        addChild(new TestFacebookDesktopSession());
         addChild(new TestSnapping());
-        SimpleButtonPanel
+//        SimpleButtonPanel
+//        new Bou
     }
 }
 }
