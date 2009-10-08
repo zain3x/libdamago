@@ -152,14 +152,14 @@ public class SnapManager extends EventDispatcher
                 if (anc == null) {
                     continue;
                 }
-                anc.bounds.translate(translate.x, translate.y).debugDraw(_debugLayer.graphics);
+                anc.bounds.translate(translate.x, translate.y).debugDraw(_debugLayer);
                 BoundsRectangle.fromRectangle(anc.bounds.translate(translate.x,
-                    translate.y).boundingRect()).debugDraw(_debugLayer.graphics);
+                    translate.y).boundingRect()).debugDraw(_debugLayer);
 
             }
             BoundsRectangle.fromRectangle(_target.globalBounds.translate(translate.x,
-                translate.y).boundingRect()).debugDraw(_debugLayer.graphics);
-            _target.globalBounds.translate(translate.x, translate.y).debugDraw(_debugLayer.graphics);
+                translate.y).boundingRect()).debugDraw(_debugLayer);
+            _target.globalBounds.translate(translate.x, translate.y).debugDraw(_debugLayer);
         }
     }
     protected var _debugLayer :Sprite = new Sprite();
