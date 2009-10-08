@@ -35,7 +35,7 @@ public class TestSnapping extends Sprite
             var blobAnchor :Sprite = new Sprite();
             blobAnchor.x = locX;
             blobAnchor.y = locY;
-            drawDot(blobAnchor.graphics, 0x00ff00, size, 0, 0);
+            drawDot(blobAnchor, 0x00ff00, size, 0, 0);
             addChild(blobAnchor);
             anc = new SnapAnchorPoint(new Point(locX, locY));
             snapper.addAnchor(anc);
@@ -70,14 +70,14 @@ public class TestSnapping extends Sprite
         blob.y = 10;
         var outerblob :Sprite = new Sprite();
         outerblob.addChild(blob);
-        drawDot(blob.graphics, 0xffffff, 20);
-        drawDot(outerblob.graphics, 0x00ffff, 25, 20, 20);
+        drawDot(blob, 0xffffff, 20);
+        drawDot(outerblob, 0x00ffff, 25, 20, 20);
         outerblob.x = 300;
         outerblob.y = 300;
         addChild(outerblob);
         var snapping :SnappingObject = new SnappingObject(outerblob, BoundsRectangle.fromRectangle(
             blob.getBounds(outerblob)));
-        snapping.localBounds.debugDraw((snapping.displayObject as Sprite).graphics);
+        snapping.localBounds.debugDraw((snapping.displayObject as Sprite));
 
         snapper.beginSnapping(snapping);
 
@@ -97,9 +97,10 @@ public class TestSnapping extends Sprite
         return s;
     }
 
-    public static function drawDot (g :Graphics, color :int = 0x00ffff, r :Number = 10,
+    public static function drawDot (s :Sprite, color :int = 0x00ffff, r :Number = 10,
         x :int = 0, y :int = 0) :void
     {
+        var g :Graphics = s.graphics;
         g.beginFill(color);
         g.drawCircle(x,y,r);
         g.endFill();
