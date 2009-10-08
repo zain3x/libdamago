@@ -15,26 +15,27 @@ import flash.geom.Rectangle;
 
 public class DebugUtil
 {
-    public static function fillDot (g :Graphics, color :int = 0x00ffff, r :Number = 10,
+    public static function fillDot (s :Sprite, color :int = 0x00ffff, r :Number = 10,
         x :int = 0, y :int = 0) :void
     {
-        g.beginFill(color);
-        g.drawCircle(x,y,r);
-        g.endFill();
+        s.graphics.beginFill(color);
+        s.graphics.drawCircle(x,y,r);
+        s.graphics.endFill();
     }
 
-    public static function drawDot (g :Graphics, color :int = 0x00ffff, r :Number = 10,
+    public static function drawDot (s :Sprite, color :int = 0x00ffff, r :Number = 10,
         x :int = 0, y :int = 0) :void
     {
-        g.lineStyle(1, color);
-        g.drawCircle(x,y,r);
-        g.lineStyle(0, 0, 0);
+        s.graphics.lineStyle(1, color);
+        s.graphics.drawCircle(x,y,r);
+        s.graphics.lineStyle(0, 0, 0);
 
     }
 
-    public static function drawLine (g :Graphics, x1 :Number, y1 :Number, x2 :Number,
+    public static function drawLine (s :Sprite, x1 :Number, y1 :Number, x2 :Number,
         y2 :Number, color :int = 0x000000, linethickness :Number = 1, alpha :Number = 1) :void
     {
+        var g :Graphics = s.graphics;
         g.lineStyle(linethickness, color, alpha);
         g.moveTo(x1, y1);
         g.lineTo(x2, y2);
@@ -49,12 +50,15 @@ public class DebugUtil
         }
         trace(space + d + ".name=" + d.name);
         for (var ii :int = 0; ii < d.numChildren; ++ii) {
-            if (d.getChildAt(ii) != null && d.getChildAt(ii)["name"] != null) {
-                trace(space + "child" + ii + "=" + d.getChildAt(ii) + ".name=" +
-                    d.getChildAt(ii).name);
-                if (d.getChildAt(ii) is DisplayObjectContainer) {
-                    traceDisplayChildren(DisplayObjectContainer(d.getChildAt(ii)), space + "  ");
-                }
+//            if (d.getChildAt(ii) != null && d.getChildAt(ii)["name"] != null) {
+//                trace(space + "child" + ii + "=" + d.getChildAt(ii) + ".name=" +
+//                    d.getChildAt(ii).name);
+//                if (d.getChildAt(ii) is DisplayObjectContainer) {
+//                    traceDisplayChildren(DisplayObjectContainer(d.getChildAt(ii)), space + "  ");
+//                }
+//            }
+            if (d.getChildAt(ii) is DisplayObjectContainer) {
+                traceDisplayChildren(DisplayObjectContainer(d.getChildAt(ii)), space + "  ");
             }
         }
     }
