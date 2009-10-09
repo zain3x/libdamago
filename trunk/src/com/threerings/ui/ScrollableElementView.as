@@ -1,12 +1,11 @@
 package com.threerings.ui {
-    import aduros.util.F;
+import aduros.util.F;
 
-    import com.threerings.ui.DisplayUtils;
-    import com.threerings.util.ArrayUtil;
-    import com.threerings.util.Predicates;
+import com.threerings.util.ArrayUtil;
+import com.threerings.util.Predicates;
 
-    import flash.display.DisplayObject;
-    import flash.display.DisplayObjectContainer;
+import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 
 
 public class ScrollableElementView
@@ -53,9 +52,10 @@ public class ScrollableElementView
     {
         _elementContainers.forEach(F.adapt(DisplayUtils.removeAllChildren));
 
-        for (var elementIdx :int = _topLeftIdx, var containerIdx :int = 0;
-            elementIdx < _elements.length && containerIdx < _elementContainers.length;
-            ++ii, ++containerIdx) {
+        var containerIdx :int = 0;
+        var elementIdx :int = _topLeftIdx;
+        for ( ;elementIdx < _elements.length && containerIdx < _elementContainers.length;
+            ++elementIdx, ++containerIdx) {
 
             if (_elements[elementIdx] != null) {
                 DisplayObjectContainer(_elementContainers[containerIdx]).addChild(
@@ -65,10 +65,27 @@ public class ScrollableElementView
         }
     }
 
+    public function clear () :void
+    {
+        _elementContainers.forEach(F.adapt(DisplayUtils.removeAllChildren));
+        _elements = [];
+        _topLeftIdx = 0;
+    }
+
     public function shutdown () :void
     {
         _elementContainers = null;
         _elements = null;
+    }
+
+    public function get containerSize () :int
+    {
+        return _elementContainers.length;
+    }
+
+    public function getElementAt (idx :int) :int
+    {
+        return _elementContainers.length;
     }
 
     protected var _topLeftIdx :int = 0;

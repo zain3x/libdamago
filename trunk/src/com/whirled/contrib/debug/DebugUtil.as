@@ -3,6 +3,8 @@
 
 package com.whirled.contrib.debug{
 
+import aduros.util.F;
+
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Map;
 import com.threerings.util.Util;
@@ -133,6 +135,11 @@ public class DebugUtil
             sb += "\n" + key + "=" + h.get(key);
         }
         return sb;
+    }
+
+    public static function traceCallback (s :String) :Function
+    {
+        return F.callback(function () :void {trace(s);});
     }
 }
 }
