@@ -33,7 +33,7 @@ import flash.geom.Point;
 public class SnapManager extends EventDispatcher
 {
 
-    public static const DEBUG_DRAW :Boolean = false;
+    public static const DEBUG_DRAW :Boolean = true;
 
     public function SnapManager (parent :Sprite)
     {

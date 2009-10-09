@@ -5,6 +5,8 @@
   <property name="lib.name"     value="libdamago"/>
   <property name="deploy.dir"   value="dist"/>
   <property name="libs.dir"     value="lib"/>
+  
+  <property name="include.src"     value="lib"/>
 
   <!-- our dependencies are in a separate file so that we can integrate into OOO builds -->
   <import file="etc/libs-incl.xml"/>
