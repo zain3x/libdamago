@@ -5,6 +5,5 @@
     <include name="ooolib.swc"/>
     <include name="flashbang.swc"/>
     <include name="**/libaduros.swc"/>
-    <!--<include name="corelib.swc"/>-->
   </fileset>
 </project>
