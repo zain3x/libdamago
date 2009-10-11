@@ -3,7 +3,7 @@ package libdamago.geometry
 import aduros.util.F;
 
 import com.threerings.geom.Vector2;
-import com.threerings.util.ArrayUtil;
+import com.threerings.com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MathUtil;
 import com.threerings.util.Util;

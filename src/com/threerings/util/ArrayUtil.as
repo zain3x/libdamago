@@ -1,13 +1,13 @@
-package util {
-    import aduros.util.F;
+package com.threerings.util {
+import aduros.util.F;
 
 public class ArrayUtil
 {
-    public static function uniqueElements (arr :Array, compare :Function  = null) :Array
+    public static function uniqueElements (arr :Array, compare :Function = null) :Array
     {
         compare = (compare != null ? compare : function (e1 :Object, e2 :Object) :Boolean {
-            return e1 == e2;
-        });
+                return e1 == e2;
+            });
         var unique :Array = [];
         for each (var e :Object in arr) {
             var duplicate :Boolean = false;
@@ -22,11 +22,10 @@ public class ArrayUtil
             }
         }
         arr.splice(0);
-        unique.forEach(function (e :Object, ...ignored) :void {
-            arr.push(e);
-        });
+        unique.forEach(function (e :Object, ... ignored) :void {
+                arr.push(e);
+            });
         return unique;
     }
-
 }
 }

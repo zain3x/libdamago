@@ -1,11 +1,11 @@
 //
 // $Id: FramerateView.as 4934 2009-09-04 17:47:44Z tim $
 
-package com.whirled.contrib.simplegame.debug {
+package com.threerings.flashbang.debug {
 
 import com.threerings.ui.TextBits;
 import com.whirled.contrib.Framerate;
-import com.whirled.contrib.debug.DebugUtil;
+import libdamago.util.DebugUtil;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 
 import flash.display.DisplayObject;

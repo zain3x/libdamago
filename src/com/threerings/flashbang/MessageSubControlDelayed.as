@@ -1,7 +1,7 @@
 //
 // $Id: MessageSubControlDelayed.as 2467 2009-06-10 18:44:02Z nathan $
 
-package com.whirled.contrib.simplegame{
+package com.threerings.flashbang {
 
 import com.whirled.net.MessageSubControl;
 

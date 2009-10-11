@@ -1,7 +1,7 @@
 package libdamago.geometry.path.navmesh
 {
     import com.threerings.geom.Vector2;
-    import com.threerings.util.ArrayUtil;
+    import com.threerings.com.threerings.util.ArrayUtil;
     import com.threerings.util.Map;
     import com.threerings.util.Maps;
     import com.threerings.util.MathUtil;
@@ -14,7 +14,7 @@ package libdamago.geometry.path.navmesh
     import libdamago.geometry.path.astar.INode;
     import libdamago.geometry.path.astar.ISearchable;
 
-    import util.GameUtil;
+    import com.threerings.util.GameUtil;
 
     public class NavMesh implements ISearchable
     {

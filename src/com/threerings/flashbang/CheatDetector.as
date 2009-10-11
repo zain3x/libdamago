@@ -1,7 +1,7 @@
 //
 // $Id: CheatDetector.as 2460 2009-06-10 17:14:58Z nathan $
 
-package com.whirled.contrib.simplegame{
+package com.threerings.flashbang {
 
 import com.whirled.contrib.simplegame.Updatable;
 

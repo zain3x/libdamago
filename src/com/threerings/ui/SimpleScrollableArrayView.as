@@ -1,7 +1,7 @@
 package com.threerings.ui
 {
 import com.threerings.display.DisplayUtil;
-import com.whirled.contrib.debug.DebugUtil;
+import libdamago.util.DebugUtil;
 
 import flash.display.Graphics;
 import flash.display.Shape;

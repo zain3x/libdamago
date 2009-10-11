@@ -1,7 +1,7 @@
 //
 // $Id: GenericDraggableWindow.as 3822 2009-07-21 22:36:14Z nathan $
 
-package com.whirled.contrib.debug{
+package com.threerings.flashbang.debug {
 
 import com.threerings.display.DisplayUtil;
 import com.threerings.ui.SimpleTextButton;

@@ -21,8 +21,8 @@ import libdamago.geometry.path.navmesh.NavMeshNode;
 import libdamago.geometry.path.navmesh.NavMeshPathFinder;
 import libdamago.geometry.path.navmesh.NavMeshPolygon;
 
-import util.GameUtil;
-import util.GraphicsUtils;
+import com.threerings.util.GameUtil;
+import com.threerings.util.GraphicsUtils;
 
 public class TestNavigationMeshPathfinding extends AppMode
 {

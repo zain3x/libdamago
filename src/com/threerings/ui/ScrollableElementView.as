@@ -1,7 +1,7 @@
 package com.threerings.ui {
 import aduros.util.F;
 
-import com.threerings.util.ArrayUtil;
+import com.threerings.com.threerings.util.ArrayUtil;
 import com.threerings.util.Predicates;
 
 import flash.display.DisplayObject;
