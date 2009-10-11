@@ -1,0 +1,13 @@
+#
+# $Id$
+
+#
+# Set this to the location of your flex sdk install dir
+
+flexsdk.dir = 
+google.version = 
+google.username = 
+google.password = 
+google.projectname = 
+google.summary = 
+google.labels = 
