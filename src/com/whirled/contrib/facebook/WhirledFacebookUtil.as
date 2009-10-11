@@ -2,6 +2,7 @@ package com.whirled.contrib.facebook
 {
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
+import com.whirled.contrib.facebook.connection.FacebookConnection;
 
 
 /**

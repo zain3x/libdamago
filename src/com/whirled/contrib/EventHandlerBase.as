@@ -14,7 +14,7 @@ public class EventHandlerBase extends EventDispatcher
     /**
      * Adds the specified listener to the specified dispatcher for the specified event.
      *
-     * Listeners registered in this way will be automatically unregistered when the SimObject is
+     * Listeners registered in this way will be automatically unregistered when the GameObject is
      * destroyed.
      */
     protected function registerListener (dispatcher :IEventDispatcher, event :String,

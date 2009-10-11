@@ -4,8 +4,6 @@
 package com.threerings.flashbang.objects {
 
 import com.threerings.flashbang.ObjectDB;
-import com.threerings.flashbang.SimObject;
-import com.threerings.flashbang.SimObjectRef;
 import com.threerings.flashbang.components.SceneComponent;
 
 import flash.display.DisplayObject;
@@ -13,8 +11,8 @@ import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.utils.getTimer;
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.SimObjectRef;
+import com.threerings.flashbang.GameObjectRef;
+import com.threerings.flashbang.GameObject;
 
 /**
  * Used for SceneObjects that themselves have sub-components.
@@ -55,8 +53,8 @@ public class ObjectDBSprite extends ObjectDB
      * @param displayParent the parent to attach the DisplayObject to, or null to attach
      * directly to the AppMode's modeSprite.
      */
-    public function addSceneObject (obj :SimObject, displayParent :DisplayObjectContainer = null)
-        :SimObjectRef
+    public function addSceneObject (obj :GameObject, displayParent :DisplayObjectContainer = null)
+        :GameObjectRef
     {
         if (!(obj is SceneComponent)) {
             throw new Error("obj must implement SceneComponent");
@@ -78,7 +76,7 @@ public class ObjectDBSprite extends ObjectDB
         return addObject(obj);
     }
 
-    override public function destroyObject (ref :SimObjectRef) :void
+    override public function destroyObject (ref :GameObjectRef) :void
     {
         if (null != ref && null != ref.object) {
             // if the object is attached to a DisplayObject, and if that

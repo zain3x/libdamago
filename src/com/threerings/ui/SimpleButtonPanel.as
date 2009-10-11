@@ -36,7 +36,6 @@ public class SimpleButtonPanel
     public function createAndAddMouseDownButton (name :String, onMouseDown :Function) :Sprite
     {
         var b :Sprite = SpriteUtil.createSprite(true, true);
-
         DebugUtil.fillRect(b, 50, 30, 0xffffff, 0);
         var g :Graphics = b.graphics;
         g.lineStyle(0,0,0);

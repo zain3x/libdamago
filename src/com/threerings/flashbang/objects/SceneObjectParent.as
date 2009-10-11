@@ -9,10 +9,12 @@ import com.threerings.util.ArrayUtil;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
+import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.components.SceneComponent;
 
 
 /**
- * A SceneObject with children SimObjects.  The children use the db, but are destroyed
+ * A SceneObject with children GameObjects.  The children use the db, but are destroyed
  * with the parent.
  */
 public class SceneObjectParent extends SceneObject
@@ -20,7 +22,7 @@ public class SceneObjectParent extends SceneObject
     override protected function addedToDB () :void
     {
         super.addedToDB();
-        for each (var sim :SimObject in _yetToAddToDB) {
+        for each (var sim :GameObject in _yetToAddToDB) {
             if (sim.db == null) {
                 db.addObject(sim);
             }
@@ -28,7 +30,7 @@ public class SceneObjectParent extends SceneObject
         _yetToAddToDB = null;
     }
 
-    protected function addSimObjectInternal (s :SimObject) :void
+    protected function addGameObjectInternal (s :GameObject) :void
     {
         if (db != null) {
             if (s.db == null) {
@@ -44,7 +46,7 @@ public class SceneObjectParent extends SceneObject
         }
     }
 
-    public function addSceneObject (obj :SimObject,
+    public function addSceneObject (obj :GameObject,
         displayParent :DisplayObjectContainer = null) :void
     {
         if (obj is SceneComponent) {
@@ -60,15 +62,15 @@ public class SceneObjectParent extends SceneObject
             }
             displayParent.addChild(disp);
         }
-        addSimObjectInternal(obj);
+        addGameObjectInternal(obj);
     }
 
-    public function addSimObject (obj :SimObject) :void
+    public function addGameObject (obj :GameObject) :void
     {
-        addSimObjectInternal(obj);
+        addGameObjectInternal(obj);
     }
 
-    protected function destroySimObject (s :SimObject) :void
+    protected function destroyGameObject (s :GameObject) :void
     {
         if (s == null) {
             return;
@@ -87,7 +89,7 @@ public class SceneObjectParent extends SceneObject
     override protected function destroyed () :void
     {
         super.destroyed();
-        for each (var child :SimObject in _subObjects) {
+        for each (var child :GameObject in _subObjects) {
             if (child.isLiveObject) {
                 child.destroySelf();
             }
@@ -97,7 +99,7 @@ public class SceneObjectParent extends SceneObject
 
     protected function destroyChildren () :void
     {
-        for each (var child :SimObject in _subObjects) {
+        for each (var child :GameObject in _subObjects) {
             if (child.isLiveObject) {
                 child.destroySelf();
             }

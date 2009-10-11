@@ -4,10 +4,11 @@
 package com.threerings.flashbang.debug {
 
 import com.threerings.display.DisplayUtil;
+import com.threerings.flashbang.objects.DraggableObject;
 import com.threerings.ui.SimpleTextButton;
+import com.threerings.ui.TextBits;
 import com.threerings.util.Log;
 import com.threerings.util.StringUtil;
-import com.threerings.flashbang.objects.DraggableObject;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
@@ -17,7 +18,6 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.text.TextField;
 
-import vampire.client.util.TextBits;
 
 public class GenericDraggableWindow extends DraggableObject
 {
