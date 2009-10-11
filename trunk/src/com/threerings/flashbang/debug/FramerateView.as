@@ -3,10 +3,9 @@
 
 package com.threerings.flashbang.debug {
 
-import com.threerings.ui.TextBits;
-import com.whirled.contrib.Framerate;
-import com.threerings.util.DebugUtil;
 import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.ui.TextBits;
+import com.threerings.util.Framerate;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
