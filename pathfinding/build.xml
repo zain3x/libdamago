@@ -5,8 +5,8 @@
   <!-- configuration parameters -->
   <property name="lib.name"     value="libdamago-pathfinding"/>
   <property name="deploy.dir"   value="dist"/>
-  <property name="libs.dir"     value="lib"/>
-  
+  <property name="libs.dir"     value="../lib"/>
+
   <!--<property name="include.src"     value="lib"/>-->
 
   <!-- our dependencies are in a separate file so that we can integrate into OOO builds -->
@@ -46,7 +46,7 @@
       <arg value="-compiler.optimize"/>
       <arg value="-compiler.source-path=src/"/>
       <arg value="-include-sources=src/"/>
-      <arg value="-compiler.library-path=lib/"/>
+      <arg value="-compiler.library-path=${deploy.dir}/lib"/>
       <arg value="-output"/>
       <arg value="${deploy.dir}/${lib.name}.swc"/>
     </java>
@@ -70,17 +70,17 @@
   <target name="dist" depends="prepare,aslib" description="Builds our distribution files">
     <!-- nothing doing -->
   </target>
-  
+
   <target name="release" depends="distclean,dist" description="Sends the latest swc to http://code.google.com/p/libdamago/">
-    <gcupload 
-        username="${google.username}" 
+    <gcupload
+        username="${google.username}"
         password="${google.password}"
-        projectname="${google.projectname}" 
+        projectname="${google.projectname}"
         filename="${deploy.dir}/${lib.name}.swc"
         targetfilename="${lib.name}_v${google.version}.swc"
         summary="${google.summary}"
         labels="${google.labels}" />
   </target>
-  
+
 
 </project>
