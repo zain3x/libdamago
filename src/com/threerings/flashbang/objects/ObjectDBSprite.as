@@ -3,10 +3,10 @@
 
 package com.threerings.flashbang.objects {
 
-import com.whirled.contrib.simplegame.ObjectDB;
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.SimObjectRef;
-import com.whirled.contrib.simplegame.components.SceneComponent;
+import com.threerings.flashbang.ObjectDB;
+import com.threerings.flashbang.SimObject;
+import com.threerings.flashbang.SimObjectRef;
+import com.threerings.flashbang.components.SceneComponent;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;

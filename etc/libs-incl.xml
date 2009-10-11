@@ -2,6 +2,6 @@
 <!-- declares the libraries needed to build ooolib -->
 <project name="library-dependencies">
   <fileset dir="${libs.dir}" id="libdamago.libs">
-    <include name="ooolib*.swc"/>
+    <include name="*.swc"/>
   </fileset>
 </project>

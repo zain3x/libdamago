@@ -1,16 +1,7 @@
 //
 // $Id: DraggableSceneObject.as 3822 2009-07-21 22:36:14Z nathan $
 
-package com.whirled.contrib.avrg{
-
-import com.threerings.util.MathUtil;
-import com.threerings.util.Log;
-import com.whirled.avrg.AVRGameControl;
-import com.whirled.avrg.AVRGameControlEvent;
-import com.whirled.avrg.AVRGamePlayerEvent;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.net.NetConstants;
-
+package com.whirled.contrib.avrg {
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.events.Event;
@@ -18,7 +9,13 @@ import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.utils.Dictionary;
-
+import com.whirled.avrg.AVRGameControl;
+import com.whirled.avrg.AVRGameControlEvent;
+import com.whirled.avrg.AVRGamePlayerEvent;
+import com.threerings.flashbang.objects.SceneObject;
+import com.whirled.net.NetConstants;
+import com.threerings.util.Log;
+import com.threerings.util.MathUtil;
 /**
  * This class is intended for HUD elements for AVRGs that also use Tim's simplegame framework.
  * The DraggableSceneObject can be dragged around the screen but it won't go outside the paintable
@@ -27,17 +24,18 @@ import flash.utils.Dictionary;
  */
 public class DraggableSceneObject extends SceneObject
 {
-    public static const SNAP_NONE :int = 1;
-    public static const SNAP_LEFT :int = 2;
-    public static const SNAP_TOP :int = 2;  // alias
-    public static const SNAP_ROOM_EDGE :int = 3;
-    public static const SNAP_BROWSER_EDGE :int = 4;
+    public static const IX_XFIX :int = 1;
+    public static const IX_XSNAP :int = 0;
+    public static const IX_YFIX :int = 3;
+    public static const IX_YSNAP :int = 2;
 
     public static const PROP_PREFIX :String = NetConstants.makePersistent("draggable_");
-    public static const IX_XSNAP :int = 0;
-    public static const IX_XFIX :int = 1;
-    public static const IX_YSNAP :int = 2;
-    public static const IX_YFIX :int = 3;
+    public static const SNAP_BROWSER_EDGE :int = 4;
+    public static const SNAP_LEFT :int = 2;
+    public static const SNAP_NONE :int = 1;
+    public static const SNAP_ROOM_EDGE :int = 3;
+    public static const SNAP_TOP :int = 2; // alias
+
 
     public function DraggableSceneObject (ctrl :AVRGameControl, persistId :String = null,
         sprite :Sprite = null)
@@ -58,19 +56,50 @@ public class DraggableSceneObject extends SceneObject
         registerListener(_displaySprite, MouseEvent.MOUSE_UP, handleMouseUp);
     }
 
+    override public function get displayObject () :DisplayObject
+    {
+        return _displaySprite;
+    }
+
+    //    public function get displaySprite () :Sprite
+    //    {
+    //        return _displaySprite;
+    //    }
+
+    override public function get objectName () :String
+    {
+        return _persistId;
+    }
+
+    public function centerOnViewableRoom () :void
+    {
+        //Workaround as roombounds can be bigger than the paintable area
+        if (_ctrl.local.getRoomBounds()[0] > _ctrl.local.getPaintableArea().width) {
+            this.x = _ctrl.local.getPaintableArea().width / 2;
+            this.y = _ctrl.local.getPaintableArea().height / 2;
+
+        } else {
+            this.x = _ctrl.local.getRoomBounds()[0] / 2;
+            this.y = _ctrl.local.getRoomBounds()[1] / 2;
+        }
+
+        this.x += -_bounds.x - _bounds.width / 2;
+        this.y += -_bounds.y - _bounds.height / 2;
+    }
+
     /**
-    * Bounds are the bounds of your HUD sprite.
-    */
-    public function init (bounds :Rectangle, xSnap :int, xPos :Number,
-                          ySnap :int, yPos :Number, bleed :Number = 0) :void
+     * Bounds are the bounds of your HUD sprite.
+     */
+    public function init (bounds :Rectangle, xSnap :int, xPos :Number, ySnap :int, yPos :Number,
+        bleed :Number = 0) :void
     {
         _bounds = bounds;
         _bleed = bleed;
 
         trace("bounds=" + _bounds);
 
-        var locData :Dictionary = null;//(_persistId != null) ?
-//            _ctrl.player.props.get(PROP_PREFIX + _persistId) as Dictionary : null;
+        var locData :Dictionary = null; //(_persistId != null) ?
+        //            _ctrl.player.props.get(PROP_PREFIX + _persistId) as Dictionary : null;
 
         if (locData != null) {
             _xSnap = locData[IX_XSNAP];
@@ -88,31 +117,11 @@ public class DraggableSceneObject extends SceneObject
         layout();
     }
 
-//    public function addChild (d :DisplayObject) :void
-//    {
-//        _displaySprite.addChild(d);
-//    }
-
-    protected function handleMouseDown (evt :MouseEvent) :void
+    protected function handleEnteredRoom (evt :AVRGameControlEvent) :void
     {
-        //No need to hold the shift key down while dragging.  Too confusing.
-//        if (!evt.shiftKey) {
-//            return;
-//        }
+        updateRoom();
 
-        if (_offset == null) {
-            registerListener(_displaySprite, Event.ENTER_FRAME, handleFrame);
-        }
-
-//        registerListener(_displaySprite, MouseEvent.ROLL_OUT, handleRollOut);
-
-        _mouse = new Point(_displaySprite.parent.mouseX, _displaySprite.parent.mouseY);
-        _offset = new Point(_mouse.x - this.x, _mouse.y - this.y);
-    }
-
-    protected function handleRollOut (e :MouseEvent) :void
-    {
-        handleMouseUp();
+        layout();
     }
 
     protected function handleFrame (evt :Event) :void
@@ -124,8 +133,8 @@ public class DraggableSceneObject extends SceneObject
             _offset = null;
             return;
         }
-//        trace("mouse=(" + _displaySprite.parent.mouseX + ", " + _displaySprite.parent.mouseY + ")");
-//        trace("_offset=" + _offset);
+        //        trace("mouse=(" + _displaySprite.parent.mouseX + ", " + _displaySprite.parent.mouseY + ")");
+        //        trace("_offset=" + _offset);
 
         var p :Point = new Point(_displaySprite.parent.mouseX - _offset.x,
             _displaySprite.parent.mouseY - _offset.y);
@@ -135,7 +144,7 @@ public class DraggableSceneObject extends SceneObject
 
         if (_painted == null) {
             log.error("_painted==null");
-            updateRoom ();
+            updateRoom();
         }
         if (_bounds != null && _painted != null) {
             // boundaries are configured: check for snapping
@@ -182,19 +191,46 @@ public class DraggableSceneObject extends SceneObject
             locData[IX_YSNAP] = _ySnap;
             locData[IX_YFIX] = _yFix;
 
-//            _ctrl.player.props.set(PROP_PREFIX + _persistId, locData);
+                //            _ctrl.player.props.set(PROP_PREFIX + _persistId, locData);
         }
 
         layout();
 
-//        trace("handleFrame (" + this.x + ", " + this.y + "), bounds=" + _bounds);
+        //        trace("handleFrame (" + this.x + ", " + this.y + "), bounds=" + _bounds);
     }
 
-    protected function handleMouseUp (...ignored) :void
+    //    public function addChild (d :DisplayObject) :void
+    //    {
+    //        _displaySprite.addChild(d);
+    //    }
+
+    protected function handleMouseDown (evt :MouseEvent) :void
+    {
+        //No need to hold the shift key down while dragging.  Too confusing.
+        //        if (!evt.shiftKey) {
+        //            return;
+        //        }
+
+        if (_offset == null) {
+            registerListener(_displaySprite, Event.ENTER_FRAME, handleFrame);
+        }
+
+        //        registerListener(_displaySprite, MouseEvent.ROLL_OUT, handleRollOut);
+
+        _mouse = new Point(_displaySprite.parent.mouseX, _displaySprite.parent.mouseY);
+        _offset = new Point(_mouse.x - this.x, _mouse.y - this.y);
+    }
+
+    protected function handleMouseUp (... ignored) :void
     {
         removeEventListener(Event.ENTER_FRAME, handleFrame);
         removeEventListener(MouseEvent.ROLL_OUT, handleRollOut);
         _offset = null;
+    }
+
+    protected function handleRollOut (e :MouseEvent) :void
+    {
+        handleMouseUp();
     }
 
     protected function handleSizeChanged (evt :AVRGameControlEvent) :void
@@ -205,11 +241,67 @@ public class DraggableSceneObject extends SceneObject
         layout();
     }
 
-    protected function handleEnteredRoom (evt :AVRGameControlEvent) :void
+    protected function layout () :void
     {
-        updateRoom();
+        if (_bounds == null || _paintable == null || _painted == null) {
+            // not yet initialized
+            return;
+        }
 
-        layout();
+        switch (_xSnap) {
+            case SNAP_NONE:
+                this.x = _xFix;
+                break;
+
+            case SNAP_LEFT:
+                this.x = _paintable.left - _bounds.left;
+                break;
+
+            case SNAP_ROOM_EDGE:
+                this.x = Math.max(0, Math.min(_paintable.right - _bounds.right,
+                    _painted.right - _bounds.left - _bleed));
+                break;
+
+            case SNAP_BROWSER_EDGE:
+                this.x = Math.max(0, _paintable.right - _bounds.right);
+                break;
+        }
+
+        switch (_ySnap) {
+            case SNAP_NONE:
+                this.y = _yFix;
+                break;
+
+            case SNAP_TOP:
+                this.y = _paintable.top - _bounds.top;
+                break;
+
+            case SNAP_ROOM_EDGE:
+                this.y = Math.max(0, Math.min(_paintable.bottom - _bounds.bottom,
+                    _painted.bottom - _bounds.top));
+                break;
+
+            case SNAP_BROWSER_EDGE:
+                this.y = Math.max(0, _paintable.bottom - _bounds.bottom);
+                break;
+        }
+
+        //Make sure we are not outside the paintable area, no matter what.
+        if (_ctrl.isConnected() && _ctrl.local.getPaintableArea() != null && _bounds != null) {
+            //            trace("clamping:");
+            //            trace("  bounds=" + _bounds);
+            //            trace("  loc=" + this.x + ", " + this.y);
+            //            trace("  _bounds.bottom=" + _bounds.bottom);
+            //            trace("  clamping x (" + (-_bounds.left) + ", " + (_ctrl.local.getPaintableArea().width - _bounds.right) + ")");
+            //            trace("  clamping y (" + (-_bounds.top) + ", " + (_ctrl.local.getPaintableArea().height - _bounds.bottom) + ")");
+            //            trace("  width=" + _displaySprite.width);
+            this.x = MathUtil.clamp(this.x, -_bounds.left,
+                _ctrl.local.getPaintableArea().width - _bounds.right);
+            this.y = MathUtil.clamp(this.y, -_bounds.top,
+                _ctrl.local.getPaintableArea().height - _bounds.bottom);
+                //            this.x = MathUtil.clamp(this.x, Math.abs(_bounds.left), _ctrl.local.getPaintableArea().width - Math.abs(_bounds.right));
+                //            this.y = MathUtil.clamp(this.y, 0 + this.height/2, _ctrl.local.getPaintableArea().height - this.height/2);
+        }
     }
 
     protected function updatePaintable () :void
@@ -241,118 +333,15 @@ public class DraggableSceneObject extends SceneObject
             }
         }
     }
-
-    protected function layout () :void
-    {
-        if (_bounds == null || _paintable == null || _painted == null) {
-            // not yet initialized
-            return;
-        }
-
-        switch(_xSnap) {
-        case SNAP_NONE:
-            this.x = _xFix;
-            break;
-
-        case SNAP_LEFT:
-            this.x = _paintable.left - _bounds.left;
-            break;
-
-        case SNAP_ROOM_EDGE:
-            this.x = Math.max(0, Math.min(_paintable.right - _bounds.right,
-                                            _painted.right - _bounds.left - _bleed));
-            break;
-
-        case SNAP_BROWSER_EDGE:
-            this.x = Math.max(0, _paintable.right - _bounds.right);
-            break;
-        }
-
-        switch(_ySnap) {
-        case SNAP_NONE:
-            this.y = _yFix;
-            break;
-
-        case SNAP_TOP:
-            this.y = _paintable.top - _bounds.top;
-            break;
-
-        case SNAP_ROOM_EDGE:
-            this.y = Math.max(0, Math.min(_paintable.bottom - _bounds.bottom,
-                                            _painted.bottom - _bounds.top));
-            break;
-
-        case SNAP_BROWSER_EDGE:
-            this.y = Math.max(0, _paintable.bottom - _bounds.bottom);
-            break;
-        }
-
-        //Make sure we are not outside the paintable area, no matter what.
-        if (_ctrl.isConnected() && _ctrl.local.getPaintableArea() != null && _bounds != null) {
-//            trace("clamping:");
-//            trace("  bounds=" + _bounds);
-//            trace("  loc=" + this.x + ", " + this.y);
-//            trace("  _bounds.bottom=" + _bounds.bottom);
-//            trace("  clamping x (" + (-_bounds.left) + ", " + (_ctrl.local.getPaintableArea().width - _bounds.right) + ")");
-//            trace("  clamping y (" + (-_bounds.top) + ", " + (_ctrl.local.getPaintableArea().height - _bounds.bottom) + ")");
-//            trace("  width=" + _displaySprite.width);
-            this.x = MathUtil.clamp(
-                this.x, -_bounds.left, _ctrl.local.getPaintableArea().width - _bounds.right);
-            this.y = MathUtil.clamp(
-                this.y, -_bounds.top, _ctrl.local.getPaintableArea().height - _bounds.bottom);
-//            this.x = MathUtil.clamp(this.x, Math.abs(_bounds.left), _ctrl.local.getPaintableArea().width - Math.abs(_bounds.right));
-//            this.y = MathUtil.clamp(this.y, 0 + this.height/2, _ctrl.local.getPaintableArea().height - this.height/2);
-        }
-    }
-
-    public function centerOnViewableRoom() :void
-    {
-        //Workaround as roombounds can be bigger than the paintable area
-        if(_ctrl.local.getRoomBounds()[0] > _ctrl.local.getPaintableArea().width) {
-            this.x = _ctrl.local.getPaintableArea().width/2;
-            this.y = _ctrl.local.getPaintableArea().height/2;
-
-        } else {
-            this.x = _ctrl.local.getRoomBounds()[0]/2;
-            this.y = _ctrl.local.getRoomBounds()[1]/2;
-        }
-
-        this.x += -_bounds.x - _bounds.width / 2;
-        this.y += -_bounds.y - _bounds.height / 2;
-    }
-
-
-    override public function get displayObject () :DisplayObject
-    {
-        return _displaySprite;
-    }
-
-//    public function get displaySprite () :Sprite
-//    {
-//        return _displaySprite;
-//    }
-
-    override public function get objectName () :String
-    {
-        return _persistId;
-    }
-
-    protected var _displaySprite :Sprite = new Sprite();
-
-    protected var _ctrl :AVRGameControl;
-
-    protected var _mode :String;
-
-    protected var _persistId :String;
+    protected var _bleed :Number;
 
     protected var _bounds :Rectangle;
 
-    protected var _xSnap :int;
-    protected var _ySnap :int;
+    protected var _ctrl :AVRGameControl;
 
-    protected var _xFix :Number;
-    protected var _yFix :Number;
-    protected var _bleed :Number;
+    protected var _displaySprite :Sprite = new Sprite();
+
+    protected var _mode :String;
 
     protected var _mouse :Point;
     protected var _offset :Point;
@@ -360,9 +349,17 @@ public class DraggableSceneObject extends SceneObject
     protected var _paintable :Rectangle;
     protected var _painted :Rectangle;
 
-    protected static const SNAP_MARGIN :int = 20;
+    protected var _persistId :String;
+
+    protected var _xFix :Number;
+
+    protected var _xSnap :int;
+    protected var _yFix :Number;
+    protected var _ySnap :int;
     protected static const DRAG_SAFETY :int = 0;
 
     protected static const log :Log = Log.getLog(DraggableSceneObject);
+
+    protected static const SNAP_MARGIN :int = 20;
 }
 }
