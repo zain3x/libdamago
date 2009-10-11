@@ -3,7 +3,7 @@ package com.threerings.ui
 import com.threerings.display.DisplayUtil;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.MathUtil;
-import com.whirled.contrib.EventHandlerManager;
+import com.threerings.util.EventHandlerManager;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
