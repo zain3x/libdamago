@@ -2,7 +2,9 @@
 <!-- declares the libraries needed to build ooolib -->
 <project name="library-dependencies">
   <fileset dir="${libs.dir}" id="libdamago-pathfinding.libs">
-    <!--<include name="ooolib*.swc"/>-->
-    <include name="corelib.swc"/>
+    <include name="ooolib.swc"/>
+    <include name="flashbang.swc"/>
+    <include name="**/libaduros.swc"/>
+    <!--<include name="corelib.swc"/>-->
   </fileset>
 </project>
