@@ -1,8 +1,7 @@
 //
 // $Id: FacebookConnection.as 4688 2009-08-20 21:51:30Z nathan $
 
-package com.whirled.contrib.facebook.connection{
-
+package com.whirled.contrib.facebook.connection {
 import aduros.util.F;
 
 import com.facebook.Facebook;
@@ -15,7 +14,6 @@ import com.facebook.session.DesktopSession;
 import com.threerings.util.Log;
 import com.threerings.util.Util;
 import com.whirled.avrg.AVRGameControl;
-import com.whirled.contrib.DelayUtil;
 import com.whirled.contrib.EventHandlerBase;
 import com.whirled.contrib.ManagedTimer;
 import com.whirled.contrib.TimerManager;
@@ -27,6 +25,12 @@ import flash.net.*;
  */
 public class FacebookConnection extends EventHandlerBase
 {
+
+    public static function getFriend (uid :String) :FacebookUser
+    {
+        return FriendsModel.getFriend(uid);
+    }
+
     public static function init (apiKey :String, secretKey :String, fbSessionKey :String,
         uid :String, autoLoadFriends :Boolean = true) :void
     {
@@ -41,32 +45,59 @@ public class FacebookConnection extends EventHandlerBase
         instance.connect(params);
     }
 
-    public static function get instance () :FacebookConnection
+    /**
+     * Posts a FacebookCall to facebook.
+     */
+    public static function post (call :FacebookCall) :void
     {
-        if (_facebookConnection == null) {
-            _facebookConnection = new FacebookConnection();
+        whenConnected(function () :void {
+                call.addEventListener(FacebookEvent.COMPLETE,
+                    F.justOnce(function (e :FacebookEvent) :void {
+                        log.info("post received complete event", "event", e);
+                    }));
+
+                instance._facebook.post(call);
+            });
+    }
+
+    public static function postMessage (msg :String) :void
+    {
+        var call :PublishPost = new PublishPost(msg);
+        post(call);
+    }
+
+    public static function runUntil (timer :TimerManager, delay :Number, callback :Function,
+        check :Function, completeCallback :Function = null) :void
+    {
+        if (!check()) {
+            return;
         }
-        return _facebookConnection;
+        var timerMod :ManagedTimer = timer.runForever(delay, modCallback);
+        function modCallback () :void {
+            if (check()) {
+                callback();
+            } else {
+                timerMod.cancel();
+                if (completeCallback != null) {
+                    completeCallback();
+                }
+            }
+        }
+
     }
 
-    public static function get friendIds () :Array
+    //type = "user_to_user" or "app_to_user"
+    public static function sendNotification (ids :Array, notification :String, callback :Function =
+        null, type :String = "user_to_user") :void
     {
-        return FriendsModel.friendsIDArray;
-    }
-
-    public static function get friends () :Array
-    {
-        return friendIds.map(Util.adapt(getFriend));
-    }
-
-    public static function get loggedInUserID () :String
-    {
-        return instance.facebook.uid;
-    }
-
-    public static function getFriend (uid :String) :FacebookUser
-    {
-        return FriendsModel.getFriend(uid);
+        var call :SendNotification = new SendNotification(ids, notification, type);
+        if (callback != null) {
+            // _events.registerOneShotCallback doesn't pass the event to the callback function.
+            // That should probably be fixed at some point, but until then, F.justOnce does pass
+            // it in, and performs the same cleanup service.
+            call.addEventListener(FacebookEvent.COMPLETE, F.justOnce(callback));
+        }
+        post(call);
     }
 
     /**
@@ -79,8 +110,8 @@ public class FacebookConnection extends EventHandlerBase
             callback();
 
         } else {
-            instance.addEventListener(
-                FacebookDataEvent.FACEBOOK_CONNECTED, F.justOnce(F.callback(callback)));
+            instance.addEventListener(FacebookDataEvent.FACEBOOK_CONNECTED,
+                F.justOnce(F.callback(callback)));
         }
     }
 
@@ -90,44 +121,9 @@ public class FacebookConnection extends EventHandlerBase
             callback();
 
         } else {
-            instance.addEventListener(
-                FacebookDataEvent.FACEBOOK_FRIEND_DATA_ARRIVED, F.justOnce(F.callback(callback)));
+            instance.addEventListener(FacebookDataEvent.FACEBOOK_FRIEND_DATA_ARRIVED,
+                F.justOnce(F.callback(callback)));
         }
-    }
-
-    /**
-     * Posts a FacebookCall to facebook.
-     */
-    public static function post (call :FacebookCall) :void
-    {
-        whenConnected(function () :void {
-            call.addEventListener(FacebookEvent.COMPLETE,
-                F.justOnce(function (e :FacebookEvent) :void {
-                    log.info("post received complete event", "event", e);
-                }));
-
-            instance._facebook.post(call);
-        });
-    }
-
-    public static function postMessage (msg :String) :void
-    {
-        var call :PublishPost = new PublishPost(msg);
-        post(call);
-    }
-
-    //type = "user_to_user" or "app_to_user"
-    public static function sendNotification (ids :Array, notification :String,
-        callback :Function = null, type :String = "user_to_user") :void
-    {
-        var call :SendNotification = new SendNotification(ids, notification, type);
-        if (callback != null) {
-            // _events.registerOneShotCallback doesn't pass the event to the callback function.
-            // That should probably be fixed at some point, but until then, F.justOnce does pass
-            // it in, and performs the same cleanup service.
-            call.addEventListener(FacebookEvent.COMPLETE, F.justOnce(callback));
-        }
-        post(call);
     }
 
     public function FacebookConnection ()
@@ -137,19 +133,14 @@ public class FacebookConnection extends EventHandlerBase
         }
     }
 
-    public function get friendsLoaded () :Boolean
-    {
-        return _friendsLoaded;
-    }
-
-    public function get isWaitingForLogin () :Boolean
-    {
-        return _waitingForLogin;
-    }
-
     public function get facebook () :Facebook
     {
         return _facebook;
+    }
+
+    public function get friendsLoaded () :Boolean
+    {
+        return _friendsLoaded;
     }
 
     public function get isConnected () :Boolean
@@ -157,20 +148,23 @@ public class FacebookConnection extends EventHandlerBase
         return _connected;
     }
 
+    public function get isWaitingForLogin () :Boolean
+    {
+        return _waitingForLogin;
+    }
+
     public function loadFriends () :void
     {
         trace("Loading friends");
         FriendsModel.facebook = _facebook;
         FriendsModel.loggedInUserID = _facebook.uid;
-        FriendsModel.loadFriends(
-            function () :void {
+        FriendsModel.loadFriends(function () :void {
                 log.debug("Friend data loaded.");
                 _friendsLoaded = true;
-                instance.dispatchEvent(
-                    new FacebookDataEvent(FacebookDataEvent.FACEBOOK_FRIEND_DATA_ARRIVED));
+                instance.dispatchEvent(new FacebookDataEvent(FacebookDataEvent.
+                    FACEBOOK_FRIEND_DATA_ARRIVED));
 
-            },
-            function () :void {
+            }, function () :void {
                 log.warning("Failure to load friends, ATM doing nothing more");
             });
     }
@@ -217,10 +211,10 @@ public class FacebookConnection extends EventHandlerBase
                         return !selfref.isConnected;
                     });
 
-//                _timerManager.runUntil(REATTEMPT_LOGIN_INTERVAL_MS, F.adapt(login),
-//                function () :Boolean {
-//                    return !selfref.isConnected;
-//                });
+                    //                _timerManager.runUntil(REATTEMPT_LOGIN_INTERVAL_MS, F.adapt(login),
+                    //                function () :Boolean {
+                    //                    return !selfref.isConnected;
+                    //                });
 
             }
             function callback () :void {
@@ -230,10 +224,10 @@ public class FacebookConnection extends EventHandlerBase
                 function () :Boolean {
                     return !selfref.isConnected;
                 }, F.adapt(loadFriends));
-//            _timerManager.runUntil(REFRESH_SESSION_INTERVAL_MS, F.adapt(callback),
-//                function () :Boolean {
-//                    return !selfref.isConnected;
-//                }, F.adapt(loadFriends));
+                //            _timerManager.runUntil(REFRESH_SESSION_INTERVAL_MS, F.adapt(callback),
+                //                function () :Boolean {
+                //                    return !selfref.isConnected;
+                //                }, F.adapt(loadFriends));
 
         } else {
 
@@ -242,20 +236,13 @@ public class FacebookConnection extends EventHandlerBase
                     return !selfref.isConnected;
                 }, F.adapt(loadFriends));
 
-
-//            _timerManager.runUntil(REFRESH_SESSION_INTERVAL_MS, _session.verifySession,
-//                function () :Boolean {
-//                    return !selfref.isConnected;
-//                }, F.adapt(loadFriends));
+            //            _timerManager.runUntil(REFRESH_SESSION_INTERVAL_MS, _session.verifySession,
+            //                function () :Boolean {
+            //                    return !selfref.isConnected;
+            //                }, F.adapt(loadFriends));
 
             _session.verifySession();
         }
-    }
-
-    protected function handleWaitingForLogin (e :FacebookEvent) :void
-    {
-        log.debug("Waiting for login...");
-        _waitingForLogin = true;
     }
 
     protected function handleFacebookConnected (e :FacebookEvent) :void
@@ -271,49 +258,58 @@ public class FacebookConnection extends EventHandlerBase
 
         } else {
             DelayUtil.delay(DelayUtil.SECONDS, 5, function () :void {
-                log.warning("FacebookSession.validateLogin()");
-                _facebook.refreshSession();
-            });
+                    log.warning("FacebookSession.validateLogin()");
+                    _facebook.refreshSession();
+                });
         }
     }
 
-    public static function runUntil (timer :TimerManager, delay :Number, callback :Function,
-        check :Function, completeCallback :Function = null) :void
+    protected function handleWaitingForLogin (e :FacebookEvent) :void
     {
-        if (!check()) {
-            return;
-        }
-        var timerMod :ManagedTimer = timer.runForever(delay, modCallback);
-        function modCallback () :void {
-            if (check()) {
-                callback();
-            } else {
-                timerMod.cancel();
-                if (completeCallback != null) {
-                    completeCallback();
-                }
-            }
-        }
-
+        log.debug("Waiting for login...");
+        _waitingForLogin = true;
     }
+    protected var _connected :Boolean = false;
+    protected var _facebook :Facebook;
+    protected var _friendsLoaded :Boolean = false;
+    protected var _params :FacebookParams;
+    protected var _session :FacebookSessionUtilMod;
 
     protected var _timerManager :TimerManager = new TimerManager();
-    protected var _facebook :Facebook;
-    protected var _session :FacebookSessionUtilMod;
-    protected var _connected :Boolean = false;
-    protected var _friendsLoaded :Boolean = false;
     protected var _waitingForLogin :Boolean = false;
-    protected var _params :FacebookParams;
 
     protected static var _autoLoadFriends :Boolean = false;
     protected static var _ctrl :AVRGameControl;
     protected static var _facebookConnection :FacebookConnection;
 
-    protected static const UUID_CHARACTER_SPACE :String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-    protected static const REFRESH_SESSION_INTERVAL_MS :Number = 2000;
+    protected static const log :Log = Log.getLog(FacebookConnection);
     protected static const REATTEMPT_LOGIN_INTERVAL_MS :Number = 10000;
 
-    protected static const log :Log = Log.getLog(FacebookConnection);
+    protected static const REFRESH_SESSION_INTERVAL_MS :Number = 2000;
+
+    protected static const UUID_CHARACTER_SPACE :String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    public static function get friendIds () :Array
+    {
+        return FriendsModel.friendsIDArray;
+    }
+
+    public static function get friends () :Array
+    {
+        return friendIds.map(Util.adapt(getFriend));
+    }
+
+    public static function get instance () :FacebookConnection
+    {
+        if (_facebookConnection == null) {
+            _facebookConnection = new FacebookConnection();
+        }
+        return _facebookConnection;
+    }
+
+    public static function get loggedInUserID () :String
+    {
+        return instance.facebook.uid;
+    }
 }
 }

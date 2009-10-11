@@ -13,6 +13,8 @@ import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.utils.getTimer;
+import com.whirled.contrib.simplegame.SimObject;
+import com.whirled.contrib.simplegame.SimObjectRef;
 
 /**
  * Used for SceneObjects that themselves have sub-components.
