@@ -4,7 +4,7 @@ import com.threerings.ui.bounds.Bounds;
 import com.threerings.ui.bounds.BoundsLine;
 import com.threerings.ui.bounds.BoundsPoint;
 import com.threerings.ui.bounds.BoundsPolygon;
-import com.threerings.com.threerings.util.ArrayUtil;
+import com.threerings.util.ArrayUtil;
 
 import flash.geom.Rectangle;
 

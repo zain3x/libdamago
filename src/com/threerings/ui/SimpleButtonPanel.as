@@ -4,7 +4,7 @@ import aduros.util.F;
 
 import com.threerings.util.EventHandlerManager;
 import com.threerings.util.SpriteUtil;
-import libdamago.util.DebugUtil;
+import com.threerings.util.DebugUtil;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;

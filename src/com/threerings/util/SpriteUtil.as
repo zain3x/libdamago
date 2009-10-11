@@ -3,7 +3,7 @@
 
 package com.threerings.util {
 import flash.display.Sprite;
-import libdamago.util.DebugUtil;
+import com.threerings.util.DebugUtil;
 public class SpriteUtil
 {
 

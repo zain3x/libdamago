@@ -1,7 +1,7 @@
 package libdamago.geometry
 {
 import com.threerings.geom.Vector2;
-import com.threerings.com.threerings.util.ArrayUtil;
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;

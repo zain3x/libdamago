@@ -4,7 +4,7 @@
 package com.threerings.ui.snapping
 {
 import com.threerings.ui.bounds.BoundsRectangle;
-import com.threerings.com.threerings.util.ArrayUtil;
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 
 import flash.display.DisplayObject;
