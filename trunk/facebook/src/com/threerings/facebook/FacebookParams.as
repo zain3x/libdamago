@@ -1,4 +1,4 @@
-package com.whirled.contrib.facebook.connection
+package com.threerings.facebook
 {
 import com.threerings.util.StringUtil;
 

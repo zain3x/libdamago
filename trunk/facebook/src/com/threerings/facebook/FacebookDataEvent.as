@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.whirled.contrib.facebook.connection
+package com.threerings.facebook
 {
 
 import flash.events.Event;

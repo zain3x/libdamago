@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.whirled.contrib.facebook.connection {
+package com.threerings.facebook {
 import com.facebook.Facebook;
 import com.facebook.commands.friends.GetFriends;
 import com.facebook.commands.users.GetInfo;

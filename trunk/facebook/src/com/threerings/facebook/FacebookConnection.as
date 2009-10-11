@@ -1,7 +1,7 @@
 //
 // $Id: FacebookConnection.as 4688 2009-08-20 21:51:30Z nathan $
 
-package com.whirled.contrib.facebook.connection {
+package com.threerings.facebook {
 import com.facebook.net.FacebookCall;
 import com.facebook.events.FacebookEvent;
 import aduros.util.F;
