@@ -5,8 +5,6 @@ package com.threerings.flashbang.objects {
 
 import com.threerings.ui.DisplayUtils;
 import com.threerings.util.ArrayUtil;
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.components.SceneComponent;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
