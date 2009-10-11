@@ -135,6 +135,11 @@ public class BoundsPolygon extends Bounds
         return new BoundsPolygon(p);
     }
 
+    override public function get center () :Vector2
+    {
+        return _polygon.center;
+    }
+
     protected var _polygon :Polygon;
     protected static const log :Log = Log.getLog(BoundsPolygon);
 }

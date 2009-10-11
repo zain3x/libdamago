@@ -84,6 +84,11 @@ public class BoundsPoint extends Bounds
         return _point;
     }
 
+    override public function get center () :Vector2
+    {
+        return _point;
+    }
+
     protected var _point :Vector2;
     protected static const log :Log = Log.getLog(BoundsPoint);
 }
