@@ -2,6 +2,7 @@ package com.whirled.contrib
 {
 import flash.events.EventDispatcher;
 import flash.events.IEventDispatcher;
+import com.threerings.util.EventHandlerManager;
 
 public class EventHandlerBase extends EventDispatcher
 {

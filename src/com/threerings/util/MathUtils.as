@@ -25,6 +25,7 @@
 
 package com.threerings.util {
 import flash.geom.Point;
+import com.threerings.geom.Vector2;
 
 /**
  * I don't really use these functions directly...they are just a reference.
@@ -42,7 +43,7 @@ public class MathUtils
     public static const RAD_TO_DEG :Number = (180 / Math.PI); //57.29577951;
 
     //Returns the angle between two points
-    public static function calcAngle (p1 :Vector2D, p2 :Vector2D) :Number
+    public static function calcAngle (p1 :Vector2, p2 :Vector2) :Number
     {
         var angle :Number = Math.atan((p2.y - p1.y) / (p2.x - p1.x)) * RAD_TO_DEG;
 
