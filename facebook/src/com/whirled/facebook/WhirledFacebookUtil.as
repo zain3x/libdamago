@@ -1,4 +1,4 @@
-package com.whirled.contrib.facebook
+package com.whirled.facebook
 {
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
