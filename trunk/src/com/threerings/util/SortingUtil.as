@@ -1,6 +1,6 @@
-package libdamago.util
+package com.threerings.util
 {
-import com.threerings.com.threerings.util.ArrayUtil;
+import com.threerings.util.ArrayUtil;
 
 public class SortingUtil
 {

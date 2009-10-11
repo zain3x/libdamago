@@ -5,7 +5,7 @@ package com.threerings.flashbang.debug {
 
 import com.threerings.ui.TextBits;
 import com.whirled.contrib.Framerate;
-import libdamago.util.DebugUtil;
+import com.threerings.util.DebugUtil;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 
 import flash.display.DisplayObject;

@@ -1,7 +1,7 @@
 //
 // $Id: DebugUtil.as 4934 2009-09-04 17:47:44Z tim $
 
-package libdamago.util {
+package com.threerings.util {
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;

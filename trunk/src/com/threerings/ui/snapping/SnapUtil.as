@@ -1,13 +1,13 @@
 package com.threerings.ui.snapping {
 import com.threerings.geom.Vector2;
 import com.threerings.ui.bounds.Bounds;
-import com.threerings.com.threerings.util.ArrayUtil;
+import com.threerings.util.ArrayUtil;
 
 import flash.display.DisplayObject;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import libdamago.util.SortingUtil;
+import com.threerings.util.SortingUtil;
 
 public class SnapUtil
 {

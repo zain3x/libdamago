@@ -3,7 +3,7 @@
 
 package com.whirled.contrib.avrg.debug.fakeavrg{
 
-import com.threerings.com.threerings.util.ArrayUtil;
+import com.threerings.util.ArrayUtil;
 import com.whirled.AbstractControl;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.RoomSubControlClient;

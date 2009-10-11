@@ -4,7 +4,7 @@
 package com.threerings.flashbang.objects {
 
 import com.threerings.ui.DisplayUtils;
-import com.threerings.com.threerings.util.ArrayUtil;
+import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.components.SceneComponent;
 

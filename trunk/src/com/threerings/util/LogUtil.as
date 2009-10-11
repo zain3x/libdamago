@@ -1,5 +1,5 @@
 package com.threerings.util {
-import libdamago.util.ReflectionUtil;
+import com.threerings.util.ReflectionUtil;
 
 public class LogUtil
 {
