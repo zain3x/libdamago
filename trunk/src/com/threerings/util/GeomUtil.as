@@ -1,4 +1,4 @@
-package util
+package com.threerings.util
 {
 import com.threerings.geom.Vector2;
 

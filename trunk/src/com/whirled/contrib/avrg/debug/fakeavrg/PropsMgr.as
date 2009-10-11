@@ -3,7 +3,7 @@
 
 package com.whirled.contrib.avrg.debug.fakeavrg{
 
-import com.threerings.util.ArrayUtil;
+import com.threerings.com.threerings.util.ArrayUtil;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.whirled.AbstractControl;
@@ -61,7 +61,7 @@ public class PropsMgr
 
 }
 
-import com.threerings.util.ArrayUtil;
+import com.threerings.com.threerings.util.ArrayUtil;
 import com.threerings.util.MethodQueue;
 import com.whirled.net.PropertySubControl;
 import com.threerings.util.Integer;

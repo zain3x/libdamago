@@ -1,4 +1,4 @@
-package com.whirled.contrib.simplegame.debug
+package com.threerings.flashbang.debug
 {
 import aduros.util.F;
 

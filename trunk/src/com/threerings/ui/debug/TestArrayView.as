@@ -4,7 +4,7 @@ import com.threerings.display.DisplayUtil;
 import com.threerings.text.TextFieldUtil;
 import com.threerings.ui.OrientationType;
 import com.threerings.ui.SimpleScrollableArrayView;
-import com.whirled.contrib.debug.DebugUtil;
+import libdamago.util.DebugUtil;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;

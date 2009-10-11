@@ -1,4 +1,4 @@
-package com.whirled.contrib.simplegame
+package com.threerings.flashbang
 {
 import flash.display.Sprite;
 

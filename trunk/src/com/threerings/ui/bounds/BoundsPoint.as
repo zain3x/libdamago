@@ -4,7 +4,7 @@ import com.threerings.geom.Vector2;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MathUtil;
-import com.whirled.contrib.debug.DebugUtil;
+import libdamago.util.DebugUtil;
 
 import flash.display.Sprite;
 import flash.geom.Point;

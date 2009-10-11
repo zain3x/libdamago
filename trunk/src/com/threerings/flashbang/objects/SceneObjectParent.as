@@ -1,10 +1,10 @@
 //
 // $Id: SceneObjectParent.as 2535 2009-06-12 15:48:44Z dion $
 
-package com.whirled.contrib.simplegame.objects{
+package com.threerings.flashbang.objects {
 
 import com.threerings.ui.DisplayUtils;
-import com.threerings.util.ArrayUtil;
+import com.threerings.com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.components.SceneComponent;
 

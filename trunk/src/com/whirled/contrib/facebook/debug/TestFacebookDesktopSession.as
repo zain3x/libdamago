@@ -6,7 +6,7 @@ import com.facebook.data.users.FacebookUser;
 import com.threerings.display.DisplayUtil;
 import com.threerings.ui.OrientationType;
 import com.threerings.ui.SimpleScrollableArrayView;
-import com.threerings.util.ArrayUtil;
+import com.threerings.com.threerings.util.ArrayUtil;
 import com.whirled.contrib.cache.BasicURLImageCache;
 import com.whirled.contrib.facebook.connection.FacebookConnection;
 
