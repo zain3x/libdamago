@@ -2,6 +2,9 @@
 <!-- declares the libraries needed to build ooolib -->
 <project name="library-dependencies">
   <fileset dir="${libs.dir}" id="libdamago.libs">
-    <include name="*.swc"/>
+    <include name="ooolib.swc"/>
+    <include name="flashbang.swc"/>
+    <include name="**/libaduros.swc"/>
+    <include name="whirledlib.swc"/>
   </fileset>
 </project>
