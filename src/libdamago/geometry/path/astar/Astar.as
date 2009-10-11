@@ -1,4 +1,4 @@
-package libdamago.geometry.path.astar
+package com.threerings.geometry.path.astar
 {
     import com.threerings.util.MathUtil;
 

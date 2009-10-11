@@ -1,5 +1,5 @@
 
-package libdamago.geometry
+package com.threerings.geometry
 {
     import com.threerings.geom.Vector2;
 

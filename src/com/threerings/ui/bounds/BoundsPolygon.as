@@ -10,8 +10,8 @@ import flash.display.Sprite;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import libdamago.geometry.LineSegment;
-import libdamago.geometry.Polygon;
+import com.threerings.geometry.LineSegment;
+import com.threerings.geometry.Polygon;
 public class BoundsPolygon extends Bounds
 {
     public function BoundsPolygon (polygon :Polygon)

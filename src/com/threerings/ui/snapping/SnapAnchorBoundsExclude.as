@@ -8,9 +8,9 @@ import com.threerings.util.ArrayUtil;
 
 import flash.geom.Rectangle;
 
-import libdamago.geometry.LineSegment;
-import libdamago.geometry.Polygon;
-import libdamago.geometry.VectorUtil;
+import com.threerings.geometry.LineSegment;
+import com.threerings.geometry.Polygon;
+import com.threerings.geometry.VectorUtil;
 
 public class SnapAnchorBoundsExclude extends SnapAnchorBounded
 {

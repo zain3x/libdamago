@@ -1,4 +1,4 @@
-package libdamago.geometry.path.astar
+package com.threerings.geometry.path.astar
 {
     /**
      * This class is used to sort the paths in the queue by priority.

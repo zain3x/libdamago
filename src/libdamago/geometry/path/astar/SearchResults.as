@@ -1,4 +1,4 @@
-package libdamago.geometry.path.astar
+package com.threerings.geometry.path.astar
 {
     /**
      * This class is used to represent the results of an A* search. If the search was successful, then getIsSuccess() returns true and getPath() returns the most optimal path.

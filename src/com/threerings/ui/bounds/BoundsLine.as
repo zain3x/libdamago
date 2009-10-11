@@ -7,7 +7,7 @@ import flash.display.Sprite;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import libdamago.geometry.LineSegment;
+import com.threerings.geometry.LineSegment;
 public class BoundsLine extends Bounds
 {
     public function BoundsLine (x1 :Number, y1 :Number, x2 :Number, y2 :Number)

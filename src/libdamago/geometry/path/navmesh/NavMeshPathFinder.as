@@ -1,4 +1,4 @@
-package libdamago.geometry.path.navmesh
+package com.threerings.geometry.path.navmesh
 {
     import com.threerings.geom.Vector2;
     import com.threerings.util.Util;
@@ -7,9 +7,9 @@ package libdamago.geometry.path.navmesh
     import flash.events.EventDispatcher;
     import flash.geom.Point;
 
-    import libdamago.geometry.path.PathToFollow;
-    import libdamago.geometry.path.astar.Astar;
-    import libdamago.geometry.path.astar.SearchResults;
+    import com.threerings.geometry.path.PathToFollow;
+    import com.threerings.geometry.path.astar.Astar;
+    import com.threerings.geometry.path.astar.SearchResults;
 
     /**
     * Adapter for the NavMesh pathfinding system.

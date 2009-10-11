@@ -1,4 +1,4 @@
-package libdamago.geometry.path.astar
+package com.threerings.geometry.path.astar
 {
     /**
      * A tile that will work with the A* search needs to implment INode. It can extend this class for convenience, which already implements INode.

@@ -1,4 +1,4 @@
-package libdamago.geometry.path.navmesh
+package com.threerings.geometry.path.navmesh
 {
     import com.threerings.geom.Vector2;
     import com.threerings.util.ArrayUtil;
@@ -8,13 +8,13 @@ package libdamago.geometry.path.navmesh
 
     import flash.geom.Rectangle;
 
-    import libdamago.geometry.LineSegment;
-    import libdamago.geometry.Polygon;
-    import libdamago.geometry.VectorUtil;
-    import libdamago.geometry.path.astar.INode;
-    import libdamago.geometry.path.astar.ISearchable;
+    import com.threerings.geometry.LineSegment;
+    import com.threerings.geometry.Polygon;
+    import com.threerings.geometry.VectorUtil;
+    import com.threerings.geometry.path.astar.INode;
+    import com.threerings.geometry.path.astar.ISearchable;
 
-    import com.threerings.com.threerings.com.threerings.util.GameUtil;
+    import com.threerings.util.GameUtil;
 
     public class NavMesh implements ISearchable
     {

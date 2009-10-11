@@ -1,4 +1,4 @@
-package libdamago.geometry.path.navmesh
+package com.threerings.geometry.path.navmesh
 {
 import aduros.util.F;
 
@@ -6,9 +6,9 @@ import com.threerings.geom.Vector2;
 import com.threerings.util.Hashable;
 import com.threerings.util.Util;
 
-import libdamago.geometry.LineSegment;
-import libdamago.geometry.Polygon;
-import libdamago.geometry.VectorUtil;
+import com.threerings.geometry.LineSegment;
+import com.threerings.geometry.Polygon;
+import com.threerings.geometry.VectorUtil;
 
 public class NavMeshPolygon extends Polygon
     implements Hashable

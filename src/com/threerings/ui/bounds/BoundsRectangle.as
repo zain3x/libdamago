@@ -6,7 +6,7 @@ import com.threerings.util.MathUtil;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import libdamago.geometry.Polygon;
+import com.threerings.geometry.Polygon;
 
 public class BoundsRectangle extends BoundsPolygon
 {

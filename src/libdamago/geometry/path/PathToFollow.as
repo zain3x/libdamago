@@ -1,11 +1,11 @@
-package libdamago.geometry.path
+package com.threerings.geometry.path
 {
     import com.threerings.util.MathUtil;
     import com.threerings.geom.Vector2;
 
-    import libdamago.geometry.Geometry;
-    import libdamago.geometry.LineSegment;
-    import libdamago.geometry.VectorUtil;
+    import com.threerings.geometry.Geometry;
+    import com.threerings.geometry.LineSegment;
+    import com.threerings.geometry.VectorUtil;
 
     /**
     * After a path is computed, save it, and use it later for following.

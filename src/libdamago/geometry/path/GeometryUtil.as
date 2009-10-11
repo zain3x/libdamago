@@ -1,11 +1,11 @@
-package libdamago.geometry.path
+package com.threerings.geometry.path
 {
 import com.threerings.geom.Vector2;
 import com.threerings.util.MathUtil;
 
 import flash.geom.Rectangle;
 
-import libdamago.geometry.Geometry;
+import com.threerings.geometry.Geometry;
 
 public class GeometryUtil
 {

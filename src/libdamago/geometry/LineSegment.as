@@ -1,4 +1,4 @@
-package libdamago.geometry
+package com.threerings.geometry
 {
 import com.threerings.geom.Vector2;
 public class LineSegment
