@@ -16,6 +16,8 @@ public class Tests extends Sprite
 //        SimpleButtonPanel
 //        new Bou
         addChild(new Tester());
+        FramerateView
+        ObjectDB
     }
 }
 }

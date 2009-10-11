@@ -6,7 +6,7 @@
   <property name="deploy.dir"   value="dist"/>
   <property name="libs.dir"     value="lib"/>
   
-  <property name="include.src"     value="lib"/>
+  <!--<property name="include.src"     value="lib"/>-->
 
   <!-- our dependencies are in a separate file so that we can integrate into OOO builds -->
   <import file="etc/libs-incl.xml"/>
@@ -45,6 +45,9 @@
       <arg value="-compiler.optimize"/>
       <arg value="-compiler.source-path=src/"/>
       <arg value="-include-sources=src/"/>
+      <!--<arg value="-include-sources=lib/flashbang/src/"/>-->
+      <arg value="-include-sources=lib/facebook/source/actionscript/"/>
+      <arg value="-compiler.library-path=lib/"/>
       <arg value="-output"/>
       <arg value="${deploy.dir}/${lib.name}.swc"/>
     </java>

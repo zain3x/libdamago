@@ -110,8 +110,9 @@ public class ScrollableArrayView extends ArrayView
         super.remove(d);
     }
 
-    public function shutdown () :void
+    override public function shutdown () :void
     {
+        super.shutdown();
         _events.freeAllHandlers();
         _elements = null;
     }

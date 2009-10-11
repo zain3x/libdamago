@@ -7,7 +7,7 @@ import com.threerings.display.DisplayUtil;
 import com.threerings.ui.SimpleTextButton;
 import com.threerings.util.Log;
 import com.threerings.util.StringUtil;
-import com.whirled.contrib.simplegame.objects.DraggableObject;
+import com.threerings.flashbang.objects.DraggableObject;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;

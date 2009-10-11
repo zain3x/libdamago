@@ -1,8 +1,8 @@
 package com.threerings.ui.bounds
 {
 import com.threerings.util.MathUtil;
-import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
-import com.whirled.contrib.simplegame.tasks.LocationTask;
+import com.threerings.flashbang.objects.SimpleSceneObject;
+import com.threerings.flashbang.tasks.LocationTask;
 
 import flash.display.DisplayObject;
 import flash.geom.Point;
