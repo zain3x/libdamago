@@ -48,7 +48,9 @@ public class BoundsLine extends Bounds
         if (b is BoundsPoint) {
             return distanceToPoint(BoundsPoint(b).point);
         } else if (b is BoundsPolygon) {
-            return BoundsPolygon(b).polygon.distanceToLine(new LineSegment(_p1, _p2));
+//            trace("dist to BoundsPolygon=", BoundsPolygon(b).polygon.distanceToLine(new LineSegment(_p1, _p2)));
+//            return BoundsPolygon(b).polygon.distanceToLine(new LineSegment(_p1, _p2));
+            return _lineSegment.dist(BoundsPolygon(b).polygon.center);
         } else if (b is BoundsLine) {
             return BoundsLine(b)._lineSegment.distanceToLine(_lineSegment);
         }
@@ -76,6 +78,11 @@ public class BoundsLine extends Bounds
     public function get lineSegment () :LineSegment
     {
         return _lineSegment;
+    }
+
+    override public function get center () :Vector2
+    {
+        return Vector2.interpolate(_p1, _p2, 0.5);
     }
 
     protected var _p1 :Vector2;

@@ -4,10 +4,9 @@ import com.threerings.geom.Vector2;
 import com.threerings.util.ClassUtil;
 
 import flash.display.DisplayObject;
-import flash.display.Graphics;
+import flash.display.Sprite;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-import flash.display.Sprite;
 public class Bounds
 {
 
@@ -87,6 +86,11 @@ public class Bounds
     }
 
     public function translate (x :Number, y :Number) :Bounds
+    {
+        throw new Error("Abstract method");
+    }
+
+    public function get center () :Vector2
     {
         throw new Error("Abstract method");
     }

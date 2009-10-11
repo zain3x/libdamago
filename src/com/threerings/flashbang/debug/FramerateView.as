@@ -1,7 +1,7 @@
 //
 // $Id: FramerateView.as 4934 2009-09-04 17:47:44Z tim $
 
-package com.whirled.contrib.simplegame.debug{
+package com.whirled.contrib.simplegame.debug {
 
 import com.threerings.ui.TextBits;
 import com.whirled.contrib.Framerate;
