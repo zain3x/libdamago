@@ -1,4 +1,4 @@
-package libdamago.geometry.path.astar
+package com.threerings.geometry.path.astar
 {
     /**
      * This interface must be implemented by anything that wants to be searchable by the Astar class.

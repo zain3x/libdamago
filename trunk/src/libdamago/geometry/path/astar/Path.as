@@ -1,4 +1,4 @@
-package libdamago.geometry.path.astar
+package com.threerings.geometry.path.astar
 {
     /**
      * This class represents a path of INodes. If a successful search is performed then SearchResults.getPath() returns the most optimal path.

@@ -5,8 +5,8 @@ import com.threerings.ui.bounds.Bounds;
 
 import flash.geom.Point;
 
-import libdamago.geometry.LineSegment;
-import libdamago.geometry.Polygon;
+import com.threerings.geometry.LineSegment;
+import com.threerings.geometry.Polygon;
 
 /**
  * This class also notifies the

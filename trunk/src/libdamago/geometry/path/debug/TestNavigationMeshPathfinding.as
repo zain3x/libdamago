@@ -1,4 +1,4 @@
-package libdamago.geometry.path.debug
+package com.threerings.geometry.path.debug
 {
 import com.threerings.display.GraphicsUtil;
 import com.threerings.flashbang.AppMode;
@@ -15,14 +15,14 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.text.TextField;
 
-import libdamago.geometry.path.PathToFollow;
-import libdamago.geometry.path.navmesh.NavMesh;
-import libdamago.geometry.path.navmesh.NavMeshNode;
-import libdamago.geometry.path.navmesh.NavMeshPathFinder;
-import libdamago.geometry.path.navmesh.NavMeshPolygon;
+import com.threerings.geometry.path.PathToFollow;
+import com.threerings.geometry.path.navmesh.NavMesh;
+import com.threerings.geometry.path.navmesh.NavMeshNode;
+import com.threerings.geometry.path.navmesh.NavMeshPathFinder;
+import com.threerings.geometry.path.navmesh.NavMeshPolygon;
 
-import com.threerings.com.threerings.com.threerings.util.GameUtil;
-import com.threerings.com.threerings.util.GraphicsUtils;
+import com.threerings.util.GameUtil;
+import com.threerings.util.GraphicsUtils;
 
 public class TestNavigationMeshPathfinding extends AppMode
 {

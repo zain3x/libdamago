@@ -6,7 +6,7 @@ import com.threerings.util.MathUtil;
 import flash.display.Graphics;
 import flash.geom.Point;
 
-import libdamago.geometry.Polygon;
+import com.threerings.geometry.Polygon;
 
 /**
  * The trapezoid must be wider at the base than at the top.

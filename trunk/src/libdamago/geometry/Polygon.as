@@ -1,4 +1,4 @@
-package libdamago.geometry
+package com.threerings.geometry
 {
 import aduros.util.F;
 

@@ -1,4 +1,4 @@
-package libdamago.geometry.path.debug
+package com.threerings.geometry.path.debug
 {
 import com.threerings.flashbang.Config;
 import com.threerings.flashbang.FlashbangApp;

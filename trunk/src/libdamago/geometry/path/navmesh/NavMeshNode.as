@@ -1,10 +1,10 @@
-package libdamago.geometry.path.navmesh
+package com.threerings.geometry.path.navmesh
 {
 import com.threerings.geom.Vector2;
 import com.threerings.util.Hashable;
 
-import libdamago.geometry.VectorUtil;
-import libdamago.geometry.path.astar.INode;
+import com.threerings.geometry.VectorUtil;
+import com.threerings.geometry.path.astar.INode;
 
 public class NavMeshNode extends Vector2
     implements INode
