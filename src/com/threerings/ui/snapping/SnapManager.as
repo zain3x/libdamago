@@ -39,7 +39,6 @@ public class SnapManager extends EventDispatcher
     {
         _parent = parent;
         _debugLayer.mouseEnabled = false;
-        _debugLayer.mouseChildren = false;
     }
 
     public function addAnchor (anchor :ISnapAnchor) :void
@@ -65,7 +64,6 @@ public class SnapManager extends EventDispatcher
 
     public function endSnapping (snapper :ISnappingObject = null) :void
     {
-//        _events.freeAllHandlers();
         _parent.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
         _target = null;
         _debugLayer.graphics.clear();
