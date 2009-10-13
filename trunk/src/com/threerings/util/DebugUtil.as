@@ -2,15 +2,16 @@
 // $Id: DebugUtil.as 4934 2009-09-04 17:47:44Z tim $
 
 package com.threerings.util {
+import aduros.util.F;
+
+import com.threerings.ui.SimpleTextButton;
+
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 import flash.display.Sprite;
+import flash.events.MouseEvent;
 import flash.geom.Rectangle;
-import com.threerings.util.ClassUtil;
-import com.threerings.util.Map;
-import com.threerings.util.Util;
-import aduros.util.F;
 
 public class DebugUtil
 {
@@ -139,6 +140,17 @@ public class DebugUtil
             current = current.parent;
         }
         trace("Lineage: " + lineage.join(" "));
+    }
+
+    public static function createButton (text :String, callback :Function,
+        parent :DisplayObjectContainer, x :int = 0, y :int = 0) :SimpleTextButton
+    {
+        var b :SimpleTextButton = new SimpleTextButton(text);
+        b.x = x;
+        b.y = y;
+        b.addEventListener(MouseEvent.CLICK, F.callback(callback));
+        parent.addChild(b);
+        return b;
     }
 }
 }
