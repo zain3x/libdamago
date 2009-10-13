@@ -2,6 +2,14 @@
 // $Id: DraggableSceneObject.as 3822 2009-07-21 22:36:14Z nathan $
 
 package com.whirled.contrib.avrg {
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.util.Log;
+import com.threerings.util.MathUtil;
+import com.whirled.avrg.AVRGameControl;
+import com.whirled.avrg.AVRGameControlEvent;
+import com.whirled.avrg.AVRGamePlayerEvent;
+import com.whirled.net.NetConstants;
+
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.events.Event;
@@ -9,15 +17,8 @@ import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.utils.Dictionary;
-import com.whirled.avrg.AVRGameControl;
-import com.whirled.avrg.AVRGameControlEvent;
-import com.whirled.avrg.AVRGamePlayerEvent;
-import com.threerings.flashbang.objects.SceneObject;
-import com.whirled.net.NetConstants;
-import com.threerings.util.Log;
-import com.threerings.util.MathUtil;
 /**
- * This class is intended for HUD elements for AVRGs that also use Tim's simplegame framework.
+ * This class is intended for HUD elements for AVRGs that also use Tim's flashbang framework.
  * The DraggableSceneObject can be dragged around the screen but it won't go outside the paintable
  * area, and if the screen is resized, it will make sure it's visible.
  *
