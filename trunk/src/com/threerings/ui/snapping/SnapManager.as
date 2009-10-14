@@ -33,7 +33,7 @@ import flash.geom.Point;
 public class SnapManager extends EventDispatcher
 {
 
-    public static const DEBUG_DRAW :Boolean = true;
+    public static const DEBUG_DRAW :Boolean = false;
 
     public function SnapManager (parent :Sprite)
     {
@@ -155,8 +155,8 @@ public class SnapManager extends EventDispatcher
                     translate.y).boundingRect()).debugDraw(_debugLayer);
 
             }
-            BoundsRectangle.fromRectangle(_target.globalBounds.translate(translate.x,
-                translate.y).boundingRect()).debugDraw(_debugLayer);
+//            BoundsRectangle.fromRectangle(_target.globalBounds.translate(translate.x,
+//                translate.y).boundingRect()).debugDraw(_debugLayer);
             _target.globalBounds.translate(translate.x, translate.y).debugDraw(_debugLayer);
         }
     }
