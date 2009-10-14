@@ -2,6 +2,8 @@ package com.threerings.ui.snapping {
 import com.threerings.ui.bounds.Bounds;
 import com.threerings.ui.bounds.BoundsPolygon;
 
+import flash.geom.Rectangle;
+
 
 /**
  * "Snaps" even when the object is contained, and not moved.
@@ -25,10 +27,33 @@ public class SnapAnchorContainer extends SnapAnchorBounded
 
     override public function snapObject (snappable :ISnappingObject) :void
     {
-        if (BoundsPolygon(_boundsGlobal).containsBounds(snappable.globalBounds)) {
-            return;
+        var snappableGlobalBounds :Rectangle = snappable.globalBounds.boundingRect();
+        //For now assume that the containter is a rect
+        var containerBounds :Rectangle = _boundsGlobal.boundingRect();
+
+        if (snappableGlobalBounds.top < containerBounds.top) {
+            snappable.displayObject.y += containerBounds.top - snappableGlobalBounds.top;
         }
-        super.snapObject(snappable);
+        if (snappableGlobalBounds.bottom > containerBounds.bottom) {
+            snappable.displayObject.y -= snappableGlobalBounds.bottom - containerBounds.bottom;
+        }
+        if (snappableGlobalBounds.left < containerBounds.left) {
+            snappable.displayObject.x += containerBounds.left - snappableGlobalBounds.left;
+        }
+        if (snappableGlobalBounds.right > containerBounds.right) {
+            snappable.displayObject.x -= snappableGlobalBounds.right - containerBounds.right;
+        }
+
+
+
+
+
+//        if (BoundsPolygon(_boundsGlobal).containsBounds(snappable.globalBounds)) {
+//            return;
+//        }
+//
+//
+//        super.snapObject(snappable);
     }
 
 }
