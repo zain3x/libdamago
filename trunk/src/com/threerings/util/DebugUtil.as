@@ -12,6 +12,7 @@ import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Rectangle;
+import flash.utils.Dictionary;
 
 public class DebugUtil
 {
@@ -93,8 +94,25 @@ public class DebugUtil
     public static function mapToString (h :Map) :String
     {
         var sb :String = "";
-        for each (var key :String in h.keys()) {
+
+        if (h == null) {
+            return sb;
+        }
+        for each (var key :Object in h.keys()) {
             sb += "\n" + key + "=" + h.get(key);
+        }
+        return sb;
+    }
+
+    public static function dictToString (h :Dictionary) :String
+    {
+        var sb :String = "";
+
+        if (h == null) {
+            return sb;
+        }
+        for each (var key :Object in h) {
+            sb += "\n" + key + "=" + h[key];
         }
         return sb;
     }

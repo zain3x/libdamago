@@ -13,7 +13,7 @@ public /*abstract*/ class SnapAnchor
     {
         _idx = idx;
 //        _snapType = type;
-        _maxSnapDistance = 20;
+        _maxSnapDistance = maxSnapDistance;
     }
 
     public function get index () :int
@@ -70,6 +70,11 @@ public /*abstract*/ class SnapAnchor
     public function get bounds () :Bounds
     {
         throw new Error("Abstract method");
+    }
+
+    public function get snapDistance () :Number
+    {
+        return _maxSnapDistance;
     }
 
     protected var _idx :int;

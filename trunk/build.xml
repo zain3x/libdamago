@@ -46,7 +46,8 @@
       <arg value="-compiler.source-path=src/"/>
       <arg value="-include-sources=src/"/>
       <!--<arg value="-include-sources=lib/flashbang/src/"/>-->
-      <arg value="-include-sources=lib/facebook/source/actionscript/"/>
+      <!--<arg value="-include-sources=lib/facebook/source/actionscript/"/>-->
+      <!--<arg value="-include-sources=lib/whirled-contrib/src/as/"/>-->
       <arg value="-compiler.library-path=lib/"/>
       <arg value="-output"/>
       <arg value="${deploy.dir}/${lib.name}.swc"/>
