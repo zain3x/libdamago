@@ -20,6 +20,7 @@ public interface ISnapAnchor
     function get index () :int;
 
     function get bounds () :Bounds;
+    function get snapDistance () :Number;
 
 
 }

@@ -8,9 +8,9 @@ import flash.geom.Point;
 
 public class SnapAnchorPoint extends SnapAnchorBounded
 {
-    public function SnapAnchorPoint (p :Point, index :int = -1)
+    public function SnapAnchorPoint (p :Point, index :int = -1, maxSnapDistance :Number = 20)
     {
-        super(new BoundsPoint(p.x, p.y), index);
+        super(new BoundsPoint(p.x, p.y), index, maxSnapDistance);
     }
 }
 }

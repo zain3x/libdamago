@@ -33,11 +33,12 @@ import flash.geom.Point;
 public class SnapManager extends EventDispatcher
 {
 
-    public static const DEBUG_DRAW :Boolean = false;
+    public static var DEBUG_DRAW :Boolean = false;
 
-    public function SnapManager (parent :Sprite)
+    public function SnapManager (parent :Sprite, debugDraw :Boolean = false)
     {
         _parent = parent;
+        DEBUG_DRAW = debugDraw;
         _debugLayer.mouseEnabled = false;
     }
 
@@ -129,6 +130,7 @@ public class SnapManager extends EventDispatcher
 
         //Snap to all anchors close enough
         for each (anc in _snapAnchors) {
+
             if (anc.isWithinSnappingDistance(_target)) {
                 anc.snapObject(_target);
                 //Dispatch event whether we snap or not to indicate snapping/no snapping
