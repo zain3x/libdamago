@@ -8,7 +8,7 @@ import com.threerings.util.StringBuilder;
 
 import flash.utils.*;
 
-public class Util
+public class MiscUtil
 {
     public static function getTimestamp () :Number
     {
