@@ -377,6 +377,7 @@ import com.threerings.util.ArrayUtil;
 
 import flash.events.TimerEvent;
 import flash.utils.Timer;
+import com.facebook.data.users.FacebookUser;
 
 /**
  * A class for managing a group of timers.
@@ -538,6 +539,34 @@ class TimerManager
         managedTimer.mgr = null;
     }
 
+    public function get localUser () :FacebookUser
+    {
+        return _localUser;
+    }
+
+    public function loadLocalUser (onSuccess :Function = null, onFailure :Function = null) :void
+    {
+        // localUserId is not set until FacebookMgr is connected, so delay this call until
+        // that's the case
+        var self :FacebookConnection = this;
+        whenConnected(function () :void {
+            var caller :FacebookCaller = new FacebookCaller(self,
+                new GetInfo([ self.localUserId ], LOCAL_USER_INFO_FIELDS));
+
+            caller.load(
+                function () :void {
+                    var data :GetInfoData = GetInfoData(caller.data);
+                    _localUser = FacebookUser(data.userCollection.getItemAt(0));
+                    dispatchEvent(new FacebookDataEvent(FacebookDataEvent.LOCAL_USER_DATA_ARRIVED));
+                    if (onSuccess != null) {
+                        onSuccess();
+                    }
+                },
+                onFailure);
+        });
+    }
+
+    protected var _localUser :FacebookUser;
     protected var _timers :Array = [];
     protected var _freeSlots :Array = [];
 
