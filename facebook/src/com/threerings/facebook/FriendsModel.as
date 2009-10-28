@@ -61,7 +61,7 @@ public class FriendsModel extends EventDispatcher
             return _friendsHash[uid];
         } else {
             //Add any new Friend id's to a que, and load them all in half a second or so.
-            DelayUtil.delay(DelayUtil.FRAMES, 15, requestFriendsList);
+            DelayUtil.delayFrames(15, requestFriendsList);
 
             var fbUser :FacebookUser = new FacebookUser();
             fbUser.uid = uid;
