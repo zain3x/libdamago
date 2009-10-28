@@ -2,16 +2,19 @@
 // $Id: FacebookConnection.as 4688 2009-08-20 21:51:30Z nathan $
 
 package com.threerings.facebook {
-import com.facebook.net.FacebookCall;
-import com.facebook.events.FacebookEvent;
 import aduros.util.F;
-import com.facebook.commands.stream.PublishPost;
-import com.whirled.contrib.TimerManager;
-import com.whirled.contrib.ManagedTimer;
-import com.facebook.commands.notifications.SendNotification;
-import com.whirled.contrib.EventHandlerBase;
-import com.facebook.data.users.FacebookUser;
+
 import com.facebook.Facebook;
+import com.facebook.commands.notifications.SendNotification;
+import com.facebook.commands.stream.PublishPost;
+import com.facebook.data.users.FacebookUser;
+import com.facebook.events.FacebookEvent;
+import com.facebook.net.FacebookCall;
+import com.facebook.session.DesktopSession;
+import com.threerings.util.DelayUtil;
+import com.threerings.util.Log;
+import com.threerings.util.Util;
+import com.whirled.contrib.EventHandlerBase;
 
 
 
@@ -252,7 +255,7 @@ public class FacebookConnection extends EventHandlerBase
             dispatchEvent(new FacebookDataEvent(FacebookDataEvent.FACEBOOK_CONNECTED));
 
         } else {
-            DelayUtil.delay(DelayUtil.SECONDS, 5, function () :void {
+            DelayUtil.delayFrames(5*30, function () :void {
                     log.warning("FacebookSession.validateLogin()");
                     _facebook.refreshSession();
                 });
@@ -274,7 +277,7 @@ public class FacebookConnection extends EventHandlerBase
     protected var _waitingForLogin :Boolean = false;
 
     protected static var _autoLoadFriends :Boolean = false;
-    protected static var _ctrl :AVRGameControl;
+//    protected static var _ctrl :AVRGameControl;
     protected static var _facebookConnection :FacebookConnection;
 
     protected static const log :Log = Log.getLog(FacebookConnection);
@@ -310,7 +313,6 @@ public class FacebookConnection extends EventHandlerBase
 }
 
 import flash.utils.Timer;
-import com.whirled.contrib.TimerManager;
 
 class ManagedTimerImpl
 {
@@ -511,7 +513,7 @@ class TimerManager
     {
         var managedTimer :ManagedTimerImpl = ManagedTimerImpl(timer);
         var slot :int = managedTimer.slot;
-        stopTimer(ManagedTimerImpl);
+        stopTimer(managedTimer);
         _timers[slot] = null;
         _freeSlots.push(slot);
     }
