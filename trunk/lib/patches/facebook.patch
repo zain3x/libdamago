@@ -1,0 +1,13 @@
+Index: ../facebook/source/actionscript/com/facebook/delegates/WebDelegate.as
+===================================================================
+--- ../facebook/source/actionscript/com/facebook/delegates/WebDelegate.as	(revision 318)
++++ ../facebook/source/actionscript/com/facebook/delegates/WebDelegate.as	(working copy)
+@@ -134,7 +134,7 @@
+ 		 * Helper function for sending the call straight to the server
+ 		 */
+ 		protected function post():void {
+-			addOptionalArguments();
++			//addOptionalArguments();
+ 			
+ 			RequestHelper.formatRequest(call);
+ 			
