@@ -2,14 +2,15 @@
 // $Id$
 
 package com.threerings.ui.snapping {
+import com.threerings.ui.bounds.BoundsRectangle;
+import com.threerings.util.ArrayUtil;
+import com.threerings.util.ClassUtil;
+
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.geom.Point;
-import com.threerings.ui.bounds.BoundsRectangle;
-import com.threerings.util.ArrayUtil;
-import com.threerings.util.ClassUtil;
 
 /**
  * Adds "snapping" to display objects when close enough to snap anchors.
@@ -120,30 +121,34 @@ public class SnapManager extends EventDispatcher
         var anc :ISnapAnchor;
         //Sort snap anchors by distance to target, so that the closest anchor snaps last
         ArrayUtil.stableSort(_snapAnchors, function (anc1 :ISnapAnchor, anc2 :ISnapAnchor) :int {
-                return anc1.getSnappableDistance(_target) < anc2.getSnappableDistance(_target) ? 1 :
-                    -1;
+                return anc1.getSnappableDistance(_target) < anc2.getSnappableDistance(_target) ? -1 :
+                    1;
             });
+//        trace("\n\n\n" + _snapAnchors.join(" \n"));
 
-        //        if (_snapAnchors.length > 0) {
-        //            anc = ISnapAnchor(_snapAnchors[0]);
-        //            if (anc.isWithinSnappingDistance(_target)) {
-        //                anc.snapObject(_target);
-        //                //Dispatch event whether we snap or not to indicate snapping/no snapping
-        //                dispatchEvent(new SnapEvent(anc, _target));
-        //                snapped = true;
-        //            }
-        //        }
+        if (snapAllAnchors) {
+            //Snap to all anchors close enough
+            for each (anc in _snapAnchors) {
 
-        //Snap to all anchors close enough
-        for each (anc in _snapAnchors) {
-
-            if (anc.isWithinSnappingDistance(_target)) {
-                anc.snapObject(_target);
-                //Dispatch event whether we snap or not to indicate snapping/no snapping
-                dispatchEvent(new SnapEvent(anc, _target));
-                snapped = true;
+                if (anc.isWithinSnappingDistance(_target)) {
+                    anc.snapObject(_target);
+                    //Dispatch event whether we snap or not to indicate snapping/no snapping
+                    dispatchEvent(new SnapEvent(anc, _target));
+                    snapped = true;
+                }
+            }
+        } else {
+            if (_snapAnchors.length > 0) {
+                anc = ISnapAnchor(_snapAnchors[0]);
+                if (anc.isWithinSnappingDistance(_target)) {
+                    anc.snapObject(_target);
+                    //Dispatch event whether we snap or not to indicate snapping/no snapping
+                    dispatchEvent(new SnapEvent(anc, _target));
+                    snapped = true;
+                }
             }
         }
+
 
         //If nothing is snapped, inform listeners of this
         if (!snapped) {
@@ -168,6 +173,11 @@ public class SnapManager extends EventDispatcher
             _target.globalBounds.translate(translate.x, translate.y).debugDraw(_debugLayer);
         }
     }
+
+    /**
+     * Snap all anchors, or just the closest;
+     */
+    public var snapAllAnchors :Boolean = false;
     protected var _debugLayer :Sprite = new Sprite();
 
     protected var _parent :Sprite;
