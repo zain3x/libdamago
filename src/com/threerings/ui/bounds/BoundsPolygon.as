@@ -135,6 +135,12 @@ public class BoundsPolygon extends Bounds
         return new BoundsPolygon(p);
     }
 
+    override public function scale (scaleX :Number, scaleY :Number) :Bounds
+    {
+        var p :Polygon = _polygon.scale(scaleX, scaleY);
+        return new BoundsPolygon(p);
+    }
+
     override public function get center () :Vector2
     {
         return _polygon.center;

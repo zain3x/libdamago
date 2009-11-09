@@ -4,6 +4,9 @@
 package com.threerings.util {
 import aduros.util.F;
 
+import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
+import com.threerings.io.Streamable;
 import com.threerings.ui.SimpleTextButton;
 
 import flash.display.DisplayObject;
@@ -12,6 +15,7 @@ import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Rectangle;
+import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 
 public class DebugUtil
@@ -164,6 +168,22 @@ public class DebugUtil
         b.addEventListener(MouseEvent.CLICK, F.callback(callback));
         parent.addChild(b);
         return b;
+    }
+
+    public static function byteClone (obj :Streamable) :Streamable
+    {
+        var bytes :ByteArray = new ByteArray();
+        var output :ObjectOutputStream = new ObjectOutputStream(bytes);
+        var input :ObjectInputStream = new ObjectInputStream(bytes);
+
+        var clazz :Class = ClassUtil.getClass(obj);
+        obj.writeObject(output);
+        bytes.position = 0;
+
+        var streamed :Streamable = new clazz();
+
+        streamed.readObject(input);
+        return streamed;
     }
 }
 }

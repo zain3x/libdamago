@@ -69,6 +69,11 @@ public class BoundsPoint extends Bounds
         return new BoundsPoint(_point.x + dx, _point.y + dy);
     }
 
+    override public function scale (scaleX :Number, scaleY :Number) :Bounds
+    {
+        return new BoundsPoint(_point.x * scaleX, _point.y * scaleY);
+    }
+
     override public function contains (x :Number, y :Number) :Boolean
     {
         return _point.x == x && _point.y == y;

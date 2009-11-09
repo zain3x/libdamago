@@ -1066,6 +1066,20 @@ public class Polygon
         return this;
     }
 
+    public function scale (scaleX :Number, scaleY :Number) :Polygon
+    {
+        return this.clone().scaleLocal(scaleX, scaleY);
+    }
+
+    public function scaleLocal (scaleX :Number, scaleY :Number) :Polygon
+    {
+        _vertices.forEach(Util.adapt(function (v :Vector2) :void {
+            v.x *= scaleX;
+            v.y *= scaleY;
+        }));
+        return this;
+    }
+
     public function union (p :Polygon) :Polygon
     {
         if (!isIntersection(p)) {
