@@ -128,18 +128,16 @@ public class DebugUtil
             });
     }
 
-    public static function traceDisplayChildren (d :DisplayObject, space :String =
+    public static function traceDisplayChildren (d :DisplayObjectContainer, space :String =
         " ") :void
     {
         if (d == null) {
             return;
         }
-        trace(space + d + ".name=" + d.name);
-
-        if (d is DisplayObjectContainer) {
-            var container :DisplayObjectContainer = DisplayObjectContainer(d);
-            for (var ii :int = 0; ii < container.numChildren; ++ii) {
-                traceDisplayChildren(container.getChildAt(ii), space + "  ");
+        trace(space + d + ".name=" + d.name + "  loc=" + d.x, d.y);
+        for (var ii :int = 0; ii < d.numChildren; ++ii) {
+            if (d.getChildAt(ii) is DisplayObjectContainer) {
+                traceDisplayChildren(DisplayObjectContainer(d.getChildAt(ii)), space + "  ");
             }
         }
     }
