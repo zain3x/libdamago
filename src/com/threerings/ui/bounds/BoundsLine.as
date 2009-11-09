@@ -1,13 +1,13 @@
 package com.threerings.ui.bounds
 {
 import com.threerings.geom.Vector2;
+import com.threerings.geometry.LineSegment;
 import com.threerings.util.ClassUtil;
 
+import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-
-import com.threerings.geometry.LineSegment;
 public class BoundsLine extends Bounds
 {
     public function BoundsLine (x1 :Number, y1 :Number, x2 :Number, y2 :Number)
@@ -70,14 +70,21 @@ public class BoundsLine extends Bounds
         return getBoundedPoint(targetX, targetY);
     }
 
-    override public function translate (dx :Number, dy :Number) :Bounds
-    {
-        return new BoundsLine(_p1.x + dx, _p1.y + dy, _p2.x + dx, _p2.y + dy);
-    }
+//    override public function translate (dx :Number, dy :Number) :Bounds
+//    {
+//        return new BoundsLine(_p1.x + dx, _p1.y + dy, _p2.x + dx, _p2.y + dy);
+//    }
+//
+//    override public function scale (scaleX :Number, scaleY :Number) :Bounds
+//    {
+//        return new BoundsLine(_p1.x * scaleX, _p1.y * scaleY, _p2.x * scaleX, _p2.y * scaleY);
+//    }
 
-    override public function scale (scaleX :Number, scaleY :Number) :Bounds
+    override public function convertToGlobal (localDisp :DisplayObject) :Bounds
     {
-        return new BoundsLine(_p1.x * scaleX, _p1.y * scaleY, _p2.x * scaleX, _p2.y * scaleY);
+        var p1 :Vector2 = Vector2.fromPoint(localDisp.localToGlobal(_p1.toPoint()));
+        var p2 :Vector2 = Vector2.fromPoint(localDisp.localToGlobal(_p2.toPoint()));
+        return new BoundsLine(p1.x, p1.y, p2.x, p2.y);
     }
 
     public function get lineSegment () :LineSegment

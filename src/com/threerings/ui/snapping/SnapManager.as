@@ -158,19 +158,21 @@ public class SnapManager extends EventDispatcher
         if (DEBUG_DRAW) {
             _debugLayer.graphics.clear();
             _parent.addChildAt(_debugLayer, _parent.numChildren);
-            var translate :Point = _debugLayer.globalToLocal(new Point(0, 0));
+//            var translate :Point = _debugLayer.globalToLocal(new Point(0, 0));
             for each (anc in _snapAnchors) {
                 if (anc == null) {
                     continue;
                 }
-                anc.bounds.translate(translate.x, translate.y).debugDraw(_debugLayer);
-                BoundsRectangle.fromRectangle(anc.bounds.translate(translate.x,
-                    translate.y).boundingRect()).debugDraw(_debugLayer);
+                anc.bounds.debugDraw(_debugLayer);
+//                BoundsRectangle.fromRectangle(anc.bounds.translate(translate.x,
+//                    translate.y).boundingRect()).debugDraw(_debugLayer);
+                BoundsRectangle.fromRectangle(anc.bounds.boundingRect()).debugDraw(_debugLayer);
 
             }
             //            BoundsRectangle.fromRectangle(_target.globalBounds.translate(translate.x,
             //                translate.y).boundingRect()).debugDraw(_debugLayer);
-            _target.globalBounds.translate(translate.x, translate.y).debugDraw(_debugLayer);
+//            _target.globalBounds.translate(translate.x, translate.y).debugDraw(_debugLayer);
+            _target.globalBounds.debugDraw(_debugLayer);
         }
     }
 

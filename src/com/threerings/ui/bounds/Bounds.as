@@ -20,8 +20,17 @@ public class Bounds
 
     public static function convertToGlobal (localBounds :Bounds, localDisp :DisplayObject) :Bounds
     {
-        var globalTranslate :Point = localDisp.localToGlobal(new Point(0, 0));
-        return localBounds.translate(globalTranslate.x, globalTranslate.y);
+        return localBounds.convertToGlobal(localDisp);
+//        var globalTranslate :Point = localDisp.localToGlobal(new Point(0, 0));
+//        var globalBounds :Bounds = localBounds.translate(globalTranslate.x, globalTranslate.y);
+//
+//        var globalScale :Point = localDisp.localToGlobal(new Point(1, 1));
+//        globalScale.x = globalScale.x - globalTranslate.x;
+//        globalScale.y = globalScale.y - globalTranslate.y;
+//
+//        trace("globalScale=" + globalScale);
+////        globalBounds = globalBounds.scale(globalScale.x, globalScale.y);
+//        return globalBounds;
 
     }
 
@@ -85,12 +94,17 @@ public class Bounds
         throw new Error("Abstract method");
     }
 
-    public function translate (x :Number, y :Number) :Bounds
-    {
-        throw new Error("Abstract method");
-    }
+//    public function translate (x :Number, y :Number) :Bounds
+//    {
+//        throw new Error("Abstract method");
+//    }
+//
+//    public function scale (scaleX :Number, scaleY :Number) :Bounds
+//    {
+//        throw new Error("Abstract method");
+//    }
 
-    public function scale (scaleX :Number, scaleY :Number) :Bounds
+    public function convertToGlobal (localDisp :DisplayObject) :Bounds
     {
         throw new Error("Abstract method");
     }
