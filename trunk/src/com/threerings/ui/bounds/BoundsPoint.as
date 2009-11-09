@@ -2,10 +2,11 @@ package com.threerings.ui.bounds
 {
 import com.threerings.geom.Vector2;
 import com.threerings.util.ClassUtil;
+import com.threerings.util.DebugUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MathUtil;
-import com.threerings.util.DebugUtil;
 
+import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -64,14 +65,20 @@ public class BoundsPoint extends Bounds
         return 0;
     }
 
-    override public function translate (dx :Number, dy :Number) :Bounds
-    {
-        return new BoundsPoint(_point.x + dx, _point.y + dy);
-    }
+//    override public function translate (dx :Number, dy :Number) :Bounds
+//    {
+//        return new BoundsPoint(_point.x + dx, _point.y + dy);
+//    }
+//
+//    override public function scale (scaleX :Number, scaleY :Number) :Bounds
+//    {
+//        return new BoundsPoint(_point.x * scaleX, _point.y * scaleY);
+//    }
 
-    override public function scale (scaleX :Number, scaleY :Number) :Bounds
+    override public function convertToGlobal (localDisp :DisplayObject) :Bounds
     {
-        return new BoundsPoint(_point.x * scaleX, _point.y * scaleY);
+        var p1 :Vector2 = Vector2.fromPoint(localDisp.localToGlobal(_point.toPoint()));
+        return new BoundsPoint(p1.x, p1.y);
     }
 
     override public function contains (x :Number, y :Number) :Boolean

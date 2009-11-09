@@ -1,17 +1,17 @@
 package com.threerings.ui.bounds
 {
 import com.threerings.geom.Vector2;
+import com.threerings.geometry.LineSegment;
+import com.threerings.geometry.Polygon;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MathUtil;
 
+import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-
-import com.threerings.geometry.LineSegment;
-import com.threerings.geometry.Polygon;
 public class BoundsPolygon extends Bounds
 {
     public function BoundsPolygon (polygon :Polygon)
@@ -129,16 +129,25 @@ public class BoundsPolygon extends Bounds
         return Vector2(points[0]).toPoint();
     }
 
-    override public function translate (dx :Number, dy :Number) :Bounds
-    {
-        var p :Polygon = _polygon.translate(dx, dy);
-        return new BoundsPolygon(p);
-    }
+//    override public function translate (dx :Number, dy :Number) :Bounds
+//    {
+//        var p :Polygon = _polygon.translate(dx, dy);
+//        return new BoundsPolygon(p);
+//    }
+//
+//    override public function scale (scaleX :Number, scaleY :Number) :Bounds
+//    {
+//        var p :Polygon = _polygon.scale(scaleX, scaleY);
+//        return new BoundsPolygon(p);
+//    }
 
-    override public function scale (scaleX :Number, scaleY :Number) :Bounds
+    override public function convertToGlobal (localDisp :DisplayObject) :Bounds
     {
-        var p :Polygon = _polygon.scale(scaleX, scaleY);
-        return new BoundsPolygon(p);
+        var globalPoints :Array = _polygon.vertices.map(
+            function (v :Vector2, ...ignored) :Vector2 {
+                return Vector2.fromPoint(localDisp.localToGlobal(v.toPoint()));
+            });
+        return new BoundsPolygon(new Polygon(globalPoints));
     }
 
     override public function get center () :Vector2
