@@ -90,6 +90,11 @@ public class Bounds
         throw new Error("Abstract method");
     }
 
+    public function scale (scaleX :Number, scaleY :Number) :Bounds
+    {
+        throw new Error("Abstract method");
+    }
+
     public function get center () :Vector2
     {
         throw new Error("Abstract method");

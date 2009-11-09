@@ -75,6 +75,11 @@ public class BoundsLine extends Bounds
         return new BoundsLine(_p1.x + dx, _p1.y + dy, _p2.x + dx, _p2.y + dy);
     }
 
+    override public function scale (scaleX :Number, scaleY :Number) :Bounds
+    {
+        return new BoundsLine(_p1.x * scaleX, _p1.y * scaleY, _p2.x * scaleX, _p2.y * scaleY);
+    }
+
     public function get lineSegment () :LineSegment
     {
         return _lineSegment;
