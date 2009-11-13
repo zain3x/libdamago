@@ -239,7 +239,9 @@ public class DisplayUtils
         }
 
         for (var ii :int = 0; ii < d.numChildren; ++ii) {
-            children.push(d.getChildAt(ii));
+            if (d.getChildAt(ii) != null) {
+                children.push(d.getChildAt(ii));
+            }
         }
         return children;
     }
