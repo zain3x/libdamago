@@ -60,6 +60,7 @@ public class SnapManager extends EventDispatcher
         }
         _target = snapper;
         _parent.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
+        handleEnterFrame();
     }
 
     public function clear () :void
