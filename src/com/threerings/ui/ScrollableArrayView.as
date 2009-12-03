@@ -1,16 +1,14 @@
 package com.threerings.ui
 {
-import com.threerings.display.DisplayUtil;
-import com.threerings.util.ArrayUtil;
-import com.threerings.util.MathUtil;
-import com.threerings.util.EventHandlerManager;
-
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.InteractiveObject;
 import flash.events.MouseEvent;
 import flash.geom.Point;
-
+import com.threerings.display.DisplayUtil;
+import com.threerings.util.ArrayUtil;
+import com.threerings.util.EventHandlerManager;
+import com.threerings.util.MathUtil;
 /**
  * A scrolling view of DisplayObjects.
  */
@@ -61,62 +59,6 @@ public class ScrollableArrayView extends ArrayView
 
     }
 
-    protected function scrollDownRight (...ignored) :Boolean
-    {
-        if (_bottomRightIdx == _elements.length - 1) {
-            return false;
-        }
-        _topLeftIdx++;
-        _topLeftIdx = MathUtil.clamp(_topLeftIdx, 0, _elements.length - 1);
-        redrawElements();
-        return true;
-    }
-
-    protected function scrollLeftUp (...ignored) :void
-    {
-        _topLeftIdx--;
-        _topLeftIdx = MathUtil.clamp(_topLeftIdx, 0, _elements.length - 1);
-        redrawElements();
-    }
-
-    protected function scrollRightDown1Page (...ignored) :void
-    {
-        var elementSize :int = _bottomRightIdx - _topLeftIdx;
-        _topLeftIdx = MathUtil.clamp(_topLeftIdx + elementSize + 1, 0, _elements.length - elementSize - 1);
-        redrawElements();
-    }
-
-    protected function scrollLeftUp1Page (...ignored) :void
-    {
-        var elementSize :int = _bottomRightIdx - _topLeftIdx;
-        _topLeftIdx = MathUtil.clamp(_topLeftIdx - elementSize - 1, 0, _elements.length - 1);
-        redrawElements();
-    }
-
-    protected function scrollMaxLeftUp (...ignored) :void
-    {
-        _topLeftIdx = 0;
-        redrawElements();
-    }
-
-    protected function scrollMaxRightDown (...ignored) :void
-    {
-        while (scrollDownRight()) {}
-    }
-
-    override public function remove (d :DisplayObject) :void
-    {
-        _topLeftIdx = MathUtil.clamp(_topLeftIdx, 0, _elements.length - 1);
-        super.remove(d);
-    }
-
-    override public function shutdown () :void
-    {
-        super.shutdown();
-        _events.freeAllHandlers();
-        _elements = null;
-    }
-
     override public function redrawElements () :void
     {
         var idx :int;
@@ -161,11 +103,68 @@ public class ScrollableArrayView extends ArrayView
         }
     }
 
-    protected var _centerElements :Boolean;
-    protected var _elementContainerCenterPosition :Number
-    protected var _topLeftIdx :int = 0;
+    override public function remove (d :DisplayObject) :void
+    {
+        _topLeftIdx = MathUtil.clamp(_topLeftIdx, 0, _elements.length - 1);
+        super.remove(d);
+    }
+
+    override public function shutdown () :void
+    {
+        super.shutdown();
+        _events.freeAllHandlers();
+        _elements = null;
+    }
+
+    protected function scrollDownRight (...ignored) :Boolean
+    {
+        if (_bottomRightIdx == _elements.length - 1) {
+            return false;
+        }
+        _topLeftIdx++;
+        _topLeftIdx = MathUtil.clamp(_topLeftIdx, 0, _elements.length - 1);
+        redrawElements();
+        return true;
+    }
+
+    protected function scrollLeftUp (...ignored) :void
+    {
+        _topLeftIdx--;
+        _topLeftIdx = MathUtil.clamp(_topLeftIdx, 0, _elements.length - 1);
+        redrawElements();
+    }
+
+    protected function scrollLeftUp1Page (...ignored) :void
+    {
+        var elementSize :int = _bottomRightIdx - _topLeftIdx;
+        _topLeftIdx = MathUtil.clamp(_topLeftIdx - elementSize - 1, 0, _elements.length - 1);
+        redrawElements();
+    }
+
+    protected function scrollMaxLeftUp (...ignored) :void
+    {
+        _topLeftIdx = 0;
+        redrawElements();
+    }
+
+    protected function scrollMaxRightDown (...ignored) :void
+    {
+        while (scrollDownRight()) {}
+    }
+
+    protected function scrollRightDown1Page (...ignored) :void
+    {
+        var elementSize :int = _bottomRightIdx - _topLeftIdx;
+        _topLeftIdx = MathUtil.clamp(_topLeftIdx + elementSize + 1, 0, _elements.length - elementSize - 1);
+        redrawElements();
+    }
+
     protected var _bottomRightIdx :int = 0;
+
+    protected var _centerElements :Boolean;
     protected var _elementContainer :DisplayObjectContainer;
+    protected var _elementContainerCenterPosition :Number
     protected var _events :EventHandlerManager = new EventHandlerManager();
+    protected var _topLeftIdx :int = 0;
 }
 }
