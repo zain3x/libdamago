@@ -160,20 +160,16 @@ public class ScrollableElementView
         var button :InteractiveObject;
         for each (button in [_firstIdxButton, _leftUpButton, _leftUpScroll1Page]) {
             if (_topLeftIdx == 0) {
-//                trace("Hiding left buttons, _topLeftIdx=" + _topLeftIdx);
                 hideAndDisableButton(button);
             } else {
-//                trace("showing left buttons, _topLeftIdx=" + _topLeftIdx);
                 enableButton(button);
             }
         }
 
         for each (button in [_lastIdxButton, _bottomDownButton, _rightBottomScroll1Page]) {
             if (_bottomRightIdx == _elements.length - 1) {
-                trace("Hiding right buttons, _bottomRightIdx=" + _bottomRightIdx, "_elements.length=" + _elements.length);
                 hideAndDisableButton(button);
             } else {
-                trace("showing right buttons, _bottomRightIdx=" + _bottomRightIdx, "_elements.length=" + _elements.length);
                 enableButton(button);
             }
         }
