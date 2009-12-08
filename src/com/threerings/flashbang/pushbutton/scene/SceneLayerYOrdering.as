@@ -33,6 +33,13 @@ public class SceneLayerYOrdering extends SceneLayer
         }
     }
 
+    override public function clear () :void
+    {
+        super.clear();
+        _componentsToReorder = null;
+        _locationCache.clear();
+    }
+
     //Subclasses override
     override protected function objectAdded (obj :*) :void
     {

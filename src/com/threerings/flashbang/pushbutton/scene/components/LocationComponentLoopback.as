@@ -4,6 +4,7 @@ import com.threerings.flashbang.components.LocationComponent;
 public class LocationComponentLoopback extends EntityComponent
     implements LocationComponent
 {
+
     public function LocationComponentLoopback (loc :LocationComponent)
     {
         _loc = loc;
