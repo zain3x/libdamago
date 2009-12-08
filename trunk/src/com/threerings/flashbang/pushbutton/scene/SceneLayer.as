@@ -1,8 +1,11 @@
 package com.threerings.flashbang.pushbutton.scene {
-import flash.display.DisplayObject;
-import flash.display.Sprite;
+import com.threerings.ui.DisplayUtils;
+import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
+
+import flash.display.DisplayObject;
+import flash.display.Sprite;
 /**
  * Can be used independently or in conjunction with a Scene + SceneView.
  *
@@ -52,6 +55,14 @@ public class SceneLayer extends Sprite
     public function render (...ignored) :void
     {
 
+    }
+
+    public function clear () :void
+    {
+        while (numChildren > 0) {
+            removeChildAt(0);
+        }
+        _sceneComponents.clear();
     }
 
 
@@ -116,11 +127,14 @@ public class SceneLayer extends Sprite
     internal function removeObjectInternal (obj :*) :void
     {
         if (!_sceneComponents.containsKey(obj)) {
-            throw new Error("Doesn't contain " + obj);
+//            throw new Error("Doesn't contain " + obj);
+            log.error("Doesn't contain " + obj);
+            return;
         }
         var disp :DisplayObject = _sceneComponents.get(obj) as DisplayObject;
         _sceneComponents.remove(obj);
-        removeChild(disp);
+        DisplayUtils.detach(disp);
+//        removeChild(disp);
         dirty = true;
         objectRemoved(obj);
     }
@@ -134,5 +148,7 @@ public class SceneLayer extends Sprite
     protected var _sceneComponents :Map = Maps.newMapOf(Object);
 
     internal var _parentScene :Scene;
+
+    protected static const log :Log = Log.getLog(SceneLayer);
 }
 }
