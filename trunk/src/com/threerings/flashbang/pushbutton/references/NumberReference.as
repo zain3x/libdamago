@@ -1,5 +1,7 @@
 package com.threerings.flashbang.pushbutton.references {
-public class NumberReference
+import com.pblabs.engine.entity.IEntity;
+
+public class NumberReference extends PushButtonReference
 {
     public function NumberReference (propKey :String, owner :IEntity)
     {
