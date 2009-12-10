@@ -13,6 +13,7 @@ public class EntityAppmode extends AppMode
 {
     public static const OBJECT_ADDED :String = "objectAdded";
     public static const OBJECT_REMOVED :String = "objectRemoved";
+    public static const SINGLETON_ENITTY_NAME :String = "singletonEntity";
 
     public function EntityAppmode ()
     {
@@ -110,29 +111,32 @@ public class EntityAppmode extends AppMode
         return this;
     }
 
-    public function addComponent (component :IEntityComponent) :void
+    public function addComponentViaSameNamedEntity (comp :IEntityComponent, name :String)
+        :GameObjectEntity
     {
-        var clazz :Class = ClassUtil.getClass(component);
-        var name :String = component.name;
-        var names :Array = _groupedComponentsByName.get(name) as Array;
-        if (null == names) {
-            names = [component];
-            _groupedComponentsByName.put(name, names)
-        } else {
-            if (!ArrayUtil.contains(names, component)) {
-                names.push(component);
-            }
-        }
+        trace("addComponentViaSameNamedEntity");
+        var obj :GameObjectEntity = getObjectNamed(name) as GameObjectEntity;
 
-        var classArray :Array = _groupedComponentsByType.get(clazz) as Array;
-        if (null == classArray) {
-            classArray = [component];
-            _groupedComponentsByType.put(clazz, classArray)
-        } else {
-            if (!ArrayUtil.contains(classArray, component)) {
-                classArray.push(component);
-            }
+        if (null == obj) {
+            obj = new GameObjectEntity(name);
+            addObject(obj);
         }
+        obj.addComponent(comp, name);
+        return obj;
+    }
+
+    public function addSingletonComponent (comp :IEntityComponent, componentName :String)
+        :GameObjectEntity
+    {
+        trace("addSingletonComponent");
+        var obj :GameObjectEntity = getObjectNamed(SINGLETON_ENITTY_NAME) as GameObjectEntity;
+
+        if (null == obj) {
+            obj = new GameObjectEntity(SINGLETON_ENITTY_NAME);
+            addObject(obj);
+        }
+        obj.addComponent(comp, componentName);
+        return obj;
     }
 
     //Don't modify the array!
@@ -141,7 +145,7 @@ public class EntityAppmode extends AppMode
         return _groupedComponentsByType.get(clazz) as Array;
     }
 
-    public function getFirstComponentOfType (clazz :Class) :IEntityComponent
+    public function getFirstComponentOfType (clazz :Class) :*
     {
         var arr :Array = _groupedComponentsByType.get(clazz) as Array;
         if (null == arr) {
@@ -175,9 +179,19 @@ public class EntityAppmode extends AppMode
         return entity.lookupComponentByName(componentName);
     }
 
-    public function removeComponent (component :IEntityComponent) :void
+    public function getComponent (componentName :String) :IEntityComponent
     {
-        _componentsToRemove.push(component);
+        var arr :Array = _groupedComponentsByName.get(componentName) as Array;
+        if (arr != null && arr.length > 0) {
+            return arr[0] as IEntityComponent;
+        }
+
+        return null;
+    }
+
+    public function getComponents (componentName :String) :Array
+    {
+        return _groupedComponentsByName.get(componentName) as Array;
     }
 
     override public function addObject (obj :GameObject) :GameObjectRef
@@ -213,6 +227,31 @@ public class EntityAppmode extends AppMode
         }
     }
 
+    internal function addComponent (component :IEntityComponent) :void
+    {
+        var name :String = component.name;
+        var names :Array = _groupedComponentsByName.get(name) as Array;
+        if (null == names) {
+            names = [component];
+            _groupedComponentsByName.put(name, names)
+        } else {
+            if (!ArrayUtil.contains(names, component)) {
+                names.push(component);
+            }
+        }
+
+        var clazz :Class = ClassUtil.getClass(component);
+        var classArray :Array = _groupedComponentsByType.get(clazz) as Array;
+        if (null == classArray) {
+            classArray = [component];
+            _groupedComponentsByType.put(clazz, classArray)
+        } else {
+            if (!ArrayUtil.contains(classArray, component)) {
+                classArray.push(component);
+            }
+        }
+    }
+
     protected function finalizeComponentRemoval () :void
     {
         for each (var component :IEntityComponent in _componentsToRemove) {
@@ -227,23 +266,14 @@ public class EntityAppmode extends AppMode
             if (null != classArray) {
                 ArrayUtil.removeFirst(classArray, component);
             }
+
         }
         _componentsToRemove = [];
     }
 
-    public function addComponentViaSameNamedEntity (comp :IEntityComponent, name :String)
-        :GameObjectEntity
+    internal function removeComponent (component :IEntityComponent) :void
     {
-        trace("addComponentViaSameNamedEntity");
-        var obj :GameObjectEntity = getObjectNamed(name) as GameObjectEntity;
-
-        if (null == obj) {
-            obj = new GameObjectEntity();
-            obj.name = name;
-            addObject(obj);
-        }
-        obj.addComponent(comp, name);
-        return obj;
+        _componentsToRemove.push(component);
     }
 
     protected var _componentsToRemove :Array = [];

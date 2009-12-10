@@ -22,7 +22,7 @@ public class GameObjectEntity extends GameObject implements IEntity
 {
     public static const ENTITY_DESTROYED :String = "EntityDestroyed";
 
-    public function GameObjectEntity (name :String = null)
+    public function GameObjectEntity (name :String)
     {
         _name = name;
     }
@@ -47,10 +47,10 @@ public class GameObjectEntity extends GameObject implements IEntity
         return _name;
     }
 
-    public function set name (val :String) :void
-    {
-        _name = val;
-    }
+//    public function set name (val :String) :void
+//    {
+//        _name = val;
+//    }
 
     override public function get objectName () :String
     {
