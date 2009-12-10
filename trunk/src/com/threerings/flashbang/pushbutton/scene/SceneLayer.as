@@ -32,6 +32,11 @@ public class SceneLayer extends Sprite
         }
     }
 
+    public function containsObject (obj :*) :Boolean
+    {
+        return _sceneComponents.containsKey(obj);
+    }
+
     public function detach () :void
     {
         if (null != _parentScene) {
