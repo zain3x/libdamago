@@ -13,6 +13,7 @@ import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Loader;
+import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.geom.Matrix;
@@ -195,6 +196,20 @@ public class DisplayUtils
             d.y -= (bounds.height / 2) + bounds.top;
         }
         return d;
+    }
+
+    public static function shrinkAndCenterOn (disp :DisplayObject, maxSize :int = 20) :DisplayObject
+    {
+        if (maxSize > 0) {
+            var max :int = Math.max(disp.width, disp.height);
+            if (max > maxSize) {
+                disp.scaleX = disp.scaleY = Number(maxSize) / max;
+            }
+        }
+        var s :Sprite = new Sprite()
+        s.addChild(disp);
+        DisplayUtils.centerOn(disp);
+        return s;
     }
 
     /**
