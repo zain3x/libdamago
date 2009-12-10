@@ -74,6 +74,27 @@ public class DisplayUtils
         return tf;
     }
 
+    public static function distributeChildrenVertically (disp :DisplayObject, startTop :Number = 0) :void
+    {
+        if (!(disp is DisplayObjectContainer)) {
+            return;
+        }
+
+        var container :DisplayObjectContainer = DisplayObjectContainer(disp);
+        var bounds :Rectangle;
+        var child :DisplayObject;
+        for (var ii :int = 0; ii < container.numChildren; ++ii) {
+            child = container.getChildAt(ii) as DisplayObject;
+            if (child == null) {
+                continue;
+            }
+            bounds = child.getBounds(container);
+            child.y += startTop - bounds.top;
+            startTop = startTop + bounds.height;
+        }
+
+    }
+
     public static function placeSequence (parent :DisplayObjectContainer, seq :Array, startX :int,
         startY :int, direction :int = 0, gap :int = 5, center :Boolean = true) :void
     {
