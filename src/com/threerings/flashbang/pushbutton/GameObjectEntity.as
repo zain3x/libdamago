@@ -1,8 +1,4 @@
 package com.threerings.flashbang.pushbutton {
-import com.pblabs.engine.components.TickedComponent;
-import com.pblabs.engine.entity.IEntity;
-import com.pblabs.engine.entity.IEntityComponent;
-import com.pblabs.engine.entity.PropertyReference;
 import com.threerings.flashbang.GameObject;
 import com.threerings.flashbang.Updatable;
 import com.threerings.util.Log;
@@ -18,7 +14,8 @@ import flash.events.IEventDispatcher;
  * behaviour is built via adding IEntityComponents.
  *
  */
-public class GameObjectEntity extends GameObject implements IEntity
+public class GameObjectEntity extends GameObject
+    implements IEntity
 {
     public static const ENTITY_DESTROYED :String = "EntityDestroyed";
 
@@ -37,15 +34,15 @@ public class GameObjectEntity extends GameObject implements IEntity
         return db as EntityAppmode;
     }
 
-    public function get eventDispatcher () :IEventDispatcher
+    public function get dispatcher () :IEventDispatcher
     {
         return this;
     }
 
-    public function get name () :String
-    {
-        return _name;
-    }
+//    public function get name () :String
+//    {
+//        return _name;
+//    }
 
 //    public function set name (val :String) :void
 //    {
@@ -57,20 +54,20 @@ public class GameObjectEntity extends GameObject implements IEntity
         return _name;
     }
 
-    public function addComponent (component :IEntityComponent, componentName :String) :void
+    public function addComponent (component :IEntityComponent) :void
     {
 //        if (isLiveObject) {
 //            throw new Error("Components must be added before adding to the ObjectDB. " +
 //                "(To add to the correct groups.  Components define groups).");
 //        }
 
-        if (!_components.addComponent(component, componentName)) {
+        if (!_components.addComponent(component, component.name)) {
             return;
         }
 
         if (isLiveObject) {
             dbComponent.addComponent(component);
-            component.register(this, componentName);
+            component.register(this);
             _components.doResetComponents();
         }
 
@@ -382,7 +379,7 @@ public class GameObjectEntity extends GameObject implements IEntity
             if (!comLookup) {
                 log.warning(this, "findProperty",
                     "Could not find component '" + curLookup + "' on named entity '" +
-                    (parentElem as IEntity).name + "' for property '" + reference.property + "'");
+                    (parentElem as IEntity).objectName + "' for property '" + reference.property + "'");
                 //                Profiler.exit("Entity.findProperty");
                 return null;
             }
@@ -504,18 +501,23 @@ public class GameObjectEntity extends GameObject implements IEntity
         //        Profiler.exit("Entity.findProperty");
         return null;
     }
+
+    public function get globalDispatcher () :IEventDispatcher
+    {
+        return db;
+    }
 }
 }
 
-import com.pblabs.engine.components.TickedComponent;
-import com.pblabs.engine.entity.IEntity;
-import com.pblabs.engine.entity.IEntityComponent;
 import com.threerings.flashbang.Updatable;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.DebugUtil;
+import com.threerings.flashbang.pushbutton.IEntityComponent;
+import flash.events.IEventDispatcher;
+import com.threerings.flashbang.pushbutton.IEntity;
 final class PropertyInfo
 {
     public var propertyName :String = null;
@@ -569,7 +571,7 @@ final class ComponentList
         if (component.owner != null) {
             log.error(this, "AddComponent",
                 "The component " + componentName + " already has an owner. (" + component.owner.
-                name + ")");
+                objectName + ")");
             return false;
         }
 
@@ -599,7 +601,7 @@ final class ComponentList
             if (component.isRegistered) {
                 continue;
             }
-            component.register(entity, component.name);
+            component.register(entity);
         }
     }
 
@@ -608,14 +610,14 @@ final class ComponentList
         if (component.owner != this) {
             log.error(this, "AddComponent",
                 "The component " + component.name + " is not owned by this entity. (" + component.
-                owner.name + ")");
+                owner.objectName + ")");
             return false;
         }
 
         if (!_components.get(component.name)) {
             log.error(this, "AddComponent",
                 "The component " + component.name + " was not found on this entity. (" + component.
-                owner.name + ")");
+                owner.objectName + ")");
             return false;
         }
         ArrayUtil.removeAll(_components, component);
@@ -676,11 +678,14 @@ final class ComponentList
         for each (var c :IEntityComponent in _components) {
             if (c is Updatable) {
                 Updatable(c).update(dt);
-            } else if (c is TickedComponent) {
-                TickedComponent(c).onTick(dt);
             }
+//            else if (c is TickedComponent) {
+//                TickedComponent(c).onTick(dt);
+//            }
         }
     }
+
+
     protected var _componentMap :Map = Maps.newMapOf(String);
 
     protected var _components :Array = [];

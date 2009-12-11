@@ -1,6 +1,5 @@
 package com.threerings.flashbang.pushbutton {
 import com.pblabs.engine.entity.EntityComponent;
-import com.pblabs.engine.entity.IEntityComponent;
 import com.threerings.util.EventHandlerManager;
 
 import flash.events.EventDispatcher;
