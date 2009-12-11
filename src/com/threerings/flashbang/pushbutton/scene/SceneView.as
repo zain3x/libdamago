@@ -25,7 +25,7 @@ public class SceneView extends Sprite
 {
     public static const NAME :String = "SceneView";
 
-    public function SceneView (width :int = 0, height :int = 0)
+    public function SceneView (width :Number = 0, height :Number = 0)
     {
         name = NAME;
 
@@ -97,7 +97,25 @@ public class SceneView extends Sprite
     {
         setChildIndex(dObj, index);
     }
+
+    public function set debug (val :Boolean) : void
+    {
+        _debug = val;
+        var g :Graphics = this.graphics;
+        g.clear();
+        if (_debug) {
+            DebugUtil.drawRect(this, _width, _height, 0);
+        }
+    }
+
+    public function get debug () :Boolean
+    {
+        return _debug;
+    }
+
     protected var _height :Number = 0;
     protected var _width :Number = 0;
+    protected var _debug :Boolean;
+
 }
 }

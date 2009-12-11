@@ -4,15 +4,16 @@ import com.threerings.flashbang.components.LocationComponent;
 import com.threerings.flashbang.pushbutton.EntityComponent;
 import com.threerings.flashbang.pushbutton.PropertyReference;
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.MathUtil;
 
+import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.geom.*;
-
 /**
  * Basic Rendering2D scene; it is given a SceneView and some
  * DisplayObjectRenderers, and makes sure that they are drawn. Extensible
@@ -21,6 +22,8 @@ import flash.geom.*;
 public class Scene extends EntityComponent
     implements Updatable
 {
+    public static const COMPONENT_NAME :String = ClassUtil.tinyClassName(Scene);
+    public var dirty :Boolean;
 
     /**
      * Maximum allowed zoom level.
@@ -41,7 +44,7 @@ public class Scene extends EntityComponent
      * @see SceneAlignment
      * @see position
      */
-//    public var sceneAlignment :SceneAlignment = SceneAlignment.DEFAULT_ALIGNMENT;
+    public var sceneAlignment :SceneAlignment = SceneAlignment.DEFAULT_ALIGNMENT;
 
     /**
      * If set, every frame, trackObject's position is read and assigned
@@ -49,7 +52,12 @@ public class Scene extends EntityComponent
      */
     public var trackObject :LocationComponent;
 
-    protected var _selfReference :PropertyReference;
+    public function Scene ()
+    {
+        // Get ticked after all the renderers.
+//        updatePriority = -10;
+        _rootSprite = new Sprite();//generateRootSprite();
+    }
 
     public function get componentReference () :PropertyReference
     {
@@ -60,16 +68,14 @@ public class Scene extends EntityComponent
         return _selfReference;
     }
 
-    public function Scene ()
-    {
-        // Get ticked after all the renderers.
-//        updatePriority = -10;
-        _rootSprite = new Sprite();//generateRootSprite();
-    }
-
     public function get layerCount () :int
     {
         return _layers.length;
+    }
+
+    override public function get name () :String
+    {
+        return COMPONENT_NAME;
     }
 
     public function get position () :Point
@@ -79,18 +85,24 @@ public class Scene extends EntityComponent
 
     public function set position (value :Point) :void
     {
-        if (!value)
+        if (!value) {
             return;
+        }
 
-        var newX :int = int(value.x);
-        var newY :int = int(value.y);
+        var newX :Number = value.x;
+        var newY :Number = value.y;
 
         if (_rootPosition.x == newX && _rootPosition.y == newY)
             return;
-
+//        trace("Setting _rootPosition.x=" + newX);
         _rootPosition.x = newX;
         _rootPosition.y = newY;
         _transformDirty = true;
+    }
+
+    public function get rootSprite () :Sprite
+    {
+        return _rootSprite;
     }
 
     public function get sceneView () :SceneView
@@ -156,18 +168,28 @@ public class Scene extends EntityComponent
     /**
      * @inheritDoc
      */
-    public function get viewBounds () :Rectangle
+    public function get sceneBounds () :Rectangle
     {
-        return _viewBounds;
+        return _sceneBounds.clone();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function set viewBounds (value :Rectangle) :void
+    public function set debug (val :Boolean) : void
     {
-        _viewBounds = value;
+        var g :Graphics = rootSprite.graphics;
+        g.clear();
+        if (val && sceneBounds != null) {
+            g.lineStyle(1, 0xff0000);
+//            g.drawRect(
+//            DebugUtil.drawRect(this, _width, _height, 0);
+        }
     }
+
+    public function set sceneBounds (value :Rectangle) :void
+    {
+        _sceneBounds = value;
+    }
+
+
 
     public function get zoom () :Number
     {
@@ -184,6 +206,105 @@ public class Scene extends EntityComponent
 
         _zoom = value;
         _transformDirty = true;
+    }
+
+    public function addLayer (layer :SceneLayer, name :String = null, idx :int = -1) :void
+    {
+        if (null == layer) {
+            throw new Error ("null layer");
+        }
+
+        if (null != layer._parentScene) {
+            throw new Error ("layer already attached to a scene");
+        }
+
+        if (null != _layers[idx]) {
+            throw new Error ("setLayer at " + idx + ", index occupied");
+        }
+
+        if (idx == -1) {
+            idx = _layers.length;
+        }
+
+        _layers[idx] = layer;
+        _rootSprite.addChildAt(layer, idx);
+        if (null != name) {
+            layer.name = name;
+        }
+        layer.attachedInternal();
+    }
+
+    public function addSceneComponent (obj :SceneEntityComponent) :void
+    {
+        if (_sceneComponents.containsKey(obj)) {
+            throw new Error("Already contains obj " + obj);
+        }
+
+        if (null == obj) {
+            throw new Error("obj is null");
+        }
+
+        if (null == obj.displayObject) {
+            throw new Error("obj.displayObject is null");
+        }
+
+        var layerName :String = obj.sceneLayerName;
+        if (null == layerName) {
+            log.warning("obj.sceneLayerName is null, using the default layer");
+            layerName = DEFAULT_LAYER_NAME;
+        }
+
+        var layer :SceneLayer = getLayer(layerName);
+
+        if (null == layer) {
+            throw new Error("No layer named " + layerName);
+        }
+
+        _sceneComponents.put(obj, layer);
+        layer.addObjectInternal(obj, obj.displayObject);
+        obj._scene = this;
+        dirty = true;
+    }
+
+    public function getDefaultLayer () :SceneLayer
+    {
+        if (null == _layers[0]) {
+            var layer :SceneLayer = new SceneLayer();
+            addLayer(layer, DEFAULT_LAYER_NAME, 0);
+            return layer;
+        }
+        return _layers[0] as SceneLayer;
+    }
+
+    public function getLayer (layerName :String) :SceneLayer
+    {
+        for each (var layer :SceneLayer in _layers) {
+            if (null != layer && layer.name == layerName) {
+                return layer;
+            }
+        }
+        return null;
+    }
+
+    public function getLayerAt (idx :uint) :SceneLayer
+    {
+        return _layers[idx] as SceneLayer;
+    }
+
+    public function removeSceneComponent (obj :SceneEntityComponent) :void
+    {
+        if (!_sceneComponents.containsKey(obj)) {
+            log.warning("Doesn't contain " + obj);
+            return;
+        }
+        var layer :SceneLayer = _sceneComponents.get(obj) as SceneLayer;
+
+        if (null == layer) {
+            throw new Error("No associated layer for " + obj);
+        }
+
+        layer.removeObjectInternal(obj);
+        _sceneComponents.remove(obj);
     }
 
 //    public function add (dor :DisplayObjectRenderer) :void
@@ -290,16 +411,21 @@ public class Scene extends EntityComponent
 //            delete _renderers[dor.displayObject];
 //    }
 
-    public function screenPan (deltaX :int, deltaY :int) :void
+    public function panView (deltaX :Number, deltaY :Number) :void
     {
         if (deltaX == 0 && deltaY == 0)
             return;
 
         // TODO: Take into account rotation so it's correct even when
         //       rotating.
+        var before :Number = _rootPosition.x;
+        _rootPosition.x -= deltaX / _zoom;
+//        trace("deltaX=", before, _rootPosition.x);
+//        trace("Before/after=", before, _rootPosition.x);
+        _rootPosition.y -= deltaY / _zoom;
 
-        _rootPosition.x -= int(deltaX / _zoom);
-        _rootPosition.y -= int(deltaY / _zoom);
+
+
         _transformDirty = true;
     }
 
@@ -346,27 +472,6 @@ public class Scene extends EntityComponent
         return _rootSprite.localToGlobal(inPos);
     }
 
-    public function updateTransform () :void
-    {
-        if (_transformDirty == false) {
-            return;
-        }
-        trace("updating scene transform");
-        _transformDirty = false;
-
-        // Update our transform, if required
-        _rootTransform.identity();
-        _rootTransform.translate(_rootPosition.x, _rootPosition.y);
-        _rootTransform.scale(zoom, zoom);
-
-        // Center it appropriately.
-//        SceneAlignment.calculate(_tempPoint, SceneAlignment.TOP_LEFT, sceneView.width, sceneView.height);
-        _rootTransform.translate(_tempPoint.x, _tempPoint.y);
-
-        _rootSprite.transform.matrix = _rootTransform;
-        trace("updating scene transform, scale=" + _rootSprite.scaleX);
-    }
-
     public function update (dt :Number) :void
     {
         if (!sceneView) {
@@ -378,17 +483,17 @@ public class Scene extends EntityComponent
             position = new Point(-(trackObject.x), -(trackObject.y));
         }
 
-        if (viewBounds != null) {
-            var centeredLimitBounds :Rectangle =
-                new Rectangle(viewBounds.x + sceneView.width * 0.5,
-                viewBounds.y + sceneView.height * 0.5,
-                viewBounds.width - sceneView.width,
-                viewBounds.height - sceneView.height);
-
-            position = new Point(MathUtil.clamp(position.x, -centeredLimitBounds.right,
-                -centeredLimitBounds.left), MathUtil.clamp(position.y, -centeredLimitBounds.bottom,
-                -centeredLimitBounds.top));
-        }
+//        if (sceneBounds != null) {
+//            var centeredLimitBounds :Rectangle =
+//                new Rectangle(sceneBounds.x + sceneView.width * 0.5,
+//                sceneBounds.y + sceneView.height * 0.5,
+//                sceneBounds.width - sceneView.width,
+//                sceneBounds.height - sceneView.height);
+//
+//            position = new Point(MathUtil.clamp(position.x, -centeredLimitBounds.right,
+//                -centeredLimitBounds.left), MathUtil.clamp(position.y, -centeredLimitBounds.bottom,
+//                -centeredLimitBounds.top));
+//        }
 
         updateTransform();
 
@@ -398,12 +503,76 @@ public class Scene extends EntityComponent
         }
     }
 
-//    protected override function onRemove () :void
-//    {
-//        // Make sure we don't leave any lingering content.
-//        if (_sceneView)
+    public function updateTransform () :void
+    {
+        if (_transformDirty == false) {
+            return;
+        }
+        _transformDirty = false;
+
+
+        if (_sceneBounds != null) {
+//            trace("panning");
+            //TODO: doesn't take into account zooming yet
+            //Check that we're inside the scene bounds
+            //Check x, starting with the right.
+            var minViewX :Number = -(_sceneBounds.right - _sceneView.width * _zoom);
+//            trace("minViewX=" + minViewX);
+//            trace("_sceneBounds.right=" + _sceneBounds.right);
+            var maxViewX :Number = -_sceneBounds.left;
+//            trace("minmaxX=", minViewX, maxViewX);
+            var minViewY :Number = -(_sceneBounds.bottom - _sceneView.height * _zoom);
+            var maxViewY :Number = -_sceneBounds.top;
+//            trace("clampedX=" + MathUtil.clamp(_rootPosition.x, minViewX, maxViewX));
+            _rootPosition.x = MathUtil.clamp(_rootPosition.x, minViewX, maxViewX);
+
+//            trace("After clamping=" + _rootPosition.x);
+            _rootPosition.y = MathUtil.clamp(_rootPosition.y, minViewY, maxViewY);
+
+//            _rootSprite.x = _rootPosition.x;
+//            _rootSprite.y = _rootPosition.y;
+        }
+
+//        return;
+//        trace("updating scene transform");
+//        _transformDirty = false;
+
+        // Update our transform, if required
+        _rootTransform.identity();
+        _rootTransform.translate(_rootPosition.x, _rootPosition.y);
+        _rootTransform.scale(zoom, zoom);
+
+        // Center it appropriately.
+//        SceneAlignment.calculate(_tempPoint, SceneAlignment.TOP_LEFT, sceneView.width,
+//            sceneView.height);
+//        _rootTransform.translate(_tempPoint.x, _tempPoint.y);
+
+        _rootSprite.transform.matrix = _rootTransform;
+
+
+//        trace("updating scene transform, scale=" + _rootSprite.scaleX);
+    }
+
+    internal function removeLayer (layer :SceneLayer) :void
+    {
+        if (!ArrayUtil.contains(_layers, layer)) {
+            throw new Error("No layer: " + layer);
+        }
+
+        _layers[ArrayUtil.indexOf(_layers, layer)] = null;
+        layer.detachedInternal();
+        layer._parentScene = null;
+        _rootSprite.removeChild(layer);
+    }
+
+    override protected function onRemove () :void
+    {
+        super.onRemove();
+        // Make sure we don't leave any lingering content.
+        if (_sceneView) {
 //            _sceneView.clearDisplayObjects();
-//    }
+        }
+    }
 
 //    /**
 //     * Convenience funtion for subclasses to control what class of layer
@@ -458,127 +627,8 @@ public class Scene extends EntityComponent
         _transformDirty = true;
     }
 
-    public function addLayer (layer :SceneLayer, name :String = null, idx :int = -1) :void
-    {
-        if (null == layer) {
-            throw new Error ("null layer");
-        }
-
-        if (null != layer._parentScene) {
-            throw new Error ("layer already attached to a scene");
-        }
-
-        if (null != _layers[idx]) {
-            throw new Error ("setLayer at " + idx + ", index occupied");
-        }
-
-        if (idx == -1) {
-            idx = _layers.length;
-        }
-
-        _layers[idx] = layer;
-        _rootSprite.addChildAt(layer, idx);
-        if (null != name) {
-            layer.name = name;
-        }
-        layer.attachedInternal();
-    }
-
-    public function getLayer (layerName :String) :SceneLayer
-    {
-        for each (var layer :SceneLayer in _layers) {
-            if (null != layer && layer.name == layerName) {
-                return layer;
-            }
-        }
-        return null;
-    }
-
-    public function getLayerAt (idx :uint) :SceneLayer
-    {
-        return _layers[idx] as SceneLayer;
-    }
-
-    internal function removeLayer (layer :SceneLayer) :void
-    {
-        if (!ArrayUtil.contains(_layers, layer)) {
-            throw new Error("No layer: " + layer);
-        }
-
-        _layers[ArrayUtil.indexOf(_layers, layer)] = null;
-        layer.detachedInternal();
-        layer._parentScene = null;
-        _rootSprite.removeChild(layer);
-    }
-
-    public function getDefaultLayer () :SceneLayer
-    {
-        if (null == _layers[0]) {
-            var layer :SceneLayer = new SceneLayer();
-            addLayer(layer, DEFAULT_LAYER_NAME, 0);
-            return layer;
-        }
-        return _layers[0] as SceneLayer;
-    }
-
-    public function addSceneComponent (obj :SceneEntityComponent) :void
-    {
-        if (_sceneComponents.containsKey(obj)) {
-            throw new Error("Already contains obj " + obj);
-        }
-
-        if (null == obj) {
-            throw new Error("obj is null");
-        }
-
-        if (null == obj.displayObject) {
-            throw new Error("obj.displayObject is null");
-        }
-
-        var layerName :String = obj.sceneLayerName;
-        if (null == layerName) {
-            log.warning("obj.sceneLayerName is null, using the default layer");
-            layerName = DEFAULT_LAYER_NAME;
-        }
-
-        var layer :SceneLayer = getLayer(layerName);
-
-        if (null == layer) {
-            throw new Error("No layer named " + layerName);
-        }
-
-        _sceneComponents.put(obj, layer);
-        layer.addObjectInternal(obj, obj.displayObject);
-        obj._scene = this;
-        dirty = true;
-    }
-
-    public function removeSceneComponent (obj :SceneEntityComponent) :void
-    {
-        if (!_sceneComponents.containsKey(obj)) {
-            log.warning("Doesn't contain " + obj);
-            return;
-        }
-        var layer :SceneLayer = _sceneComponents.get(obj) as SceneLayer;
-
-        if (null == layer) {
-            throw new Error("No associated layer for " + obj);
-        }
-
-        layer.removeObjectInternal(obj);
-        _sceneComponents.remove(obj);
-    }
-
-    public function get rootSprite () :Sprite
-    {
-        return _rootSprite;
-    }
-
     protected var _currentWorldCenter :Point = new Point();
     protected var _layers :Array = [];
-
-    /** Objects mapped to layers*/
-    protected var _sceneComponents :Map = Maps.newMapOf(Object);
 
 
 //    protected var _renderers :Dictionary = new Dictionary(true);
@@ -587,19 +637,23 @@ public class Scene extends EntityComponent
     protected var _rootSprite :Sprite;
     protected var _rootTransform :Matrix = new Matrix();
 
+    /** Objects mapped to layers*/
+    protected var _sceneComponents :Map = Maps.newMapOf(Object);
+
     protected var _sceneView :SceneView;
 
 //    protected var _sceneViewBoundsCache :Rectangle = new Rectangle();
     protected var _sceneViewName :String = null;
-    protected var _tempPoint :Point = new Point();
 
-    protected var _viewBounds :Rectangle = null;
+    protected var _selfReference :PropertyReference;
+    protected var _tempPoint :Point = new Point();
     protected var _transformDirty :Boolean = true;
 
+    protected var _sceneBounds :Rectangle = null;
+
     protected var _zoom :Number = 1;
-    public var dirty :Boolean;
+    protected static const DEFAULT_LAYER_NAME :String = "defaultLayer";
 
     protected static const log :Log = Log.getLog(Scene);
-    protected static const DEFAULT_LAYER_NAME :String = "defaultLayer";
 }
 }
