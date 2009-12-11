@@ -1,6 +1,4 @@
 package com.threerings.flashbang.pushbutton {
-import com.pblabs.engine.entity.IEntity;
-import com.pblabs.engine.entity.IEntityComponent;
 import com.threerings.flashbang.AppMode;
 import com.threerings.flashbang.GameObject;
 import com.threerings.flashbang.GameObjectRef;
@@ -13,7 +11,7 @@ public class EntityAppmode extends AppMode
 {
     public static const OBJECT_ADDED :String = "objectAdded";
     public static const OBJECT_REMOVED :String = "objectRemoved";
-    public static const SINGLETON_ENITTY_NAME :String = "singletonEntity";
+    public static const SINGLETON_ENTITY_NAME :String = "singletonEntity";
 
     public function EntityAppmode ()
     {
@@ -111,31 +109,31 @@ public class EntityAppmode extends AppMode
         return this;
     }
 
-    public function addComponentViaSameNamedEntity (comp :IEntityComponent, name :String)
-        :GameObjectEntity
-    {
-        trace("addComponentViaSameNamedEntity");
-        var obj :GameObjectEntity = getObjectNamed(name) as GameObjectEntity;
-
-        if (null == obj) {
-            obj = new GameObjectEntity(name);
-            addObject(obj);
-        }
-        obj.addComponent(comp, name);
-        return obj;
-    }
+//    public function addComponentViaSameNamedEntity (comp :IEntityComponent)
+//        :GameObjectEntity
+//    {
+//        trace("addComponentViaSameNamedEntity");
+//        var obj :GameObjectEntity = getObjectNamed(name) as GameObjectEntity;
+//
+//        if (null == obj) {
+//            obj = new GameObjectEntity(name);
+//            addObject(obj);
+//        }
+//        obj.addComponent(comp);
+//        return obj;
+//    }
 
     public function addSingletonComponent (comp :IEntityComponent, componentName :String)
         :GameObjectEntity
     {
         trace("addSingletonComponent");
-        var obj :GameObjectEntity = getObjectNamed(SINGLETON_ENITTY_NAME) as GameObjectEntity;
+        var obj :GameObjectEntity = getObjectNamed(SINGLETON_ENTITY_NAME) as GameObjectEntity;
 
         if (null == obj) {
-            obj = new GameObjectEntity(SINGLETON_ENITTY_NAME);
+            obj = new GameObjectEntity(SINGLETON_ENTITY_NAME);
             addObject(obj);
         }
-        obj.addComponent(comp, componentName);
+        obj.addComponent(comp);
         return obj;
     }
 

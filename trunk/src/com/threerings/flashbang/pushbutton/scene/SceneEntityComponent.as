@@ -79,22 +79,22 @@ public class SceneEntityComponent extends EntityComponent
         return _displayObject;
     }
 
-    /**
-     * The displayObject which this DisplayObjectRenderer will draw.
-     */
-    public function set displayObject (value :DisplayObject) :void
-    {
-        var previousDisp :DisplayObject = _displayObject;
-        _displayObject = value;
-
-        // Remove old object from scene.
-        if (_scene && _displayObject != previousDisp) {
-            _scene.removeSceneComponent(this);
-            _scene.addSceneComponent(this);
-            _lastLayerIndex = _layerIndex;
-            _layerIndexDirty = _zIndexDirty = false;
-        }
-    }
+//    /**
+//     * The displayObject which this DisplayObjectRenderer will draw.
+//     */
+//    public function set displayObject (value :DisplayObject) :void
+//    {
+//        var previousDisp :DisplayObject = _displayObject;
+//        _displayObject = value;
+//
+//        // Remove old object from scene.
+//        if (_scene && _displayObject != previousDisp) {
+//            _scene.removeSceneComponent(this);
+//            _scene.addSceneComponent(this);
+//            _lastLayerIndex = _layerIndex;
+//            _layerIndexDirty = _zIndexDirty = false;
+//        }
+//    }
 
     public function get isDirty () :Boolean
     {
