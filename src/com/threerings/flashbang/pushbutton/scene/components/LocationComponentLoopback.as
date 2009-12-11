@@ -1,9 +1,15 @@
 package com.threerings.flashbang.pushbutton.scene.components {
-import com.pblabs.engine.entity.EntityComponent;
 import com.threerings.flashbang.components.LocationComponent;
+import com.threerings.flashbang.pushbutton.EntityComponent;
 public class LocationComponentLoopback extends EntityComponent
     implements LocationComponent
 {
+    public static const COMPONENT_NAME :String = "location";
+
+    override public function get name () :String
+    {
+        return COMPONENT_NAME;
+    }
 
     public function LocationComponentLoopback (loc :LocationComponent)
     {
