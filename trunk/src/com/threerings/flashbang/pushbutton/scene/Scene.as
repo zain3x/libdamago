@@ -1,9 +1,8 @@
 package com.threerings.flashbang.pushbutton.scene {
-import com.pblabs.engine.entity.EntityComponent;
-import com.pblabs.engine.entity.PropertyReference;
-import com.pblabs.rendering2D.SceneAlignment;
 import com.threerings.flashbang.Updatable;
 import com.threerings.flashbang.components.LocationComponent;
+import com.threerings.flashbang.pushbutton.EntityComponent;
+import com.threerings.flashbang.pushbutton.PropertyReference;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
@@ -57,7 +56,7 @@ public class Scene extends EntityComponent
         if (null != _selfReference) {
             return _selfReference;
         }
-        _selfReference = new PropertyReference("#" + owner.name + "." + name);
+        _selfReference = new PropertyReference("#" + owner.objectName + "." + name);
         return _selfReference;
     }
 
@@ -361,7 +360,7 @@ public class Scene extends EntityComponent
         _rootTransform.scale(zoom, zoom);
 
         // Center it appropriately.
-        SceneAlignment.calculate(_tempPoint, SceneAlignment.TOP_LEFT, sceneView.width, sceneView.height);
+//        SceneAlignment.calculate(_tempPoint, SceneAlignment.TOP_LEFT, sceneView.width, sceneView.height);
         _rootTransform.translate(_tempPoint.x, _tempPoint.y);
 
         _rootSprite.transform.matrix = _rootTransform;

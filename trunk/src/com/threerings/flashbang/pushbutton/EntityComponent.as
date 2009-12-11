@@ -1,4 +1,8 @@
 package com.threerings.flashbang.pushbutton {
+    import com.threerings.util.EventHandlerManager;
+
+    import flash.events.IEventDispatcher;
+
 /**
  * An implementation of the IEntityComponent interface, providing all the basic
  * functionality required of all components. Custom components should always
@@ -24,7 +28,7 @@ public class EntityComponent implements IEntityComponent
      */
     public function get name () :String
     {
-        throw new Error("Abstract method");
+        throw new Error("Abstract method on " + this);
     }
     /**
      * @inheritDoc
@@ -78,15 +82,6 @@ public class EntityComponent implements IEntityComponent
     }
 
     /**
-     * This is called when the component is removed from an entity. It should reverse
-     * anything that happened in onAdd or onReset (like removing event listeners or
-     * nulling object references).
-     */
-    protected function onRemove () :void
-    {
-    }
-
-    /**
      * This is called anytime a component is added or removed from the owner entity.
      * Lookups of other components on the owner entity should happen here.
      *
@@ -96,6 +91,51 @@ public class EntityComponent implements IEntityComponent
     protected function onReset () :void
     {
     }
-    private var _owner :IEntity = null;
+
+    /**
+     * This is called when the component is removed from an entity. It should reverse
+     * anything that happened in onAdd or onReset (like removing event listeners or
+     * nulling object references).
+     */
+    protected function onRemove():void
+    {
+        _events.freeAllHandlers();
+    }
+
+    /**
+     * Adds the specified listener to the specified dispatcher for the specified event.
+     *
+     * Listeners registered in this way will be automatically unregistered when the EntityComponent is
+     * removed.
+     */
+    protected function registerListener (dispatcher :IEventDispatcher, event :String,
+        listener :Function, useCapture :Boolean = false, priority :int = 0) :void
+    {
+        _events.registerListener(dispatcher, event, listener, useCapture, priority);
+    }
+
+    /**
+     * Registers a zero-arg callback function that should be called once when the event fires.
+     *
+     * Listeners registered in this way will be automatically unregistered when the EntityComponent is
+     * removed.
+     */
+    protected function registerOneShotCallback (dispatcher :IEventDispatcher, event :String,
+        callback :Function, useCapture :Boolean = false, priority :int = 0) :void
+    {
+        _events.registerOneShotCallback(dispatcher, event, callback, useCapture, priority);
+    }
+
+    /**
+     * Removes the specified listener from the specified dispatcher for the specified event.
+     */
+    protected function unregisterListener (dispatcher :IEventDispatcher, event :String,
+        listener :Function, useCapture :Boolean = false) :void
+    {
+        _events.unregisterListener(dispatcher, event, listener, useCapture);
+    }
+
+    protected var _events :EventHandlerManager = new EventHandlerManager();
+    protected var _owner :IEntity = null;
 }
 }

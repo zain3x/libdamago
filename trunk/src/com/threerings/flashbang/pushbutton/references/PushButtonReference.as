@@ -1,6 +1,6 @@
 package com.threerings.flashbang.pushbutton.references {
-import com.pblabs.engine.entity.IEntity;
-import com.pblabs.engine.entity.PropertyReference;
+import com.threerings.flashbang.pushbutton.IEntity;
+import com.threerings.flashbang.pushbutton.PropertyReference;
 public class PushButtonReference
 {
     public function PushButtonReference (propKey :String, owner :IEntity)
