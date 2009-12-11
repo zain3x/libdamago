@@ -3,16 +3,16 @@ import com.threerings.flashbang.Updatable;
 import com.threerings.flashbang.components.SceneComponent;
 import com.threerings.flashbang.pushbutton.EntityComponent;
 import com.threerings.flashbang.pushbutton.PropertyReference;
+import com.threerings.util.ClassUtil;
 
 import flash.display.DisplayObject;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-
 //For displaying IEntitys in Scenes
 public class SceneEntityComponent extends EntityComponent
     implements SceneComponent, Updatable
 {
-
+    public static const COMPONENT_NAME :String = ClassUtil.tinyClassName(SceneEntityComponent);
     /**
      * If set, alpha is gotten from this property every frame.
      */
@@ -32,12 +32,12 @@ public class SceneEntityComponent extends EntityComponent
      * If set, rotation is gotten from this property every frame.
      */
     public var rotationProperty :PropertyReference;
+    public var sceneComponentName :String;
+
+    public var sceneLayerName :String;
 
     public var xProperty :PropertyReference;
     public var yProperty :PropertyReference;
-
-    public var sceneLayerName :String;
-    public var sceneComponentName :String;
 
 
 
@@ -51,9 +51,10 @@ public class SceneEntityComponent extends EntityComponent
      */
     public var zIndexProperty :PropertyReference;
 
-    public function SceneEntityComponent ()
+    public function SceneEntityComponent (displayObject :DisplayObject = null)
     {
         super();
+        _displayObject = displayObject;
     }
 
     public function get alpha () :Number
@@ -98,6 +99,11 @@ public class SceneEntityComponent extends EntityComponent
     public function get isDirty () :Boolean
     {
         return _isDirty;
+    }
+
+    override public function get name () :String
+    {
+        return COMPONENT_NAME;
     }
 
     //    public function get layerIndex () :int

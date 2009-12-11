@@ -21,7 +21,7 @@ public class GameObjectEntity extends GameObject
     public static const ENTITY_DESTROYED :String = "EntityDestroyed";
     public static const GROUP_ENTITY :String = "EntityGroup";
 
-    public function GameObjectEntity (name :String)
+    public function GameObjectEntity (name :String = null)
     {
         _name = name;
     }

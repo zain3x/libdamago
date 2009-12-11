@@ -4,6 +4,7 @@ import com.threerings.flashbang.GameObject;
 import com.threerings.flashbang.GameObjectRef;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
+import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.ValueEvent;
@@ -123,10 +124,10 @@ public class EntityAppmode extends AppMode
 //        return obj;
 //    }
 
-    public function addSingletonComponent (comp :IEntityComponent, componentName :String)
+    public function addSingletonComponent (comp :IEntityComponent)
         :GameObjectEntity
     {
-        trace("addSingletonComponent");
+        log.info("addSingletonComponent", "comp", comp);
         var obj :GameObjectEntity = getObjectNamed(SINGLETON_ENTITY_NAME) as GameObjectEntity;
 
         if (null == obj) {
@@ -358,5 +359,7 @@ public class EntityAppmode extends AppMode
 
     /** stores a mapping from Class to Array */
     protected var _groupedComponentsByType :Map= Maps.newMapOf(Class);
+
+    protected static const log :Log = Log.getLog(EntityAppmode);
 }
 }
