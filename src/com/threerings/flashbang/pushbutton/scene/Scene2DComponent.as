@@ -3,6 +3,7 @@ import com.threerings.flashbang.Updatable;
 import com.threerings.flashbang.components.LocationComponent;
 import com.threerings.flashbang.pushbutton.EntityComponent;
 import com.threerings.flashbang.pushbutton.PropertyReference;
+import com.threerings.flashbang.pushbutton.references.RectangleReference;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
@@ -19,10 +20,10 @@ import flash.geom.*;
  * DisplayObjectRenderers, and makes sure that they are drawn. Extensible
  * for more complex rendering scenarios. Enforces sorting order, too.
  */
-public class Scene extends EntityComponent
+public class Scene2DComponent extends EntityComponent
     implements Updatable
 {
-    public static const COMPONENT_NAME :String = ClassUtil.tinyClassName(Scene);
+    public static const COMPONENT_NAME :String = ClassUtil.tinyClassName(Scene2DComponent);
     public var dirty :Boolean;
 
     /**
@@ -52,8 +53,11 @@ public class Scene extends EntityComponent
      */
     public var trackObject :LocationComponent;
 
-    public function Scene ()
+//    public var sceneBoundsRef :RectangleReference;
+
+    public function Scene2DComponent (sceneName :String = null)
     {
+        _sceneName = sceneName;
         // Get ticked after all the renderers.
 //        updatePriority = -10;
         _rootSprite = new Sprite();//generateRootSprite();
@@ -75,7 +79,7 @@ public class Scene extends EntityComponent
 
     override public function get name () :String
     {
-        return COMPONENT_NAME;
+        return _sceneName == null ? COMPONENT_NAME : _sceneName;
     }
 
     public function get position () :Point
@@ -160,17 +164,23 @@ public class Scene extends EntityComponent
 //        return _sceneViewBoundsCache;
 //    }
 
-    public function set sceneViewName (value :String) :void
-    {
-        _sceneViewName = value;
-    }
+//    public function set sceneViewName (value :String) :void
+//    {
+//        _sceneViewName = value;
+//    }
 
     /**
      * @inheritDoc
      */
     public function get sceneBounds () :Rectangle
     {
-        return _sceneBounds.clone();
+//        if (_sceneBounds != null) {
+            return _sceneBounds;
+//        }
+//        if (sceneBoundsRef != null && sceneBoundsRef.value != null) {
+//            return sceneBoundsRef.value;
+//        }
+//        return null;
     }
 
     public function set debug (val :Boolean) : void
@@ -413,8 +423,11 @@ public class Scene extends EntityComponent
 
     public function panView (deltaX :Number, deltaY :Number) :void
     {
-        if (deltaX == 0 && deltaY == 0)
+        trace("panView", deltaX, deltaY);
+        if (deltaX == 0 && deltaY == 0) {
             return;
+        }
+
 
         // TODO: Take into account rotation so it's correct even when
         //       rotating.
@@ -474,6 +487,7 @@ public class Scene extends EntityComponent
 
     public function update (dt :Number) :void
     {
+//        trace("updating scene");
         if (!sceneView) {
             log.warning(this + " sceneView is null, so we aren't rendering.");
             return;
@@ -502,6 +516,11 @@ public class Scene extends EntityComponent
             l.renderInternal();
         }
     }
+
+//    protected function get sceneBounds () :Rectangle
+//    {
+//
+//    }
 
     public function updateTransform () :void
     {
@@ -643,7 +662,8 @@ public class Scene extends EntityComponent
     protected var _sceneView :SceneView;
 
 //    protected var _sceneViewBoundsCache :Rectangle = new Rectangle();
-    protected var _sceneViewName :String = null;
+//    protected var _sceneViewName :String = null;
+    protected var _sceneName :String = null;
 
     protected var _selfReference :PropertyReference;
     protected var _tempPoint :Point = new Point();
@@ -654,6 +674,6 @@ public class Scene extends EntityComponent
     protected var _zoom :Number = 1;
     protected static const DEFAULT_LAYER_NAME :String = "defaultLayer";
 
-    protected static const log :Log = Log.getLog(Scene);
+    protected static const log :Log = Log.getLog(Scene2DComponent);
 }
 }

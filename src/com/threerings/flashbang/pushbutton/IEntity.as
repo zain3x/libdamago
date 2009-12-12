@@ -15,7 +15,7 @@ public interface IEntity
      * so the entity will only be cleaned up by the garbage collector if those
      * are set to null manually.</p>
      */
-    function destroy () :void;
+    function destroySelf () :void;
 
     /**
      * Gets a component of a specific type from this entity. If more than one
@@ -93,7 +93,10 @@ public interface IEntity
 
     function get globalDispatcher () :IEventDispatcher;
 
-    function getEntity (predicate :Function) :IEntity;
-    function getEntities (predicate :Function = null) :Array;
+    function get manager () :IEntityManager;
+
+//    function getEntity (predicate :Function) :IEntity;
+//    function getComponent (predicate :Function) :IEntityComponent;
+//    function getEntities (predicate :Function = null) :Array;
 }
 }

@@ -3,7 +3,7 @@ import com.threerings.flashbang.components.LocationComponent;
 import com.threerings.flashbang.pushbutton.EntityAppmode;
 import com.threerings.flashbang.pushbutton.GameObjectEntity;
 import com.threerings.flashbang.pushbutton.PropertyReference;
-import com.threerings.flashbang.pushbutton.scene.Scene;
+import com.threerings.flashbang.pushbutton.scene.Scene2DComponent;
 import com.threerings.flashbang.pushbutton.scene.SceneEntityComponent;
 import com.threerings.flashbang.pushbutton.scene.SceneLayerYOrdering;
 import com.threerings.flashbang.pushbutton.scene.SceneView;
@@ -25,7 +25,7 @@ public class TestSceneBounds extends EntityAppmode
         var view :SceneView = new SceneView(200, 200);
         view.debug = true;
 
-        _scene = new Scene();
+        _scene = new Scene2DComponent();
 //        _scene.zoom = 0.5;
         _scene.sceneBounds = new Rectangle(-50, 0, 450, 400);
         _scene.debug = true;
@@ -104,7 +104,7 @@ public class TestSceneBounds extends EntityAppmode
 
     protected var _sceneName :String = "scene";
     protected var _layerName :String = "someLayer";
-    protected var _scene :Scene;
+    protected var _scene :Scene2DComponent;
     protected var _sortingLayer :SceneLayerYOrdering;
 }
 }

@@ -1,20 +1,22 @@
 package com.threerings.flashbang.pushbutton.references {
-import com.threerings.flashbang.pushbutton.IEntity;
+import com.threerings.flashbang.pushbutton.IEntityComponent;
+
+import flash.geom.Point;
 public class PointReference extends PushButtonReference
 {
-    public function PointReference (propKey :String, owner :IEntity)
+    public function PointReference (propKey :String, comp :IEntityComponent)
     {
-        super(propKey, owner);
+        super(propKey, comp);
     }
 
     public function get value () :Point
     {
-        return _owner.getProperty(_ref) as Point;
+        return owner.getProperty(_ref) as Point;
     }
 
     public function set value (val :Point) :void
     {
-        _owner.setProperty(_ref, val);
+        owner.setProperty(_ref, val);
     }
 }
 }

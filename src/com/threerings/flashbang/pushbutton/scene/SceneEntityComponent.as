@@ -257,7 +257,7 @@ public class SceneEntityComponent extends EntityComponent
     //        _transformDirty = true;
     //    }
 
-    public function get scene () :Scene
+    public function get scene () :Scene2DComponent
     {
         return _scene;
     }
@@ -631,6 +631,6 @@ public class SceneEntityComponent extends EntityComponent
 
     //    protected var _rotationOffset :Number = 0;
     //    protected var _scale :Point = new Point(1, 1);
-    internal var _scene :Scene;
+    internal var _scene :Scene2DComponent;
 }
 }

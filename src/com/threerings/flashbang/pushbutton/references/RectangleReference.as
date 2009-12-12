@@ -1,22 +1,22 @@
 package com.threerings.flashbang.pushbutton.references {
-import com.threerings.flashbang.pushbutton.IEntity;
+import com.threerings.flashbang.pushbutton.IEntityComponent;
 
 import flash.geom.Rectangle;
 public class RectangleReference extends PushButtonReference
 {
-    public function RectangleReference (propKey :String, owner :IEntity)
+    public function RectangleReference (propKey :String, comp :IEntityComponent)
     {
-        super(propKey, owner);
+        super(propKey, comp);
     }
 
     public function get value () :Rectangle
     {
-        return _owner.getProperty(_ref) as Rectangle;
+        return owner.getProperty(_ref) as Rectangle;
     }
 
     public function set value (val :Rectangle) :void
     {
-        _owner.setProperty(_ref, val);
+        owner.setProperty(_ref, val);
     }
 }
 }

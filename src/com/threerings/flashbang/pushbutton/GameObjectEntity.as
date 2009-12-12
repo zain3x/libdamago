@@ -8,15 +8,13 @@ import com.threerings.util.Maps;
 
 import flash.events.Event;
 import flash.events.IEventDispatcher;
-
 /**
  * A modification of GameObject.  Utilizes EntityComponents.
  * Rather that creating GameObjects with extra functionality via extending this class,
  * behaviour is built via adding IEntityComponents.
  *
  */
-public class GameObjectEntity extends GameObject
-    implements IEntity
+public class GameObjectEntity extends GameObject implements IEntity
 {
     public static const ENTITY_DESTROYED :String = "EntityDestroyed";
     public static const GROUP_ENTITY :String = "EntityGroup";
@@ -24,6 +22,11 @@ public class GameObjectEntity extends GameObject
     public function GameObjectEntity (name :String = null)
     {
         _name = name;
+    }
+
+    public function get manager () :IEntityManager
+    {
+        return db as IEntityManager;
     }
 
     public function get components () :Array
@@ -41,15 +44,20 @@ public class GameObjectEntity extends GameObject
         return this;
     }
 
-//    public function get name () :String
-//    {
-//        return _name;
-//    }
+    public function get globalDispatcher () :IEventDispatcher
+    {
+        return db;
+    }
 
-//    public function set name (val :String) :void
-//    {
-//        _name = val;
-//    }
+    //    public function get name () :String
+    //    {
+    //        return _name;
+    //    }
+
+    //    public function set name (val :String) :void
+    //    {
+    //        _name = val;
+    //    }
 
     override public function get objectName () :String
     {
@@ -58,10 +66,10 @@ public class GameObjectEntity extends GameObject
 
     public function addComponent (component :IEntityComponent) :void
     {
-//        if (isLiveObject) {
-//            throw new Error("Components must be added before adding to the ObjectDB. " +
-//                "(To add to the correct groups.  Components define groups).");
-//        }
+        //        if (isLiveObject) {
+        //            throw new Error("Components must be added before adding to the ObjectDB. " +
+        //                "(To add to the correct groups.  Components define groups).");
+        //        }
         if (component.name == null || component.name == "") {
             throw new Error("component.name cannot be null.");
         }
@@ -134,16 +142,48 @@ public class GameObjectEntity extends GameObject
         //        }
     }
 
-    public function destroy () :void
-    {
-        if (isLiveObject) {
-            destroySelf();
-        }
-    }
+    //    public function destroy () :void
+    //    {
+    //        if (isLiveObject) {
+    //            destroySelf();
+    //        }
+    //    }
 
     public function doesPropertyExist (property :PropertyReference) :Boolean
     {
         return findProperty(property, false, _tempPropertyInfo, true) != null;
+    }
+
+    public function getEntities (predicate :Function = null) :Array
+    {
+        var entities :Array = [];
+        for each (var ref :GameObjectRef in db.getObjectRefsInGroup(GROUP_ENTITY)) {
+            if (ref.object != null && predicate(ref.object.objectName)) {
+                entities.push(ref.object);
+            }
+        }
+        return entities;
+    }
+
+    //    protected function getComponentByName (componentName :String) :IEntityComponent
+    //    {
+    //        for each (var ref :GameObjectRef in db.getObjectRefsInGroup(
+    //        return db.getComponent(componentName);
+    //    }
+    //
+    //    protected function getComponentsNamed (componentName :String) :Array
+    //    {
+    //        return db.getComponents(componentName);
+    //    }
+
+    public function getEntity (predicate :Function) :IEntity
+    {
+        for each (var ref :GameObjectRef in db.getObjectRefsInGroup(GROUP_ENTITY)) {
+            if (ref.object != null && predicate(ref.object.objectName)) {
+                return ref.object as IEntity;
+            }
+        }
+        return null;
     }
 
     public function getProperty (property :PropertyReference, defaultVal :* = null) :*
@@ -164,18 +204,23 @@ public class GameObjectEntity extends GameObject
         return result;
     }
 
-    public function initialize (name :String = null, alias :String = null) :void
+    public function hasComponent (componentType :Class) :Boolean
     {
-        _name = name;
-        if (_name == null || _name == "")
-            return;
-
-        _alias = alias;
-
-        //        NameManager.instance.addEntity(this, _name);
-        //        if (_alias)
-        //            NameManager.instance.addEntity(this, _alias);
+        return null != lookupComponentByType(componentType);
     }
+
+    //    public function initialize (name :String = null, alias :String = null) :void
+    //    {
+    //        _name = name;
+    //        if (_name == null || _name == "")
+    //            return;
+    //
+    //        _alias = alias;
+    //
+    //        //        NameManager.instance.addEntity(this, _name);
+    //        //        if (_alias)
+    //        //            NameManager.instance.addEntity(this, _alias);
+    //    }
 
     public function lookupComponentByName (componentName :String) :IEntityComponent
     {
@@ -192,21 +237,6 @@ public class GameObjectEntity extends GameObject
         return _components.lookupComponentsByType(componentType);
     }
 
-    public function hasComponent (componentType :Class) :Boolean
-    {
-        return null != lookupComponentByType(componentType);
-    }
-
-    public function removeComponent (component :IEntityComponent) :void
-    {
-        if (!_components.doRemoveComponent(component)) {
-            return;
-        }
-        dbComponent.removeComponent(component);
-        component.unregister();
-        _components.doResetComponents();
-    }
-
     public function serialize (xml :XML) :void
     {
         //        for each (var component :IEntityComponent in _components) {
@@ -220,11 +250,21 @@ public class GameObjectEntity extends GameObject
     {
         // Look up and set.
         var info :PropertyInfo = findProperty(property, true, _tempPropertyInfo);
-        if (info)
+        if (info != null) {
             info.setValue(value);
+        } else {
+            log.warning("setProperty", "property", property, "info", info);
+        }
 
         // Clean up to avoid dangling references.
         _tempPropertyInfo.clear();
+    }
+
+    override public function destroySelf () :void
+    {
+        if (isLiveObject) {
+            super.destroySelf();
+        }
     }
 
     override public function getObjectGroup (groupNum :int) :String
@@ -263,6 +303,16 @@ public class GameObjectEntity extends GameObject
     {
         super.update(dt);
         _components.update(dt);
+    }
+
+    protected function removeComponent (component :IEntityComponent) :void
+    {
+        if (!_components.doRemoveComponent(component)) {
+            return;
+        }
+        dbComponent.removeComponent(component);
+        component.unregister();
+        _components.doResetComponents();
     }
 
     protected var _alias :String = null;
@@ -392,7 +442,8 @@ public class GameObjectEntity extends GameObject
             if (!comLookup) {
                 log.warning(this, "findProperty",
                     "Could not find component '" + curLookup + "' on named entity '" +
-                    (parentElem as IEntity).objectName + "' for property '" + reference.property + "'");
+                    (parentElem as IEntity).objectName + "' for property '" + reference.property +
+                    "'");
                 //                Profiler.exit("Entity.findProperty");
                 return null;
             }
@@ -514,56 +565,18 @@ public class GameObjectEntity extends GameObject
         //        Profiler.exit("Entity.findProperty");
         return null;
     }
-
-    public function get globalDispatcher () :IEventDispatcher
-    {
-        return db;
-    }
-
-//    protected function getComponentByName (componentName :String) :IEntityComponent
-//    {
-//        for each (var ref :GameObjectRef in db.getObjectRefsInGroup(
-//        return db.getComponent(componentName);
-//    }
-//
-//    protected function getComponentsNamed (componentName :String) :Array
-//    {
-//        return db.getComponents(componentName);
-//    }
-
-
-    public function getEntity (predicate :Function) :IEntity
-    {
-        for each (var ref :GameObjectRef in db.getObjectRefsInGroup(GROUP_ENTITY)) {
-            if (ref.object != null && predicate(ref.object.objectName)) {
-                return ref.object as IEntity;
-            }
-        }
-        return null;
-    }
-    public function getEntities (predicate :Function = null) :Array
-    {
-        var entities :Array = [];
-        for each (var ref :GameObjectRef in db.getObjectRefsInGroup(GROUP_ENTITY)) {
-            if (ref.object != null && predicate(ref.object.objectName)) {
-                entities.push(ref.object);
-            }
-        }
-        return entities;
-    }
-
 }
 }
 
+import flash.events.IEventDispatcher;
 import com.threerings.flashbang.Updatable;
+import com.threerings.flashbang.pushbutton.IEntity;
+import com.threerings.flashbang.pushbutton.IEntityComponent;
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.DebugUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
-import com.threerings.util.DebugUtil;
-import com.threerings.flashbang.pushbutton.IEntityComponent;
-import flash.events.IEventDispatcher;
-import com.threerings.flashbang.pushbutton.IEntity;
 final class PropertyInfo
 {
     public var propertyName :String = null;
@@ -725,13 +738,11 @@ final class ComponentList
             if (c is Updatable) {
                 Updatable(c).update(dt);
             }
-//            else if (c is TickedComponent) {
-//                TickedComponent(c).onTick(dt);
-//            }
+                //            else if (c is TickedComponent) {
+                //                TickedComponent(c).onTick(dt);
+                //            }
         }
     }
-
-
 
     protected var _componentMap :Map = Maps.newMapOf(String);
 

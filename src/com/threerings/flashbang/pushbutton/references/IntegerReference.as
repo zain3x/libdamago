@@ -2,19 +2,19 @@ package com.threerings.flashbang.pushbutton.references {
 import com.pblabs.engine.entity.IEntity;
 public class IntegerReference extends PushButtonReference
 {
-    public function IntegerReference (propKey :String, owner :IEntity)
+    public function IntegerReference (propKey :String, comp :IEntityComponent)
     {
-        super(propKey, owner);
+        super(propKey, comp);
     }
 
     public function get value () :int
     {
-        return _owner.getProperty(_ref) as int;
+        return owner.getProperty(_ref) as int;
     }
 
     public function set value (val :int) :void
     {
-        _owner.setProperty(_ref, val);
+        owner.setProperty(_ref, val);
     }
 }
 }
