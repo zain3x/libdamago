@@ -9,10 +9,11 @@ import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.ValueEvent;
 public class EntityAppmode extends AppMode
+    implements IEntityManager
 {
     public static const OBJECT_ADDED :String = "objectAdded";
     public static const OBJECT_REMOVED :String = "objectRemoved";
-    public static const SINGLETON_ENTITY_NAME :String = "singletonEntity";
+    public static const SINGLETON_ENTITY_NAME :String = "!";
 
     public function EntityAppmode ()
     {
@@ -95,6 +96,56 @@ public class EntityAppmode extends AppMode
 
     }
 
+    public function getEntity (predicate :Function) :IEntity
+    {
+        for each (var ref :GameObjectRef in getObjectRefsInGroup(GameObjectEntity.GROUP_ENTITY)) {
+            if (ref.object != null && predicate(ref.object)) {
+                return ref.object as IEntity;
+            }
+        }
+        return null;
+    }
+    public function getEntities (predicate :Function = null) :Array
+    {
+        var arr :Array = [];
+        for each (var ref :GameObjectRef in getObjectRefsInGroup(GameObjectEntity.GROUP_ENTITY)) {
+            if (ref.object == null) {
+                continue;
+            }
+            if (predicate == null || predicate(ref.object)) {
+                arr.push(ref.object)
+            }
+        }
+        return arr;
+    }
+    public function getComponent (predicate :Function) :IEntityComponent
+    {
+        for each (var ref :GameObjectRef in getObjectRefsInGroup(GameObjectEntity.GROUP_ENTITY)) {
+            if (ref.object != null && predicate(ref.object)) {
+                for each (var comp :IEntityComponent in GameObjectEntity(ref.object).components) {
+                    if (predicate(comp)) {
+                        return comp;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    public function getComponents (predicate :Function = null) :Array
+    {
+        var arr :Array = [];
+        for each (var ref :GameObjectRef in getObjectRefsInGroup(GameObjectEntity.GROUP_ENTITY)) {
+            if (ref.object != null) {
+                for each (var comp :IEntityComponent in GameObjectEntity(ref.object).components) {
+                    if (predicate == null || predicate(comp)) {
+                        arr.push(comp);
+                    }
+                }
+            }
+        }
+        return arr;
+    }
+
     public function get elapsedTime () :Number
     {
         return _elapsedTime;
@@ -138,6 +189,16 @@ public class EntityAppmode extends AppMode
         return obj;
     }
 
+    public function getSingletonComponent (name :String) :IEntityComponent
+    {
+        var obj :GameObjectEntity = getObjectNamed(SINGLETON_ENTITY_NAME) as GameObjectEntity;
+
+        if (null == obj) {
+            return null;
+        }
+        return obj.lookupComponentByName(name);
+    }
+
     //Don't modify the array!
     public function getComponentsOfType (clazz :Class) :Array
     {
@@ -178,20 +239,20 @@ public class EntityAppmode extends AppMode
         return entity.lookupComponentByName(componentName);
     }
 
-    public function getComponent (componentName :String) :IEntityComponent
-    {
-        var arr :Array = _groupedComponentsByName.get(componentName) as Array;
-        if (arr != null && arr.length > 0) {
-            return arr[0] as IEntityComponent;
-        }
-
-        return null;
-    }
-
-    public function getComponents (componentName :String) :Array
-    {
-        return _groupedComponentsByName.get(componentName) as Array;
-    }
+//    public function getComponent (componentName :String) :IEntityComponent
+//    {
+//        var arr :Array = _groupedComponentsByName.get(componentName) as Array;
+//        if (arr != null && arr.length > 0) {
+//            return arr[0] as IEntityComponent;
+//        }
+//
+//        return null;
+//    }
+//
+//    public function getComponents (componentName :String) :Array
+//    {
+//        return _groupedComponentsByName.get(componentName) as Array;
+//    }
 
     override public function addObject (obj :GameObject) :GameObjectRef
     {

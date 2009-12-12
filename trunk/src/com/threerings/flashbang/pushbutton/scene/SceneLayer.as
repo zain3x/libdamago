@@ -19,7 +19,7 @@ public class SceneLayer extends Sprite
          super();
     }
 
-    public function get scene () :Scene
+    public function get scene () :Scene2DComponent
     {
         return _parentScene;
     }
@@ -152,7 +152,7 @@ public class SceneLayer extends Sprite
     /** We'll accept any kind of object mapped to a DisplayObject*/
     protected var _sceneComponents :Map = Maps.newMapOf(Object);
 
-    internal var _parentScene :Scene;
+    internal var _parentScene :Scene2DComponent;
 
     protected static const log :Log = Log.getLog(SceneLayer);
 }
