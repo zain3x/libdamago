@@ -93,7 +93,11 @@ public interface IEntity
 
     function get globalDispatcher () :IEventDispatcher;
 
-    function get manager () :IEntityManager;
+//    function get manager () :IEntityManager;
+
+    function getEntity (entityName :String) :IEntity;
+    function getEntitiesInGroup (groupName :String) :Array;//<GameObjectRef>
+
 
 //    function getEntity (predicate :Function) :IEntity;
 //    function getComponent (predicate :Function) :IEntityComponent;
