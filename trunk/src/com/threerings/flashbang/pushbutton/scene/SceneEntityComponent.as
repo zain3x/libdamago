@@ -1,8 +1,8 @@
 package com.threerings.flashbang.pushbutton.scene {
+import com.pblabs.engine.entity.EntityComponent;
+import com.pblabs.engine.entity.PropertyReference;
 import com.threerings.flashbang.Updatable;
 import com.threerings.flashbang.components.SceneComponent;
-import com.threerings.flashbang.pushbutton.EntityComponent;
-import com.threerings.flashbang.pushbutton.PropertyReference;
 import com.threerings.util.ClassUtil;
 
 import flash.display.DisplayObject;

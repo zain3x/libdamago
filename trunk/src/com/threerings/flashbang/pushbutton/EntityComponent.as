@@ -1,7 +1,9 @@
 package com.threerings.flashbang.pushbutton {
-    import com.threerings.util.EventHandlerManager;
+import com.pblabs.engine.entity.IEntity;
+import com.pblabs.engine.entity.IEntityComponent;
+import com.threerings.util.EventHandlerManager;
 
-    import flash.events.IEventDispatcher;
+import flash.events.IEventDispatcher;
 
 /**
  * An implementation of the IEntityComponent interface, providing all the basic
@@ -15,6 +17,10 @@ package com.threerings.flashbang.pushbutton {
 public class EntityComponent implements IEntityComponent
 {
 
+    public function EntityComponent (name :String = null)
+    {
+        _name = name;
+    }
     /**
      * @inheritDoc
      */
@@ -28,8 +34,19 @@ public class EntityComponent implements IEntityComponent
      */
     public function get name () :String
     {
-        throw new Error("Abstract method on " + this);
+        return _name;
+//        throw new Error("Abstract method on " + this);
     }
+
+    public function set name (val :String) :void
+    {
+        if (isRegistered) {
+            throw new Error("Cannot set name for a registed component, this will break the " +
+                    "Entity groups.");
+        }
+        _name = val;
+    }
+
     /**
      * @inheritDoc
      */
@@ -41,7 +58,7 @@ public class EntityComponent implements IEntityComponent
     /**
      * @inheritDoc
      */
-    public function register (owner :IEntity) :void
+    public function register (owner :IEntity, name:String) :void
     {
         if (isRegistered)
             throw new Error("Trying to register an already-registered component!");
@@ -137,5 +154,6 @@ public class EntityComponent implements IEntityComponent
 
     protected var _events :EventHandlerManager = new EventHandlerManager();
     protected var _owner :IEntity = null;
+    protected var _name :String = null;
 }
 }

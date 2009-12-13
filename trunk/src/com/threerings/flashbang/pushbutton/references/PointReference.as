@@ -1,10 +1,10 @@
 package com.threerings.flashbang.pushbutton.references {
-import com.threerings.flashbang.pushbutton.IEntityComponent;
+import com.threerings.flashbang.pushbutton.IEntityComponentExtended;
 
 import flash.geom.Point;
 public class PointReference extends PushButtonReference
 {
-    public function PointReference (propKey :String, comp :IEntityComponent)
+    public function PointReference (propKey :String, comp :IEntityComponentExtended)
     {
         super(propKey, comp);
     }

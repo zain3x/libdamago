@@ -1,4 +1,6 @@
 package com.threerings.flashbang.pushbutton {
+import com.pblabs.engine.entity.IEntityComponent;
+import com.pblabs.engine.entity.PropertyReference;
 import com.threerings.flashbang.GameObject;
 import com.threerings.flashbang.Updatable;
 import com.threerings.util.ClassUtil;
@@ -6,6 +8,7 @@ import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.Predicates;
+import com.threerings.util.ArrayUtil;
 
 import flash.events.Event;
 import flash.events.IEventDispatcher;
@@ -15,7 +18,7 @@ import flash.events.IEventDispatcher;
  * behaviour is built via adding IEntityComponents.
  *
  */
-public class GameObjectEntity extends GameObject implements IEntity
+public class GameObjectEntity extends GameObject implements IEntityExtended
 {
     public static const ENTITY_DESTROYED :String = "EntityDestroyed";
     public static const GROUP_ENTITY :String = "EntityGroup";
@@ -27,7 +30,7 @@ public class GameObjectEntity extends GameObject implements IEntity
 
     public function get components () :Array
     {
-        return _components.components;
+        return _components;
     }
 
     public function get dbComponent () :EntityAppmode
@@ -40,15 +43,25 @@ public class GameObjectEntity extends GameObject implements IEntity
         return this;
     }
 
+    public function get eventDispatcher () :IEventDispatcher
+    {
+        return this;
+    }
+
     public function get globalDispatcher () :IEventDispatcher
     {
         return db;
     }
 
-    public function get manager () :IEntityManager
+    public function get name () :String
     {
-        return db as IEntityManager;
+        return objectName
     }
+
+    //    public function get manager () :IEntityManager
+    //    {
+    //        return db as IEntityManager;
+    //    }
 
     //    public function get name () :String
     //    {
@@ -65,12 +78,19 @@ public class GameObjectEntity extends GameObject implements IEntity
         return _name;
     }
 
-    public function addComponent (component :IEntityComponent) :void
+    public function addComponent (component :IEntityComponent, componentName :String) :void
     {
-        //        if (isLiveObject) {
-        //            throw new Error("Components must be added before adding to the ObjectDB. " +
-        //                "(To add to the correct groups.  Components define groups).");
-        //        }
+        if (isLiveObject) {
+            //            throw new Error("Components must be added before adding to the ObjectDB. " +
+            //                "(To add to the correct groups.  Components define groups).");
+            log.warning("Components must be added before adding to the ObjectDB to have the" +
+                " IEntity listed in the component groups. ");
+        }
+
+        if ((component.name == null || component.name != componentName) && componentName != null) {
+            EntityComponent(component).name = componentName;
+        }
+
         if (component.name == null || component.name == "") {
             throw new Error("component.name cannot be null.");
         }
@@ -80,14 +100,22 @@ public class GameObjectEntity extends GameObject implements IEntity
                 lookupComponentByName(component.name));
         }
 
-        if (!_components.addComponent(component, component.name)) {
+        if (_componentMap.containsKey(componentName)) {
             return;
         }
 
+        _componentMap.put(componentName, component);
+        _components.push(component);
+
+//        if (!_components.addComponent(component, component.name)) {
+//            return;
+//        }
+
+
         if (isLiveObject) {
-            dbComponent.addComponent(component);
-            component.register(this);
-            _components.doResetComponents();
+            //            dbComponent.addComponent(component);
+            component.register(this, componentName);
+            doResetComponents();
         }
 
         //ObjectDB expects the groups defined on addObject, but that might not be the case for
@@ -96,52 +124,67 @@ public class GameObjectEntity extends GameObject implements IEntity
 
     public function deserialize (xml :XML, registerComponents :Boolean = true) :void
     {
-        // Note what entity we're deserializing to the Serializer.
-        //        Serializer.instance.setCurrentEntity(this);
-
-        //        for each (var componentXML :XML in xml.*) {
-        //            // Error if it's an unexpected tag.
-        //            if (componentXML.name().toString().toLowerCase() != "component") {
-        //                log.error(this, "deserialize",
-        //                    "Found unexpected tag '" + componentXML.name().toString() +
-        //                    "', only <component/> is valid, ignoring tag. Error in entity '" + name + "'.");
-        //                continue;
-        //            }
-        //
-        //            var componentName :String = componentXML.attribute("name");
-        //            var componentClassName :String = componentXML.attribute("type");
-        //            var component :IEntityComponent = null;
-        //
-        //            if (componentClassName.length > 0) {
-        //                component = TypeUtility.instantiate(componentClassName) as IEntityComponent;
-        //                if (!component) {
-        //                    log.error(this, "deserialize",
-        //                        "Unable to instantiate component " + componentName + " of type " +
-        //                        componentClassName + " on entity '" + name + "'.");
-        //                    continue;
-        //                }
-        //
-        //                if (!doAddComponent(component, componentName))
-        //                    continue;
-        //            } else {
-        //                component = lookupComponentByName(componentName);
-        //                if (!component) {
-        //                    log.error(this, "deserialize",
-        //                        "No type specified for the component " + componentName +
-        //                        " and the component doesn't exist on a parent template for entity '" +
-        //                        name + "'.");
-        //                    continue;
-        //                }
-        //            }
-        //
-        //            Serializer.instance.deserialize(component, componentXML);
-        //        }
-        //
-        //        if (registerComponents) {
-        //            doRegisterComponents();
-        //            doResetComponents();
-        //        }
     }
+
+//    public function addComponent (component:IEntityComponent, componentName:String) :void
+//    {
+//    }
+
+    public function destroy () :void
+    {
+        if (isLiveObject) {
+            destroySelf();
+        }
+    }
+
+    //    public function deserialize (xml :XML, registerComponents :Boolean = true) :void
+    //    {
+    // Note what entity we're deserializing to the Serializer.
+    //        Serializer.instance.setCurrentEntity(this);
+
+    //        for each (var componentXML :XML in xml.*) {
+    //            // Error if it's an unexpected tag.
+    //            if (componentXML.name().toString().toLowerCase() != "component") {
+    //                log.error(this, "deserialize",
+    //                    "Found unexpected tag '" + componentXML.name().toString() +
+    //                    "', only <component/> is valid, ignoring tag. Error in entity '" + name + "'.");
+    //                continue;
+    //            }
+    //
+    //            var componentName :String = componentXML.attribute("name");
+    //            var componentClassName :String = componentXML.attribute("type");
+    //            var component :IEntityComponent = null;
+    //
+    //            if (componentClassName.length > 0) {
+    //                component = TypeUtility.instantiate(componentClassName) as IEntityComponent;
+    //                if (!component) {
+    //                    log.error(this, "deserialize",
+    //                        "Unable to instantiate component " + componentName + " of type " +
+    //                        componentClassName + " on entity '" + name + "'.");
+    //                    continue;
+    //                }
+    //
+    //                if (!doAddComponent(component, componentName))
+    //                    continue;
+    //            } else {
+    //                component = lookupComponentByName(componentName);
+    //                if (!component) {
+    //                    log.error(this, "deserialize",
+    //                        "No type specified for the component " + componentName +
+    //                        " and the component doesn't exist on a parent template for entity '" +
+    //                        name + "'.");
+    //                    continue;
+    //                }
+    //            }
+    //
+    //            Serializer.instance.deserialize(component, componentXML);
+    //        }
+    //
+    //        if (registerComponents) {
+    //            doRegisterComponents();
+    //            doResetComponents();
+    //        }
+    //    }
 
     //    public function destroy () :void
     //    {
@@ -155,25 +198,26 @@ public class GameObjectEntity extends GameObject implements IEntity
         return findProperty(property, false, _tempPropertyInfo, true) != null;
     }
 
-    public function getEntity (entityName :String) :IEntity
+    public function getEntitiesInGroup (groupName :String) :Array //<IEntity>
     {
-        return db.getObjectNamed(entityName) as IEntity;
-    }
-    public function getEntitiesInGroup (groupName :String) :Array//<IEntity>
-    {
-        return db.getObjectsInGroup(groupName).filter(Predicates.createIs(IEntity));
+        return db.getObjectsInGroup(groupName).filter(Predicates.createIs(IEntityExtended));
     }
 
-//    public function getEntities (predicate :Function = null) :Array
-//    {
-//        var entities :Array = [];
-//        for each (var ref :GameObjectRef in db.getObjectRefsInGroup(GROUP_ENTITY)) {
-//            if (ref.object != null && predicate(ref.object.objectName)) {
-//                entities.push(ref.object);
-//            }
-//        }
-//        return entities;
-//    }
+    public function getEntity (entityName :String) :IEntityExtended
+    {
+        return db.getObjectNamed(entityName) as IEntityExtended;
+    }
+
+    //    public function getEntities (predicate :Function = null) :Array
+    //    {
+    //        var entities :Array = [];
+    //        for each (var ref :GameObjectRef in db.getObjectRefsInGroup(GROUP_ENTITY)) {
+    //            if (ref.object != null && predicate(ref.object.objectName)) {
+    //                entities.push(ref.object);
+    //            }
+    //        }
+    //        return entities;
+    //    }
 
     //    protected function getComponentByName (componentName :String) :IEntityComponent
     //    {
@@ -185,16 +229,16 @@ public class GameObjectEntity extends GameObject implements IEntity
     //    {
     //        return db.getComponents(componentName);
     //    }
-//
-//    public function getEntity (predicate :Function) :IEntity
-//    {
-//        for each (var ref :GameObjectRef in db.getObjectRefsInGroup(GROUP_ENTITY)) {
-//            if (ref.object != null && predicate(ref.object.objectName)) {
-//                return ref.object as IEntity;
-//            }
-//        }
-//        return null;
-//    }
+    //
+    //    public function getEntity (predicate :Function) :IEntity
+    //    {
+    //        for each (var ref :GameObjectRef in db.getObjectRefsInGroup(GROUP_ENTITY)) {
+    //            if (ref.object != null && predicate(ref.object.objectName)) {
+    //                return ref.object as IEntity;
+    //            }
+    //        }
+    //        return null;
+    //    }
 
     public function getProperty (property :PropertyReference, defaultVal :* = null) :*
     {
@@ -219,6 +263,10 @@ public class GameObjectEntity extends GameObject implements IEntity
         return null != lookupComponentByType(componentType);
     }
 
+    public function initialize (name :String = null, alias :String = null) :void
+    {
+    }
+
     //    public function initialize (name :String = null, alias :String = null) :void
     //    {
     //        _name = name;
@@ -234,26 +282,26 @@ public class GameObjectEntity extends GameObject implements IEntity
 
     public function lookupComponentByName (componentName :String) :IEntityComponent
     {
-        return _components.lookupComponentByName(componentName);
+        return _componentMap.get(componentName) as IEntityComponent;
     }
 
     public function lookupComponentByType (componentType :Class) :IEntityComponent
     {
-        return _components.lookupComponentByType(componentType);
+        for each (var c :IEntityComponent in _components) {
+            if (c is componentType) {
+                return c;
+            }
+        }
+        return null;
     }
 
     public function lookupComponentsByType (componentType :Class) :Array
     {
-        return _components.lookupComponentsByType(componentType);
+        throw new Error("Not implemented");;
     }
 
     public function serialize (xml :XML) :void
     {
-        //        for each (var component :IEntityComponent in _components) {
-        //            var componentXML :XML = new XML(<Component/>);
-        //            Serializer.instance.serialize(component, componentXML);
-        //            xml.appendChild(componentXML);
-        //        }
     }
 
     public function setProperty (property :PropertyReference, value :*) :void
@@ -294,9 +342,9 @@ public class GameObjectEntity extends GameObject implements IEntity
     override protected function addedToDB () :void
     {
         super.addedToDB();
-        for each (var comp :IEntityComponent in _components.components) {
-            dbComponent.addComponent(comp);
-        }
+        //        for each (var comp :IEntityComponent in _components.components) {
+        //            dbComponent.addComponent(comp);
+        //        }
         _components.doRegisterComponents(this);
     }
 
@@ -305,31 +353,54 @@ public class GameObjectEntity extends GameObject implements IEntity
         // Give listeners a chance to act before we start destroying stuff.
         dispatchEvent(new Event(ENTITY_DESTROYED));
         super.destroyed();
-        for each (var comp :IEntityComponent in _components.components) {
-            dbComponent.removeComponent(comp);
-        }
+        //        for each (var comp :IEntityComponent in _components.components) {
+        //            dbComponent.removeComponent(comp);
+        //        }
         _components.shutdown();
     }
 
     override protected function update (dt :Number) :void
     {
         super.update(dt);
-        _components.update(dt);
+        for each (var c :IEntityComponent in _components) {
+            if (c is Updatable) {
+                Updatable(c).update(dt);
+            }
+                //            else if (c is TickedComponent) {
+                //                TickedComponent(c).onTick(dt);
+                //            }
+        }
     }
 
-    protected function removeComponent (component :IEntityComponent) :void
+    public function removeComponent (component :IEntityComponent) :void
     {
-        if (!_components.doRemoveComponent(component)) {
+        if (!_componentMap.containsKey(component.name)) {
             return;
         }
-        dbComponent.removeComponent(component);
+
+//        if (!_components.doRemoveComponent(component)) {
+//            return;
+//        }
+        //        dbComponent.removeComponent(component);
         component.unregister();
-        _components.doResetComponents();
+
+        _componentMap.remove(component.name);
+        ArrayUtil.removeFirst(_components, component);
+        doResetComponents();
     }
 
-//    protected var _alias :String = null;
+    protected function doResetComponents () :void
+    {
+        for each (var component :IEntityComponent in _components) {
+            component.reset();
+        }
+    }
+
+    //    protected var _alias :String = null;
     //Components are removed before we remove this object from its groups.
-    protected var _components :ComponentList = new ComponentList();
+//    protected var _components :ComponentList = new ComponentList();
+    protected var _componentMap :Map = Maps.newMapOf(String);
+    protected var _components :Array = [];
 
     protected var _name :String = null;
     private var _tempPropertyInfo :PropertyInfo = new PropertyInfo();
@@ -450,12 +521,12 @@ public class GameObjectEntity extends GameObject implements IEntity
             curIdx++;
             curLookup = path[1];
             var comLookup :IEntityComponent =
-                (parentElem as IEntity).lookupComponentByName(curLookup);
+                (parentElem as IEntityExtended).lookupComponentByName(curLookup);
             if (!comLookup) {
                 log.warning(this, "findProperty",
                     "Could not find component '" + curLookup + "' on named entity '" +
-                    (parentElem as IEntity).objectName + "' for property '" + reference.property +
-                    "'");
+                    (parentElem as IEntityExtended).name + "' for property '" + reference.
+                    property + "'");
                 //                Profiler.exit("Entity.findProperty");
                 return null;
             }
@@ -582,13 +653,12 @@ public class GameObjectEntity extends GameObject implements IEntity
 
 import flash.events.IEventDispatcher;
 import com.threerings.flashbang.Updatable;
-import com.threerings.flashbang.pushbutton.IEntity;
-import com.threerings.flashbang.pushbutton.IEntityComponent;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.DebugUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
+import com.pblabs.engine.entity.IEntityComponent;
 final class PropertyInfo
 {
     public var propertyName :String = null;
@@ -618,147 +688,147 @@ final class PropertyInfo
     }
 }
 
-final class ComponentList
-{
-
-    public function get components () :Array
-    {
-        return _components;
-    }
-
-    public function get names () :Array
-    {
-        return _componentMap.keys();
-    }
-
-    public function addComponent (component :IEntityComponent, componentName :String) :Boolean
-    {
-
-        if (componentName == "") {
-            log.warning("AddComponent",
-                "A component name was not specified. This might cause problems later.");
-        }
-
-        if (component.owner != null) {
-            log.error(this, "AddComponent",
-                "The component " + componentName + " already has an owner. (" + component.owner.
-                objectName + ")");
-            return false;
-        }
-
-        if (_componentMap.get(componentName) != null) {
-            log.error(this, "AddComponent", component,
-                "A component with name " + componentName + " already exists on this entity " +
-                ". " + DebugUtil.mapToString(_componentMap));
-            return false;
-        }
-
-        _components.push(component);
-        _componentMap.put(componentName, component);
-        for each (var component :IEntityComponent in _components) {
-            component.reset();
-        }
-        return true;
-    }
-
-    /**
-     * Register any unregistered components on this entity. Useful when you are
-     * deferring registration (for instance due to template processing).
-     */
-    public function doRegisterComponents (entity :IEntity) :void
-    {
-        for each (var component :IEntityComponent in _components) {
-            // Skip ones we have already registered.
-            if (component.isRegistered) {
-                continue;
-            }
-            component.register(entity);
-        }
-    }
-
-    public function doRemoveComponent (component :IEntityComponent) :Boolean
-    {
-        if (component.owner != this) {
-            log.error(this, "AddComponent",
-                "The component " + component.name + " is not owned by this entity. (" + component.
-                owner.objectName + ")");
-            return false;
-        }
-
-        if (!_components.get(component.name)) {
-            log.error(this, "AddComponent",
-                "The component " + component.name + " was not found on this entity. (" + component.
-                owner.objectName + ")");
-            return false;
-        }
-        ArrayUtil.removeAll(_components, component);
-        _componentMap.remove(component.name);
-        return true;
-    }
-
-    public function doResetComponents () :void
-    {
-        for each (var component :IEntityComponent in _components) {
-            component.reset();
-        }
-    }
-
-    public function isComponent (componentName :String) :Boolean
-    {
-        return _componentMap.get(componentName) != null;
-    }
-
-    public function lookupComponentByName (componentName :String) :IEntityComponent
-    {
-        return _componentMap.get(componentName) as IEntityComponent;
-    }
-
-    public function lookupComponentByType (componentType :Class) :IEntityComponent
-    {
-        for each (var c :IEntityComponent in _components) {
-            if (c is componentType)
-                return c;
-        }
-
-        return null;
-    }
-
-    public function lookupComponentsByType (componentType :Class) :Array
-    {
-        var list :Array = [];
-
-        for each (var c :IEntityComponent in _components) {
-            if (c is componentType)
-                list.push(c);
-        }
-
-        return list;
-    }
-
-    public function shutdown () :void
-    {
-        for each (var c :IEntityComponent in _components) {
-            c.unregister();
-        }
-        _components = null;
-        _componentMap.clear();
-    }
-
-    public function update (dt :Number) :void
-    {
-        for each (var c :IEntityComponent in _components) {
-            if (c is Updatable) {
-                Updatable(c).update(dt);
-            }
-                //            else if (c is TickedComponent) {
-                //                TickedComponent(c).onTick(dt);
-                //            }
-        }
-    }
-
-    protected var _componentMap :Map = Maps.newMapOf(String);
-
-    protected var _components :Array = [];
-    protected static const log :Log = Log.getLog(ComponentList);
-}
+//final class ComponentList
+//{
+//
+//    public function get components () :Array
+//    {
+//        return _components;
+//    }
+//
+//    public function get names () :Array
+//    {
+//        return _componentMap.keys();
+//    }
+//
+//    public function addComponent (component :IEntityComponent, componentName :String) :Boolean
+//    {
+//
+//        if (componentName == "") {
+//            log.warning("AddComponent",
+//                "A component name was not specified. This might cause problems later.");
+//        }
+//
+//        if (component.owner != null) {
+//            log.error(this, "AddComponent",
+//                "The component " + componentName + " already has an owner. (" + component.owner.
+//                name + ")");
+//            return false;
+//        }
+//
+//        if (_componentMap.get(componentName) != null) {
+//            log.error(this, "AddComponent", component,
+//                "A component with name " + componentName + " already exists on this entity " +
+//                ". " + DebugUtil.mapToString(_componentMap));
+//            return false;
+//        }
+//
+//        _components.push(component);
+//        _componentMap.put(componentName, component);
+//        for each (var component :IEntityComponent in _components) {
+//            component.reset();
+//        }
+//        return true;
+//    }
+//
+//    /**
+//     * Register any unregistered components on this entity. Useful when you are
+//     * deferring registration (for instance due to template processing).
+//     */
+//    public function doRegisterComponents (entity :IEntityExtended) :void
+//    {
+//        for each (var component :IEntityComponent in _components) {
+//            // Skip ones we have already registered.
+//            if (component.isRegistered) {
+//                continue;
+//            }
+//            component.register(entity);
+//        }
+//    }
+//
+//    public function doRemoveComponent (component :IEntityComponent) :Boolean
+//    {
+//        if (component.owner != this) {
+//            log.error(this, "AddComponent",
+//                "The component " + component.name + " is not owned by this entity. (" + component.
+//                owner.objectName + ")");
+//            return false;
+//        }
+//
+//        if (!_components.get(component.name)) {
+//            log.error(this, "AddComponent",
+//                "The component " + component.name + " was not found on this entity. (" + component.
+//                owner.objectName + ")");
+//            return false;
+//        }
+//        ArrayUtil.removeAll(_components, component);
+//        _componentMap.remove(component.name);
+//        return true;
+//    }
+//
+//    public function doResetComponents () :void
+//    {
+//        for each (var component :IEntityComponent in _components) {
+//            component.reset();
+//        }
+//    }
+//
+//    public function isComponent (componentName :String) :Boolean
+//    {
+//        return _componentMap.get(componentName) != null;
+//    }
+//
+//    public function lookupComponentByName (componentName :String) :IEntityComponent
+//    {
+//        return _componentMap.get(componentName) as IEntityComponent;
+//    }
+//
+//    public function lookupComponentByType (componentType :Class) :IEntityComponent
+//    {
+//        for each (var c :IEntityComponent in _components) {
+//            if (c is componentType)
+//                return c;
+//        }
+//
+//        return null;
+//    }
+//
+//    public function lookupComponentsByType (componentType :Class) :Array
+//    {
+//        var list :Array = [];
+//
+//        for each (var c :IEntityComponent in _components) {
+//            if (c is componentType)
+//                list.push(c);
+//        }
+//
+//        return list;
+//    }
+//
+//    public function shutdown () :void
+//    {
+//        for each (var c :IEntityComponent in _components) {
+//            c.unregister();
+//        }
+//        _components = null;
+//        _componentMap.clear();
+//    }
+//
+//    public function update (dt :Number) :void
+//    {
+//        for each (var c :IEntityComponent in _components) {
+//            if (c is Updatable) {
+//                Updatable(c).update(dt);
+//            }
+//                //            else if (c is TickedComponent) {
+//                //                TickedComponent(c).onTick(dt);
+//                //            }
+//        }
+//    }
+//
+//    protected var _componentMap :Map = Maps.newMapOf(String);
+//
+//    protected var _components :Array = [];
+//    protected static const log :Log = Log.getLog(ComponentList);
+//}
 
