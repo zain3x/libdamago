@@ -1,10 +1,11 @@
 package com.threerings.flashbang.pushbutton {
 import com.threerings.flashbang.GameObject;
-import com.threerings.flashbang.GameObjectRef;
 import com.threerings.flashbang.Updatable;
+import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
+import com.threerings.util.Predicates;
 
 import flash.events.Event;
 import flash.events.IEventDispatcher;
@@ -22,11 +23,6 @@ public class GameObjectEntity extends GameObject implements IEntity
     public function GameObjectEntity (name :String = null)
     {
         _name = name;
-    }
-
-    public function get manager () :IEntityManager
-    {
-        return db as IEntityManager;
     }
 
     public function get components () :Array
@@ -47,6 +43,11 @@ public class GameObjectEntity extends GameObject implements IEntity
     public function get globalDispatcher () :IEventDispatcher
     {
         return db;
+    }
+
+    public function get manager () :IEntityManager
+    {
+        return db as IEntityManager;
     }
 
     //    public function get name () :String
@@ -154,16 +155,25 @@ public class GameObjectEntity extends GameObject implements IEntity
         return findProperty(property, false, _tempPropertyInfo, true) != null;
     }
 
-    public function getEntities (predicate :Function = null) :Array
+    public function getEntity (entityName :String) :IEntity
     {
-        var entities :Array = [];
-        for each (var ref :GameObjectRef in db.getObjectRefsInGroup(GROUP_ENTITY)) {
-            if (ref.object != null && predicate(ref.object.objectName)) {
-                entities.push(ref.object);
-            }
-        }
-        return entities;
+        return db.getObjectNamed(entityName) as IEntity;
     }
+    public function getEntitiesInGroup (groupName :String) :Array//<IEntity>
+    {
+        return db.getObjectsInGroup(groupName).filter(Predicates.createIs(IEntity));
+    }
+
+//    public function getEntities (predicate :Function = null) :Array
+//    {
+//        var entities :Array = [];
+//        for each (var ref :GameObjectRef in db.getObjectRefsInGroup(GROUP_ENTITY)) {
+//            if (ref.object != null && predicate(ref.object.objectName)) {
+//                entities.push(ref.object);
+//            }
+//        }
+//        return entities;
+//    }
 
     //    protected function getComponentByName (componentName :String) :IEntityComponent
     //    {
@@ -175,16 +185,16 @@ public class GameObjectEntity extends GameObject implements IEntity
     //    {
     //        return db.getComponents(componentName);
     //    }
-
-    public function getEntity (predicate :Function) :IEntity
-    {
-        for each (var ref :GameObjectRef in db.getObjectRefsInGroup(GROUP_ENTITY)) {
-            if (ref.object != null && predicate(ref.object.objectName)) {
-                return ref.object as IEntity;
-            }
-        }
-        return null;
-    }
+//
+//    public function getEntity (predicate :Function) :IEntity
+//    {
+//        for each (var ref :GameObjectRef in db.getObjectRefsInGroup(GROUP_ENTITY)) {
+//            if (ref.object != null && predicate(ref.object.objectName)) {
+//                return ref.object as IEntity;
+//            }
+//        }
+//        return null;
+//    }
 
     public function getProperty (property :PropertyReference, defaultVal :* = null) :*
     {
@@ -267,16 +277,18 @@ public class GameObjectEntity extends GameObject implements IEntity
         }
     }
 
+    //GameObjectEntity groups include the component classnames.
     override public function getObjectGroup (groupNum :int) :String
     {
         if (groupNum == 0) {
             return GROUP_ENTITY;
         }
-        var componentNames :Array = _components.names;
-        if (componentNames.length > 0 && groupNum - 1 < componentNames.length) {
-            return componentNames[groupNum - 1];
+        var numComponents :int = _components.components != null ? _components.components.length : 0;
+        var components :Array = _components.components;
+        if (numComponents > 0 && groupNum - 1 < numComponents) {
+            return ClassUtil.getClassName(components[groupNum - 1]);
         }
-        return super.getObjectGroup(groupNum - (componentNames.length + 1));
+        return super.getObjectGroup(groupNum - (numComponents + 1));
     }
 
     override protected function addedToDB () :void
@@ -315,7 +327,7 @@ public class GameObjectEntity extends GameObject implements IEntity
         _components.doResetComponents();
     }
 
-    protected var _alias :String = null;
+//    protected var _alias :String = null;
     //Components are removed before we remove this object from its groups.
     protected var _components :ComponentList = new ComponentList();
 
