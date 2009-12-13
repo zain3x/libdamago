@@ -1,8 +1,8 @@
 package com.threerings.flashbang.pushbutton.scene.tests {
+import com.pblabs.engine.entity.PropertyReference;
 import com.threerings.flashbang.components.LocationComponent;
 import com.threerings.flashbang.pushbutton.EntityAppmode;
 import com.threerings.flashbang.pushbutton.GameObjectEntity;
-import com.threerings.flashbang.pushbutton.PropertyReference;
 import com.threerings.flashbang.pushbutton.scene.Scene2DComponent;
 import com.threerings.flashbang.pushbutton.scene.SceneEntityComponent;
 import com.threerings.flashbang.pushbutton.scene.SceneLayerYOrdering;
@@ -35,7 +35,7 @@ public class TestSceneBounds extends EntityAppmode
 //        modeSprite.addChild(_sortingLayer);
 //        registerListener(_sortingLayer, Event.ENTER_FRAME, _sortingLayer.render);
         _scene.addLayer(_sortingLayer, _layerName);
-        this.addSingletonComponent(_scene);
+        addSingletonComponent(_scene);
 //        addComponentViaSameNamedEntity(_scene, _sceneName);
         modeSprite.addChild(view);
 
@@ -80,12 +80,12 @@ public class TestSceneBounds extends EntityAppmode
         var location :LocationComponentBasic = new LocationComponentBasic();
         location.x = sprite.x;
         location.y = sprite.y;
-        obj.addComponent(location);
+        obj.addComponent(location, location.name);
 
 
         var sceneComponent :SceneEntityComponent = new SceneEntityComponent(sprite);
         sceneComponent.sceneLayerName = _layerName;
-        obj.addComponent(sceneComponent);
+        obj.addComponent(sceneComponent, sceneComponent.name);
 
         //Link the display to the location component
         sceneComponent.xProperty = new PropertyReference("@location.x");

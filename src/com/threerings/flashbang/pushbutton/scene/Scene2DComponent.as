@@ -1,9 +1,8 @@
 package com.threerings.flashbang.pushbutton.scene {
+import com.pblabs.engine.entity.PropertyReference;
 import com.threerings.flashbang.Updatable;
 import com.threerings.flashbang.components.LocationComponent;
 import com.threerings.flashbang.pushbutton.EntityComponent;
-import com.threerings.flashbang.pushbutton.PropertyReference;
-import com.threerings.flashbang.pushbutton.references.RectangleReference;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
@@ -68,7 +67,7 @@ public class Scene2DComponent extends EntityComponent
         if (null != _selfReference) {
             return _selfReference;
         }
-        _selfReference = new PropertyReference("#" + owner.objectName + "." + name);
+        _selfReference = new PropertyReference("#" + owner.name + "." + name);
         return _selfReference;
     }
 

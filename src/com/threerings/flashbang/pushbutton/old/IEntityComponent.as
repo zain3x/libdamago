@@ -1,4 +1,4 @@
-package com.threerings.flashbang.pushbutton {
+package com.threerings.flashbang.pushbutton.old {
 public interface IEntityComponent
 {
       /**

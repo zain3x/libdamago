@@ -1,15 +1,9 @@
 package com.threerings.flashbang.pushbutton {
+import com.pblabs.engine.entity.IEntityComponent;
+import com.pblabs.engine.entity.PropertyReference;
 import com.threerings.flashbang.AppMode;
-import com.threerings.flashbang.GameObject;
-import com.threerings.flashbang.GameObjectRef;
-import com.threerings.util.ArrayUtil;
-import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
-import com.threerings.util.Map;
-import com.threerings.util.Maps;
-import com.threerings.util.ValueEvent;
 public class EntityAppmode extends AppMode
-    implements IEntityManager
 {
     public static const OBJECT_ADDED :String = "objectAdded";
     public static const OBJECT_REMOVED :String = "objectRemoved";
@@ -95,71 +89,71 @@ public class EntityAppmode extends AppMode
 //        trace("Scene ref=" + obj.getProperty(sceneRef));
 
     }
-
-    public function getEntity (predicate :Function) :IEntity
-    {
-        for each (var ref :GameObjectRef in getObjectRefsInGroup(GameObjectEntity.GROUP_ENTITY)) {
-            if (ref.object != null && predicate(ref.object)) {
-                return ref.object as IEntity;
-            }
-        }
-        return null;
-    }
-    public function getEntities (predicate :Function = null) :Array
-    {
-        var arr :Array = [];
-        for each (var ref :GameObjectRef in getObjectRefsInGroup(GameObjectEntity.GROUP_ENTITY)) {
-            if (ref.object == null) {
-                continue;
-            }
-            if (predicate == null || predicate(ref.object)) {
-                arr.push(ref.object)
-            }
-        }
-        return arr;
-    }
-    public function getComponent (predicate :Function) :IEntityComponent
-    {
-        for each (var ref :GameObjectRef in getObjectRefsInGroup(GameObjectEntity.GROUP_ENTITY)) {
-            if (ref.object != null && predicate(ref.object)) {
-                for each (var comp :IEntityComponent in GameObjectEntity(ref.object).components) {
-                    if (predicate(comp)) {
-                        return comp;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-    public function getComponents (predicate :Function = null) :Array
-    {
-        var arr :Array = [];
-        for each (var ref :GameObjectRef in getObjectRefsInGroup(GameObjectEntity.GROUP_ENTITY)) {
-            if (ref.object != null) {
-                for each (var comp :IEntityComponent in GameObjectEntity(ref.object).components) {
-                    if (predicate == null || predicate(comp)) {
-                        arr.push(comp);
-                    }
-                }
-            }
-        }
-        return arr;
-    }
+//
+//    public function getEntity (predicate :Function) :IEntity
+//    {
+//        for each (var ref :GameObjectRef in getObjectRefsInGroup(GameObjectEntity.GROUP_ENTITY)) {
+//            if (ref.object != null && predicate(ref.object)) {
+//                return ref.object as IEntity;
+//            }
+//        }
+//        return null;
+//    }
+//    public function getEntities (predicate :Function = null) :Array
+//    {
+//        var arr :Array = [];
+//        for each (var ref :GameObjectRef in getObjectRefsInGroup(GameObjectEntity.GROUP_ENTITY)) {
+//            if (ref.object == null) {
+//                continue;
+//            }
+//            if (predicate == null || predicate(ref.object)) {
+//                arr.push(ref.object)
+//            }
+//        }
+//        return arr;
+//    }
+//    public function getComponent (predicate :Function) :IEntityComponent
+//    {
+//        for each (var ref :GameObjectRef in getObjectRefsInGroup(GameObjectEntity.GROUP_ENTITY)) {
+//            if (ref.object != null && predicate(ref.object)) {
+//                for each (var comp :IEntityComponent in GameObjectEntity(ref.object).components) {
+//                    if (predicate(comp)) {
+//                        return comp;
+//                    }
+//                }
+//            }
+//        }
+//        return null;
+//    }
+//    public function getComponents (predicate :Function = null) :Array
+//    {
+//        var arr :Array = [];
+//        for each (var ref :GameObjectRef in getObjectRefsInGroup(GameObjectEntity.GROUP_ENTITY)) {
+//            if (ref.object != null) {
+//                for each (var comp :IEntityComponent in GameObjectEntity(ref.object).components) {
+//                    if (predicate == null || predicate(comp)) {
+//                        arr.push(comp);
+//                    }
+//                }
+//            }
+//        }
+//        return arr;
+//    }
 
     public function get elapsedTime () :Number
     {
         return _elapsedTime;
     }
 
-    public function get instance () :EntityAppmode
-    {
-        return this;
-    }
-
-    public function get NameManager () :EntityAppmode
-    {
-        return this;
-    }
+//    public function get instance () :EntityAppmode
+//    {
+//        return this;
+//    }
+//
+//    public function get NameManager () :EntityAppmode
+//    {
+//        return this;
+//    }
 
 //    public function addComponentViaSameNamedEntity (comp :IEntityComponent)
 //        :GameObjectEntity
@@ -176,7 +170,7 @@ public class EntityAppmode extends AppMode
 //    }
 
     public function addSingletonComponent (comp :IEntityComponent)
-        :GameObjectEntity
+        :PropertyReference
     {
         log.info("addSingletonComponent", "comp", comp);
         var obj :GameObjectEntity = getObjectNamed(SINGLETON_ENTITY_NAME) as GameObjectEntity;
@@ -185,8 +179,8 @@ public class EntityAppmode extends AppMode
             obj = new GameObjectEntity(SINGLETON_ENTITY_NAME);
             addObject(obj);
         }
-        obj.addComponent(comp);
-        return obj;
+        obj.addComponent(comp, comp.name);
+        return new PropertyReference("#" + SINGLETON_ENTITY_NAME + "." + comp.name);
     }
 
     public function getSingletonComponent (name :String) :IEntityComponent
@@ -200,44 +194,44 @@ public class EntityAppmode extends AppMode
     }
 
     //Don't modify the array!
-    public function getComponentsOfType (clazz :Class) :Array
-    {
-        return _groupedComponentsByType.get(clazz) as Array;
-    }
+//    public function getComponentsOfType (clazz :Class) :Array
+//    {
+//        return _groupedComponentsByType.get(clazz) as Array;
+//    }
 
-    public function getFirstComponentOfType (clazz :Class) :*
-    {
-        var arr :Array = _groupedComponentsByType.get(clazz) as Array;
-        if (null == arr) {
-            return null;
-        }
-        return arr[0];
-    }
+//    public function getFirstComponentOfType (clazz :Class) :*
+//    {
+//        var arr :Array = _groupedComponentsByType.get(clazz) as Array;
+//        if (null == arr) {
+//            return null;
+//        }
+//        return arr[0];
+//    }
+//
+//    public function getFirstNamedComponent (name :String) :IEntityComponent
+//    {
+//        var arr :Array = _groupedComponentsByName.get(name) as Array;
+//        if (null == arr) {
+//            return null;
+//        }
+//        return arr[0];
+//    }
 
-    public function getFirstNamedComponent (name :String) :IEntityComponent
-    {
-        var arr :Array = _groupedComponentsByName.get(name) as Array;
-        if (null == arr) {
-            return null;
-        }
-        return arr[0];
-    }
+//    public function getNamedComponents (name :String) :Array
+//    {
+//        return _groupedComponentsByName.get(name) as Array;
+//    }
 
-    public function getNamedComponents (name :String) :Array
-    {
-        return _groupedComponentsByName.get(name) as Array;
-    }
-
-    public function lookupComponentByName (entityName :String,
-        componentName :String) :IEntityComponent
-    {
-        var entity :IEntity = getObjectNamed(entityName) as IEntity;
-        if (entity == null) {
-            return null;
-        }
-
-        return entity.lookupComponentByName(componentName);
-    }
+//    public function lookupComponentByName (entityName :String,
+//        componentName :String) :IEntityComponent
+//    {
+//        var entity :IEntity = getObjectNamed(entityName) as IEntity;
+//        if (entity == null) {
+//            return null;
+//        }
+//
+//        return entity.lookupComponentByName(componentName);
+//    }
 
 //    public function getComponent (componentName :String) :IEntityComponent
 //    {
@@ -254,89 +248,89 @@ public class EntityAppmode extends AppMode
 //        return _groupedComponentsByName.get(componentName) as Array;
 //    }
 
-    override public function addObject (obj :GameObject) :GameObjectRef
-    {
-        var ref :GameObjectRef = super.addObject(obj);
-        if (obj is IEntity) {
-            for each (var component :IEntityComponent in GameObjectEntity(obj).components) {
-                addComponent(component);
-            }
-        }
-        dispatchEvent(new ValueEvent(OBJECT_ADDED, obj));
-        return ref;
-    }
-
-    override public function destroyObject (ref :GameObjectRef) :void
-    {
-        dispatchEvent(new ValueEvent(OBJECT_REMOVED, ref.object));
-        super.destroyObject(ref);
-    }
+//    override public function addObject (obj :GameObject) :GameObjectRef
+//    {
+//        var ref :GameObjectRef = super.addObject(obj);
+//        if (obj is IEntity) {
+//            for each (var component :IEntityComponent in GameObjectEntity(obj).components) {
+//                addComponent(component);
+//            }
+//        }
+//        dispatchEvent(new ValueEvent(OBJECT_ADDED, obj));
+//        return ref;
+//    }
+//
+//    override public function destroyObject (ref :GameObjectRef) :void
+//    {
+//        dispatchEvent(new ValueEvent(OBJECT_REMOVED, ref.object));
+//        super.destroyObject(ref);
+//    }
 
     override public function update (dt :Number) :void
     {
         _elapsedTime += dt;
         super.update(dt);
     }
+//
+//    override protected function endUpdate (dt :Number) :void
+//    {
+//        super.endUpdate(dt);
+//        // clean out all components that were removed during the update loop
+//        if (_componentsToRemove != null && _componentsToRemove.length > 0) {
+//            finalizeComponentRemoval();
+//        }
+//    }
 
-    override protected function endUpdate (dt :Number) :void
-    {
-        super.endUpdate(dt);
-        // clean out all components that were removed during the update loop
-        if (_componentsToRemove != null && _componentsToRemove.length > 0) {
-            finalizeComponentRemoval();
-        }
-    }
+//    internal function addComponent (component :IEntityComponent) :void
+//    {
+//        var name :String = component.name;
+//        var names :Array = _groupedComponentsByName.get(name) as Array;
+//        if (null == names) {
+//            names = [component];
+//            _groupedComponentsByName.put(name, names)
+//        } else {
+//            if (!ArrayUtil.contains(names, component)) {
+//                names.push(component);
+//            }
+//        }
+//
+//        var clazz :Class = ClassUtil.getClass(component);
+//        var classArray :Array = _groupedComponentsByType.get(clazz) as Array;
+//        if (null == classArray) {
+//            classArray = [component];
+//            _groupedComponentsByType.put(clazz, classArray)
+//        } else {
+//            if (!ArrayUtil.contains(classArray, component)) {
+//                classArray.push(component);
+//            }
+//        }
+//    }
 
-    internal function addComponent (component :IEntityComponent) :void
-    {
-        var name :String = component.name;
-        var names :Array = _groupedComponentsByName.get(name) as Array;
-        if (null == names) {
-            names = [component];
-            _groupedComponentsByName.put(name, names)
-        } else {
-            if (!ArrayUtil.contains(names, component)) {
-                names.push(component);
-            }
-        }
+//    protected function finalizeComponentRemoval () :void
+//    {
+//        for each (var component :IEntityComponent in _componentsToRemove) {
+//            var clazz :Class = ClassUtil.getClass(component);
+//            var name :String = component.name;
+//            var nameArray :Array = _groupedComponentsByName.get(name) as Array;
+//            var classArray :Array = _groupedComponentsByType.get(clazz) as Array;
+//
+//            if (null != nameArray) {
+//                ArrayUtil.removeFirst(nameArray, component);
+//            }
+//            if (null != classArray) {
+//                ArrayUtil.removeFirst(classArray, component);
+//            }
+//
+//        }
+//        _componentsToRemove = [];
+//    }
+//
+//    internal function removeComponent (component :IEntityComponent) :void
+//    {
+//        _componentsToRemove.push(component);
+//    }
 
-        var clazz :Class = ClassUtil.getClass(component);
-        var classArray :Array = _groupedComponentsByType.get(clazz) as Array;
-        if (null == classArray) {
-            classArray = [component];
-            _groupedComponentsByType.put(clazz, classArray)
-        } else {
-            if (!ArrayUtil.contains(classArray, component)) {
-                classArray.push(component);
-            }
-        }
-    }
-
-    protected function finalizeComponentRemoval () :void
-    {
-        for each (var component :IEntityComponent in _componentsToRemove) {
-            var clazz :Class = ClassUtil.getClass(component);
-            var name :String = component.name;
-            var nameArray :Array = _groupedComponentsByName.get(name) as Array;
-            var classArray :Array = _groupedComponentsByType.get(clazz) as Array;
-
-            if (null != nameArray) {
-                ArrayUtil.removeFirst(nameArray, component);
-            }
-            if (null != classArray) {
-                ArrayUtil.removeFirst(classArray, component);
-            }
-
-        }
-        _componentsToRemove = [];
-    }
-
-    internal function removeComponent (component :IEntityComponent) :void
-    {
-        _componentsToRemove.push(component);
-    }
-
-    protected var _componentsToRemove :Array = [];
+//    protected var _componentsToRemove :Array = [];
 
     //    private function CreateScene () :void
     //    {
@@ -415,11 +409,11 @@ public class EntityAppmode extends AppMode
     /** Elapsed time for this ObjectDB */
     protected var _elapsedTime :Number = 0;
 
-    /** stores a mapping from String to Array */
-    protected var _groupedComponentsByName :Map = Maps.newMapOf(String);
-
-    /** stores a mapping from Class to Array */
-    protected var _groupedComponentsByType :Map= Maps.newMapOf(Class);
+//    /** stores a mapping from String to Array */
+//    protected var _groupedComponentsByName :Map = Maps.newMapOf(String);
+//
+//    /** stores a mapping from Class to Array */
+//    protected var _groupedComponentsByType :Map= Maps.newMapOf(Class);
 
     protected static const log :Log = Log.getLog(EntityAppmode);
 }
