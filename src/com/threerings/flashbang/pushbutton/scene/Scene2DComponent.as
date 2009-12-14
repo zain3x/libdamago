@@ -422,7 +422,6 @@ public class Scene2DComponent extends EntityComponent
 
     public function panView (deltaX :Number, deltaY :Number) :void
     {
-        trace("panView", deltaX, deltaY);
         if (deltaX == 0 && deltaY == 0) {
             return;
         }

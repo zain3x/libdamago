@@ -1,15 +1,17 @@
 package com.threerings.ui {
-import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;
-import flash.display.InteractiveObject;
-import flash.events.MouseEvent;
+import aduros.util.F;
+
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.EventHandlerManager;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.MathUtil;
 import com.threerings.util.Predicates;
-import aduros.util.F;
+
+import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
+import flash.display.InteractiveObject;
+import flash.events.MouseEvent;
 public class ScrollableElementView
 {
 
@@ -108,6 +110,11 @@ public class ScrollableElementView
             return 0;
         }
         return _elements.length;
+    }
+
+    public function get elements () :Array
+    {
+        return _elements.concat();
     }
 
     public function getElementAt (idx :int) :*
