@@ -72,6 +72,12 @@ public class ScrollableElementView
         redrawElements();
     }
 
+    public function indexOf (obj :*) :int
+    {
+        return ArrayUtil.indexOf(_elements, obj);
+    }
+
+
     public function addElement (obj :Object, getDisplay :Function = null) :void
     {
         if (getDisplay == null) {
@@ -208,7 +214,7 @@ public class ScrollableElementView
         var buttonParent :DisplayObjectContainer = button.parent;
         var idx :int = buttonParent.getChildIndex(button);
         function enable () :void {
-            buttonParent.addChildAt(button, idx);
+            buttonParent.addChildAt(button, MathUtil.clamp(idx, 0, buttonParent.numChildren));
         }
 
         _enableButtonFunctions.put(button, enable);
