@@ -12,14 +12,14 @@ import com.threerings.util.ArrayUtil;
 
 import flash.events.Event;
 import flash.events.IEventDispatcher;
+
 /**
  * A modification of GameObject.  Utilizes EntityComponents.
  * Rather that creating GameObjects with extra functionality via extending this class,
  * behaviour is built via adding IEntityComponents.
  *
  */
-public class GameObjectEntity extends GameObject
-    implements IEntityExtended
+public class GameObjectEntity extends GameObject implements IEntityExtended
 {
     public static const ENTITY_DESTROYED :String = "EntityDestroyed";
     public static const GROUP_ENTITY :String = "EntityGroup";
@@ -32,6 +32,11 @@ public class GameObjectEntity extends GameObject
     public function get components () :Array
     {
         return _components;
+    }
+
+    public function get alias () :String
+    {
+        return null;
     }
 
     public function get dbComponent () :EntityAppmode
@@ -108,10 +113,9 @@ public class GameObjectEntity extends GameObject
         _componentMap.put(componentName, component);
         _components.push(component);
 
-//        if (!_components.addComponent(component, component.name)) {
-//            return;
-//        }
-
+        //        if (!_components.addComponent(component, component.name)) {
+        //            return;
+        //        }
 
         if (isLiveObject) {
             //            dbComponent.addComponent(component);
@@ -127,9 +131,9 @@ public class GameObjectEntity extends GameObject
     {
     }
 
-//    public function addComponent (component:IEntityComponent, componentName:String) :void
-//    {
-//    }
+    //    public function addComponent (component:IEntityComponent, componentName:String) :void
+    //    {
+    //    }
 
     public function destroy () :void
     {
@@ -298,7 +302,8 @@ public class GameObjectEntity extends GameObject
 
     public function lookupComponentsByType (componentType :Class) :Array
     {
-        throw new Error("Not implemented");;
+        throw new Error("Not implemented");
+        ;
     }
 
     public function serialize (xml :XML) :void
@@ -346,7 +351,7 @@ public class GameObjectEntity extends GameObject
         //            dbComponent.addComponent(comp);
         //        }
         doRegisterComponents();
-//        _components.doRegisterComponents(this);
+        //        _components.doRegisterComponents(this);
     }
 
     override protected function destroyed () :void
@@ -363,7 +368,7 @@ public class GameObjectEntity extends GameObject
         //        for each (var comp :IEntityComponent in _components.components) {
         //            dbComponent.removeComponent(comp);
         //        }
-//        _components.shutdown();
+        //        _components.shutdown();
     }
 
     override protected function update (dt :Number) :void
@@ -385,9 +390,9 @@ public class GameObjectEntity extends GameObject
             return;
         }
 
-//        if (!_components.doRemoveComponent(component)) {
-//            return;
-//        }
+        //        if (!_components.doRemoveComponent(component)) {
+        //            return;
+        //        }
         //        dbComponent.removeComponent(component);
         component.unregister();
 
@@ -416,7 +421,7 @@ public class GameObjectEntity extends GameObject
 
     //    protected var _alias :String = null;
     //Components are removed before we remove this object from its groups.
-//    protected var _components :ComponentList = new ComponentList();
+    //    protected var _components :ComponentList = new ComponentList();
     protected var _componentMap :Map = Maps.newMapOf(String);
     protected var _components :Array = [];
 
@@ -543,8 +548,8 @@ public class GameObjectEntity extends GameObject
             if (!comLookup) {
                 log.warning(this, "findProperty",
                     "Could not find component '" + curLookup + "' on named entity '" +
-                    (parentElem as IEntityExtended).name + "' for property '" + reference.
-                    property + "'");
+                    (parentElem as IEntityExtended).name + "' for property '" + reference.property +
+                    "'");
                 //                Profiler.exit("Entity.findProperty");
                 return null;
             }
@@ -677,6 +682,7 @@ import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.pblabs.engine.entity.IEntityComponent;
+
 final class PropertyInfo
 {
     public var propertyName :String = null;
