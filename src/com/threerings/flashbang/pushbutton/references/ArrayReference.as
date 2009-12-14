@@ -1,8 +1,8 @@
 package com.threerings.flashbang.pushbutton.references {
-import com.threerings.flashbang.pushbutton.IEntityComponentExtended;
+import com.pblabs.engine.entity.IEntityComponent;
 public class ArrayReference extends PushButtonReference
 {
-    public function ArrayReference (propKey :String, comp :IEntityComponentExtended)
+    public function ArrayReference (propKey :String, comp :IEntityComponent)
     {
         super(propKey, comp);
     }

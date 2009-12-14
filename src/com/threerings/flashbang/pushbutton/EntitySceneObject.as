@@ -18,7 +18,7 @@
 //
 // $Id: SceneObject.as 17 2009-10-05 19:32:01Z tconkling $
 
-package com.threerings.flashbang.objects {
+package com.threerings.flashbang.pushbutton {
 
 import com.threerings.flashbang.components.AlphaComponent;
 import com.threerings.flashbang.components.BoundsComponent;

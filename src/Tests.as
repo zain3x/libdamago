@@ -1,21 +1,23 @@
 package
 {
+import com.threerings.flashbang.debug.FlashbangAppRunner;
 import com.threerings.flashbang.pushbutton.EntityComponent;
 import com.threerings.flashbang.pushbutton.GameObjectEntity;
-import com.threerings.flashbang.pushbutton.IEntity;
-import com.threerings.flashbang.pushbutton.IEntityComponent;
+import com.threerings.flashbang.pushbutton.scene.tests.TestSceneBounds;
+import com.threerings.flashbang.pushbutton.scene.tests.TestYOrderingLayer;
 
-import flash.display.Sprite;
-
-[SWF(width="800", height="800", frameRate="30")]
-public class Tests extends Sprite
+[SWF(width="600", height="600", frameRate="30")]
+public class Tests extends FlashbangAppRunner
 {
     public function Tests ()
     {
-        IEntity
-        IEntityComponent
+//        IEntityExtended
+//        IEntityComponentEx
         EntityComponent
         GameObjectEntity
+//        queueAppMode(new TestYOrderingLayer());
+        queueAppMode(new TestSceneBounds());
+
 //        addChild(new TestFacebookDesktopSession());
 //        addChild(new TestFacebookDesktopSession());
 //        addChild(new TestSnapping());

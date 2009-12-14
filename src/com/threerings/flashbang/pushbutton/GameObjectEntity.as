@@ -18,7 +18,8 @@ import flash.events.IEventDispatcher;
  * behaviour is built via adding IEntityComponents.
  *
  */
-public class GameObjectEntity extends GameObject implements IEntityExtended
+public class GameObjectEntity extends GameObject
+    implements IEntityExtended
 {
     public static const ENTITY_DESTROYED :String = "EntityDestroyed";
     public static const GROUP_ENTITY :String = "EntityGroup";
@@ -331,10 +332,9 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
         if (groupNum == 0) {
             return GROUP_ENTITY;
         }
-        var numComponents :int = _components.components != null ? _components.components.length : 0;
-        var components :Array = _components.components;
+        var numComponents :int = _components != null ? _components.length : 0;
         if (numComponents > 0 && groupNum - 1 < numComponents) {
-            return ClassUtil.getClassName(components[groupNum - 1]);
+            return ClassUtil.getClassName(_components[groupNum - 1]);
         }
         return super.getObjectGroup(groupNum - (numComponents + 1));
     }
@@ -345,7 +345,8 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
         //        for each (var comp :IEntityComponent in _components.components) {
         //            dbComponent.addComponent(comp);
         //        }
-        _components.doRegisterComponents(this);
+        doRegisterComponents();
+//        _components.doRegisterComponents(this);
     }
 
     override protected function destroyed () :void
@@ -353,10 +354,16 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
         // Give listeners a chance to act before we start destroying stuff.
         dispatchEvent(new Event(ENTITY_DESTROYED));
         super.destroyed();
+
+        for each (var c :IEntityComponent in _components) {
+            c.unregister();
+        }
+        _components = null;
+        _componentMap.clear();
         //        for each (var comp :IEntityComponent in _components.components) {
         //            dbComponent.removeComponent(comp);
         //        }
-        _components.shutdown();
+//        _components.shutdown();
     }
 
     override protected function update (dt :Number) :void
@@ -393,6 +400,17 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
     {
         for each (var component :IEntityComponent in _components) {
             component.reset();
+        }
+    }
+
+    protected function doRegisterComponents () :void
+    {
+        for each (var component :IEntityComponent in _components) {
+            // Skip ones we have already registered.
+            if (component.isRegistered) {
+                continue;
+            }
+            component.register(this, component.name);
         }
     }
 

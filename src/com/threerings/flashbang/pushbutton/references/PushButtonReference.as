@@ -1,7 +1,7 @@
 package com.threerings.flashbang.pushbutton.references {
+import com.pblabs.engine.entity.IEntity;
 import com.pblabs.engine.entity.IEntityComponent;
 import com.pblabs.engine.entity.PropertyReference;
-import com.threerings.flashbang.pushbutton.IEntityExtended;
 public class PushButtonReference
 {
     public function PushButtonReference (propKey :String, comp :IEntityComponent)
@@ -10,7 +10,7 @@ public class PushButtonReference
         _component = comp;
     }
 
-    protected function get owner () :IEntityExtended
+    protected function get owner () :IEntity
     {
         return _component.owner;
     }
