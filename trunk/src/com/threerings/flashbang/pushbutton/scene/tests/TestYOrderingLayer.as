@@ -1,15 +1,15 @@
 package com.threerings.flashbang.pushbutton.scene.tests {
 import com.pblabs.engine.entity.PropertyReference;
-import com.threerings.flashbang.components.EntityAppmode;
-import com.threerings.flashbang.components.GameObjectEntity;
 import com.threerings.flashbang.components.LocationComponent;
-import com.threerings.flashbang.components.tasks.LocationTaskComponent;
+import com.threerings.flashbang.pushbutton.EntityAppmode;
+import com.threerings.flashbang.pushbutton.GameObjectEntity;
+import com.threerings.flashbang.pushbutton.scene.Scene2DComponent;
+import com.threerings.flashbang.pushbutton.scene.SceneEntityComponent;
+import com.threerings.flashbang.pushbutton.scene.SceneLayerYOrdering;
+import com.threerings.flashbang.pushbutton.scene.SceneView;
+import com.threerings.flashbang.pushbutton.scene.components.LocationComponentBasic;
+import com.threerings.flashbang.pushbutton.tasks.LocationTaskComponent;
 import com.threerings.flashbang.util.Rand;
-import com.threerings.flashbang.view.LocationComponentBasic;
-import com.threerings.flashbang.view.Scene;
-import com.threerings.flashbang.view.SceneEntityComponent;
-import com.threerings.flashbang.view.SceneLayerYOrdering;
-import com.threerings.flashbang.view.SceneView;
 import com.threerings.util.DebugUtil;
 
 import flash.display.Graphics;
@@ -25,7 +25,7 @@ public class TestYOrderingLayer extends EntityAppmode
 
         var view :SceneView = new SceneView(500, 500);
 
-        _scene = new Scene();
+        _scene = new Scene2DComponent();
         _scene.sceneView = view;
         _sortingLayer= new SceneLayerYOrdering();
         modeSprite.addChild(_sortingLayer);
@@ -77,9 +77,8 @@ public class TestYOrderingLayer extends EntityAppmode
         obj.addComponent(location, locationName);
 
 
-        var sceneComponent :SceneEntityComponent = new SceneEntityComponent();
+        var sceneComponent :SceneEntityComponent = new SceneEntityComponent(sprite);
         var sceneComponentName :String = "sceneComponent";
-        sceneComponent.displayObject = sprite;
         sceneComponent.sceneLayerName = _layerName;
         obj.addComponent(sceneComponent, sceneComponentName);
 
@@ -100,7 +99,7 @@ public class TestYOrderingLayer extends EntityAppmode
 
     protected var _sceneName :String = "scene";
     protected var _layerName :String = "someLayer";
-    protected var _scene :Scene;
+    protected var _scene :Scene2DComponent;
     protected var _sortingLayer :SceneLayerYOrdering;
 }
 }
