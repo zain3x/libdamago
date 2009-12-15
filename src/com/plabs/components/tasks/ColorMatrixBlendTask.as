@@ -20,12 +20,9 @@
 
 package com.plabs.components.tasks {
 
+import com.pblabs.engine.entity.IEntity;
 import com.threerings.display.ColorMatrix;
 import com.threerings.display.FilterUtil;
-import com.threerings.flashbang.IEntity;
-import com.threerings.flashbang.ObjectMessage;
-import com.threerings.flashbang.IEntityTask;
-import com.threerings.flashbang.components.SceneComponent;
 
 import flash.display.DisplayObject;
 import flash.filters.ColorMatrixFilter;
@@ -36,7 +33,7 @@ public class ColorMatrixBlendTask
     implements IEntityTask
 {
     public static function colorize (fromColor :uint, toColor :uint,
-        time :Number, disp :DisplayObject = null, easingFn :Function = null,
+        time :Number, disp :DisplayObject, easingFn :Function = null,
         preserveFilters :Boolean = false) :ColorMatrixBlendTask
     {
         return new ColorMatrixBlendTask(
@@ -53,7 +50,7 @@ public class ColorMatrixBlendTask
         easingFn :Function = null,
         preserveFilters :Boolean = false)
     {
-        _dispOverride = DisplayObjectWrapper.create(disp);
+        _disp = disp;
         _from = cmFrom;
         _to = cmTo;
         _totalTime = time;
@@ -63,11 +60,6 @@ public class ColorMatrixBlendTask
 
     public function update (dt :Number, obj :IEntity) :Boolean
     {
-        var sc :SceneComponent = (!_dispOverride.isNull ? _dispOverride : obj as SceneComponent);
-        if (sc == null) {
-            throw new Error("obj does not implement SceneComponent");
-        }
-
         _elapsedTime += dt;
 
         var amount :Number = _easingFn(Math.min(_elapsedTime, _totalTime), 0, 1, _totalTime);
@@ -77,13 +69,13 @@ public class ColorMatrixBlendTask
         // when adding the new filter. This can be an expensive operation, so it's false by default.
         if (_preserveFilters) {
             if (_oldFilter != null) {
-                FilterUtil.removeFilter(sc.displayObject, _oldFilter);
+                FilterUtil.removeFilter(_disp, _oldFilter);
             }
-            FilterUtil.addFilter(sc.displayObject, filter);
+            FilterUtil.addFilter(_disp, filter);
             _oldFilter = filter;
 
         } else {
-            sc.displayObject.filters = [ filter ];
+            _disp.filters = [ filter ];
         }
 
         return (_elapsedTime >= _totalTime);
@@ -91,16 +83,11 @@ public class ColorMatrixBlendTask
 
     public function clone () :IEntityTask
     {
-        return new ColorMatrixBlendTask(_from, _to, _totalTime, _dispOverride.displayObject,
+        return new ColorMatrixBlendTask(_from, _to, _totalTime, _disp,
             _easingFn, _preserveFilters);
     }
 
-    public function receiveMessage (msg :ObjectMessage) :Boolean
-    {
-        return false;
-    }
-
-    protected var _dispOverride :DisplayObjectWrapper;
+    protected var _disp :DisplayObject;
     protected var _from :ColorMatrix;
     protected var _to :ColorMatrix;
     protected var _totalTime :Number;

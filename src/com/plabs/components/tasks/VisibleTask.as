@@ -20,9 +20,7 @@
 
 package com.plabs.components.tasks {
 
-import com.threerings.flashbang.IEntity;
-import com.threerings.flashbang.ObjectMessage;
-import com.threerings.flashbang.IEntityTask;
+import com.pblabs.engine.entity.IEntity;
 import com.threerings.flashbang.components.VisibleComponent;
 
 import flash.display.DisplayObject;
@@ -30,36 +28,25 @@ import flash.display.DisplayObject;
 public class VisibleTask
     implements IEntityTask
 {
-    public function VisibleTask (visible :Boolean, disp :DisplayObject = null)
+    public function VisibleTask (visible :Boolean, disp :DisplayObject)
     {
         _visible = visible;
-        _dispOverride = DisplayObjectWrapper.create(disp);
+        _disp = disp;
     }
 
     public function update (dt :Number, obj :IEntity) :Boolean
     {
-        var vc :VisibleComponent =
-            (!_dispOverride.isNull ? _dispOverride : obj as VisibleComponent);
-        if (null == vc) {
-            throw new Error("obj does not implement VisibleComponent");
-        }
-
-        vc.visible = _visible;
+        _disp.visible = _visible;
         return true;
     }
 
     public function clone () :IEntityTask
     {
-        return new VisibleTask(_visible, _dispOverride.displayObject);
-    }
-
-    public function receiveMessage (msg :ObjectMessage) :Boolean
-    {
-        return false;
+        return new VisibleTask(_visible, _disp);
     }
 
     protected var _visible :Boolean;
-    protected var _dispOverride :DisplayObjectWrapper;
+    protected var _disp :DisplayObject;
 }
 
 }
