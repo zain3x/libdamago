@@ -52,7 +52,7 @@ public class UrlLoadedImageCache
 //            }
 //        }
         sprite.addChild(bm);
-        DisplayUtils.centerOn(bm);
+//        DisplayUtils.centerOn(bm);
     }
 
     protected static function loadPicFromUrl (url :String, callback :Function = null) :Sprite
