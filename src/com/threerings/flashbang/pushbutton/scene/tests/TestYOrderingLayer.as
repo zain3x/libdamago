@@ -1,6 +1,8 @@
 package com.threerings.flashbang.pushbutton.scene.tests {
 import com.pblabs.engine.entity.PropertyReference;
-import com.threerings.flashbang.components.LocationComponent;
+import com.plabs.components.tasks.AnimateValueTask;
+import com.plabs.components.tasks.LocationTask;
+import com.plabs.components.tasks.TaskComponent;
 import com.threerings.flashbang.pushbutton.EntityAppmode;
 import com.threerings.flashbang.pushbutton.GameObjectEntity;
 import com.threerings.flashbang.pushbutton.scene.Scene2DComponent;
@@ -8,7 +10,6 @@ import com.threerings.flashbang.pushbutton.scene.SceneEntityComponent;
 import com.threerings.flashbang.pushbutton.scene.SceneLayerYOrdering;
 import com.threerings.flashbang.pushbutton.scene.SceneView;
 import com.threerings.flashbang.pushbutton.scene.components.LocationComponentBasic;
-import com.threerings.flashbang.pushbutton.tasks.LocationTaskComponent;
 import com.threerings.flashbang.util.Rand;
 import com.threerings.util.DebugUtil;
 
@@ -44,9 +45,13 @@ public class TestYOrderingLayer extends EntityAppmode
 
         var moving :GameObjectEntity = createRectObject(new Rectangle(40, 40, 20, 50), 0xff0000);
         registerListener(modeSprite, MouseEvent.CLICK, function (...ignored) :void {
-            moving.removeAllTasks();
-            moving.addTask(LocationTaskComponent.CreateLinear(view.mouseX, view.mouseY, 3,
-                moving.lookupComponentByType(LocationComponent) as LocationComponent));
+            var tasks :TaskComponent = moving.lookupComponentByType(TaskComponent) as TaskComponent;
+            tasks.removeAllTasks();
+            moving.setProperty(new PropertyReference("@sceneComponent.displayObject.alpha"), 1);
+            tasks.addTask(AnimateValueTask.CreateLinear(new PropertyReference("@sceneComponent.displayObject.alpha"), 0, 3));
+            var xRef :PropertyReference = new PropertyReference("@location.x");
+            var yRef :PropertyReference = new PropertyReference("@location.y");
+            tasks.addTask(LocationTask.CreateSmooth(xRef, yRef, view.mouseX, view.mouseY, 3));
         });
     }
 
@@ -85,6 +90,9 @@ public class TestYOrderingLayer extends EntityAppmode
         //Link the display to the location component
         sceneComponent.xProperty = new PropertyReference("@location.x");
         sceneComponent.yProperty = new PropertyReference("@location.y");
+
+        //Tasks
+        obj.addComponent(new TaskComponent(), TaskComponent.COMPONENT_NAME);
 
         //Add to the db
         this.addObject(obj);
