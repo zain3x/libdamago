@@ -19,22 +19,17 @@
 // $Id: TaskContainer.as 25 2009-10-27 20:19:09Z tconkling $
 
 package com.plabs.components.tasks {
-
+import com.pblabs.engine.entity.IEntity;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Assert;
-
-import com.threerings.flashbang.ObjectMessage;
-import com.threerings.flashbang.ObjectTask;
-import com.threerings.flashbang.GameObject;
-
 public class TaskContainer
-    implements ObjectTask
+    implements IEntityTask
 {
-    public static const TYPE_PARALLEL :uint = 0;
-    public static const TYPE_SERIAL :uint = 1;
-    public static const TYPE_REPEATING :uint = 2;
 
     public static const TYPE__LIMIT :uint = 3;
+    public static const TYPE_PARALLEL :uint = 0;
+    public static const TYPE_REPEATING :uint = 2;
+    public static const TYPE_SERIAL :uint = 1;
 
     public function TaskContainer (type :uint, subtasks :Array = null)
     {
@@ -45,14 +40,14 @@ public class TaskContainer
         _type = type;
 
         if (subtasks != null) {
-            for each (var task :ObjectTask in subtasks) {
+            for each (var task :IEntityTask in subtasks) {
                 addTask(task);
             }
         }
     }
 
     /** Adds a child task to the TaskContainer. */
-    public function addTask (task :ObjectTask) :void
+    public function addTask (task :IEntityTask) :void
     {
         if (null == task) {
             throw new ArgumentError("task must be non-null");
@@ -63,51 +58,8 @@ public class TaskContainer
         _activeTaskCount += 1;
     }
 
-    /** Removes all tasks from the TaskContainer. */
-    public function removeAllTasks () :void
-    {
-        _invalidated = true;
-        _tasks = new Array();
-        _completedTasks = new Array();
-        _activeTaskCount = 0;
-    }
-
-    /** Returns true if the TaskContainer has any child tasks. */
-    public function hasTasks () :Boolean
-    {
-        return (_activeTaskCount > 0);
-    }
-
-    public function update (dt :Number, obj :GameObject) :Boolean
-    {
-        var result :Boolean = applyFunction(
-            function (task :ObjectTask) :Boolean {
-                return task.update(dt, obj);
-            });
-
-        return result;
-    }
-
-    protected function cloneSubtasks () :Array
-    {
-        Assert.isTrue(_tasks.length == _completedTasks.length);
-
-        var out :Array = new Array(_tasks.length);
-
-        // clone each child task and put it in the cloned container
-        var n :int = _tasks.length;
-        for (var i :int = 0; i < n; ++i) {
-            var task :ObjectTask =
-                (null != _tasks[i] ? _tasks[i] as ObjectTask : _completedTasks[i] as ObjectTask);
-            Assert.isNotNull(task);
-            out[i] = task.clone();
-        }
-
-        return out;
-    }
-
     /** Returns a clone of the TaskContainer. */
-    public function clone () :ObjectTask
+    public function clone () :IEntityTask
     {
         var clonedSubtasks :Array = cloneSubtasks();
 
@@ -119,13 +71,29 @@ public class TaskContainer
         return theClone;
     }
 
-    public function receiveMessage (msg :ObjectMessage) :Boolean
+    /** Returns true if the TaskContainer has any child tasks. */
+    public function hasTasks () :Boolean
     {
-        return applyFunction(
-            function (task :ObjectTask) :Boolean {
-                return task.receiveMessage(msg);
-            }
-        );
+        return (_activeTaskCount > 0);
+    }
+
+    /** Removes all tasks from the TaskContainer. */
+    public function removeAllTasks () :void
+    {
+        _invalidated = true;
+        _tasks = new Array();
+        _completedTasks = new Array();
+        _activeTaskCount = 0;
+    }
+
+    public function update (dt :Number, obj :IEntity) :Boolean
+    {
+        var result :Boolean = applyFunction(
+            function (task :IEntityTask) :Boolean {
+                return task.update(dt, obj);
+            });
+
+        return result;
     }
 
     /**
@@ -133,7 +101,7 @@ public class TaskContainer
      * (for parallel tasks) or the first object in the container (for serial and repeating tasks)
      * and returns true if there are no more active tasks in the container.
      * f must be of the form:
-     * function f (task :ObjectTask) :Boolean
+     * function f (task :IEntityTask) :Boolean
      * it must return true if the task is complete after f is applied.
      */
     protected function applyFunction (f :Function) :Boolean
@@ -143,7 +111,7 @@ public class TaskContainer
         var n :int = _tasks.length;
         for (var i :int = 0; i < n; ++i) {
 
-            var task :ObjectTask = (_tasks[i] as ObjectTask);
+            var task :IEntityTask = (_tasks[i] as IEntityTask);
 
             // we can have holes in the array
             if (null == task) {
@@ -154,7 +122,7 @@ public class TaskContainer
 
             if (_invalidated) {
                 // The TaskContainer was destroyed by its containing
-                // GameObject during task iteration. Stop processing immediately.
+                // IEntity during task iteration. Stop processing immediately.
                 return false;
             }
 
@@ -177,7 +145,7 @@ public class TaskContainer
             _tasks = new Array();
             _completedTasks = new Array();
 
-            for each (var completedTask :ObjectTask in completedTasks) {
+            for each (var completedTask :IEntityTask in completedTasks) {
                 addTask(completedTask.clone());
             }
         }
@@ -186,11 +154,29 @@ public class TaskContainer
         return (0 == _activeTaskCount);
     }
 
-    protected var _type :int;
-    protected var _tasks :Array = new Array();
-    protected var _completedTasks :Array = new Array();
+    protected function cloneSubtasks () :Array
+    {
+        Assert.isTrue(_tasks.length == _completedTasks.length);
+
+        var out :Array = new Array(_tasks.length);
+
+        // clone each child task and put it in the cloned container
+        var n :int = _tasks.length;
+        for (var i :int = 0; i < n; ++i) {
+            var task :IEntityTask =
+                (null != _tasks[i] ? _tasks[i] as IEntityTask : _completedTasks[i] as IEntityTask);
+            Assert.isNotNull(task);
+            out[i] = task.clone();
+        }
+
+        return out;
+    }
     protected var _activeTaskCount :int;
+    protected var _completedTasks :Array = new Array();
     protected var _invalidated :Boolean;
+    protected var _tasks :Array = new Array();
+
+    protected var _type :int;
 }
 
 }

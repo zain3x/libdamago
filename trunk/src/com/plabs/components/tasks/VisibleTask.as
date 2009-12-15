@@ -20,15 +20,15 @@
 
 package com.plabs.components.tasks {
 
-import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.IEntity;
 import com.threerings.flashbang.ObjectMessage;
-import com.threerings.flashbang.ObjectTask;
+import com.threerings.flashbang.IEntityTask;
 import com.threerings.flashbang.components.VisibleComponent;
 
 import flash.display.DisplayObject;
 
 public class VisibleTask
-    implements ObjectTask
+    implements IEntityTask
 {
     public function VisibleTask (visible :Boolean, disp :DisplayObject = null)
     {
@@ -36,7 +36,7 @@ public class VisibleTask
         _dispOverride = DisplayObjectWrapper.create(disp);
     }
 
-    public function update (dt :Number, obj :GameObject) :Boolean
+    public function update (dt :Number, obj :IEntity) :Boolean
     {
         var vc :VisibleComponent =
             (!_dispOverride.isNull ? _dispOverride : obj as VisibleComponent);
@@ -48,7 +48,7 @@ public class VisibleTask
         return true;
     }
 
-    public function clone () :ObjectTask
+    public function clone () :IEntityTask
     {
         return new VisibleTask(_visible, _dispOverride.displayObject);
     }

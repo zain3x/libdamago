@@ -20,32 +20,23 @@
 
 package com.plabs.components.tasks {
 
-import com.threerings.flashbang.*;
-import com.threerings.flashbang.components.*;
-import com.threerings.flashbang.objects.*;
+import com.pblabs.engine.entity.IEntity;
 
-import flash.display.MovieClip;
-
-public class WaitOnPredicateTask implements ObjectTask
+public class WaitOnPredicateTask implements IEntityTask
 {
     public function WaitOnPredicateTask (pred :Function)
     {
         _pred = pred;
     }
 
-    public function update (dt :Number, obj :GameObject) :Boolean
+    public function update (dt :Number, obj :IEntity) :Boolean
     {
         return _pred();
     }
 
-    public function clone () :ObjectTask
+    public function clone () :IEntityTask
     {
         return new WaitOnPredicateTask(_pred);
-    }
-
-    public function receiveMessage (msg :ObjectMessage) :Boolean
-    {
-        return false;
     }
 
     protected var _pred :Function;

@@ -20,76 +20,42 @@
 
 package com.plabs.components.tasks {
 
-import com.threerings.flashbang.GameObject;
-import com.threerings.flashbang.ObjectTask;
-import com.threerings.flashbang.components.LocationComponent;
-
-import flash.display.DisplayObject;
+import com.pblabs.engine.entity.PropertyReference;
 
 import mx.effects.easing.*;
 
-public class LocationTask extends InterpolatingTask
-    implements EntityTask
+public class LocationTask extends ParallelTask
 {
-    public static function CreateLinear (xRef :PropertyReference, yRef :PropertyReference, x :Number, y :Number, time :Number) :LocationTask
+    public static function CreateLinear (xRef :PropertyReference, yRef :PropertyReference,
+        x :Number, y :Number, time :Number) :LocationTask
     {
-        return new LocationTask(xRef, yRef, x, y, time, mx.effects.easing.Linear.easeNone,);
+        return new LocationTask(xRef, yRef, x, y, time, mx.effects.easing.Linear.easeNone);
     }
 
-    // public static function CreateSmooth (x :Number, y :Number, time :Number,
-    //     disp :DisplayObject = null) :LocationTask
-    // {
-    //     return new LocationTask(x, y, time, mx.effects.easing.Cubic.easeInOut, disp);
-    // }
+    public static function CreateSmooth (xRef :PropertyReference, yRef :PropertyReference,
+        x :Number, y :Number, time :Number) :LocationTask
+    {
+        return new LocationTask(xRef, yRef, x, y, time, mx.effects.easing.Cubic.easeInOut);
+    }
 
-    // public static function CreateEaseIn (x :Number, y :Number, time :Number,
-    //     disp :DisplayObject = null) :LocationTask
-    // {
-    //     return new LocationTask(x, y, time, mx.effects.easing.Cubic.easeIn, disp);
-    // }
+    public static function CreateEaseIn (xRef :PropertyReference, yRef :PropertyReference,
+        x :Number, y :Number, time :Number) :LocationTask
+    {
+        return new LocationTask(xRef, yRef, x, y, time, mx.effects.easing.Cubic.easeIn);
+    }
 
-    // public static function CreateEaseOut (x :Number, y :Number, time :Number,
-    //     disp :DisplayObject = null) :LocationTask
-    // {
-    //     return new LocationTask(x, y, time, mx.effects.easing.Cubic.easeOut, disp);
-    // }
+    public static function CreateEaseOut (xRef :PropertyReference, yRef :PropertyReference,
+        x :Number, y :Number, time :Number) :LocationTask
+    {
+        return new LocationTask(xRef, yRef, x, y, time, mx.effects.easing.Cubic.easeOut);
+    }
 
     public function LocationTask (xRef :PropertyReference, yRef :PropertyReference, x :Number, y
     :Number, time :Number = 0, easingFn :Function = null)
     {
-        super(time, easingFn);
-        _toX = x;
-        _toY = y;
-        _xRef = xRef;
-        _yRef = yRef;
+        super(new AnimateValueTask(xRef, x, time, easingFn),
+            new AnimateValueTask(yRef, y, time, easingFn));
     }
 
-    override public function update (dt :Number, obj :IEntity) :Boolean
-    {
-        if (0 == _elapsedTime) {
-            _fromX = obj.getProperty(_xRef) as Number;
-            _fromY = obj.getProperty(_yRef) as Number;
-        }
-
-        _elapsedTime += dt;
-
-        obj.setProperty(_xRef, interpolate(_fromX, _toX, _elapsedTime, _totalTime, _easingFn));
-        obj.setProperty(_yRef, interpolate(_fromY, _toY, _elapsedTime, _totalTime, _easingFn));
-
-        return (_elapsedTime >= _totalTime);
-    }
-
-    override public function clone () :ObjectTask
-    {
-        return new LocationTask(_xRef, _yRef, _toX, _toY, _totalTime, _easingFn);
-    }
-
-    protected var _toX :Number;
-    protected var _toY :Number;
-    protected var _fromX :Number;
-    protected var _fromY :Number;
-    protected var _xRef :PropertyReference;
-    protected var _yRef :PropertyReference;
 }
-
 }

@@ -20,15 +20,13 @@
 
 package com.plabs.components.tasks {
 
-import com.threerings.flashbang.*;
-import com.threerings.flashbang.components.*;
-import com.threerings.flashbang.objects.*;
+import com.pblabs.engine.entity.IEntity;
 
 import flash.display.MovieClip;
 
-public class WaitForFrameTask implements ObjectTask
+public class WaitForFrameTask implements IEntityTask
 {
-    public function WaitForFrameTask (frameLabelOrNumber :*, movie :MovieClip = null)
+    public function WaitForFrameTask (frameLabelOrNumber :*, movie :MovieClip)
     {
         if (frameLabelOrNumber is int) {
             _frameNumber = frameLabelOrNumber as int;
@@ -41,34 +39,18 @@ public class WaitForFrameTask implements ObjectTask
         _movie = movie;
     }
 
-    public function update (dt :Number, obj :GameObject) :Boolean
+    public function update (dt :Number, obj :IEntity) :Boolean
     {
         var movieClip :MovieClip = _movie;
-
-        // if we don't have a default movie,
-        if (null == movieClip) {
-            var sc :SceneComponent = obj as SceneComponent;
-            movieClip = (null != sc ? sc.displayObject as MovieClip : null);
-
-            if (null == movieClip) {
-                throw new Error("WaitForFrameTask can only operate on SceneComponents " +
-                                "with MovieClip DisplayObjects");
-            }
-        }
-
         return (null != _frameLabel ? movieClip.currentLabel == _frameLabel :
                                       movieClip.currentFrame == _frameNumber);
     }
 
-    public function clone () :ObjectTask
+    public function clone () :IEntityTask
     {
         return new WaitForFrameTask(null != _frameLabel ? _frameLabel : _frameNumber, _movie);
     }
 
-    public function receiveMessage (msg :ObjectMessage) :Boolean
-    {
-        return false;
-    }
 
     protected var _frameLabel :String;
     protected var _frameNumber :int;

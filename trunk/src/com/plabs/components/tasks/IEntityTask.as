@@ -16,16 +16,18 @@
 //
 // Copyright 2008 Three Rings Design
 //
-// $Id: SerialTask.as 14 2009-10-05 19:21:31Z tconkling $
+// $Id: LocationTask.as 25 2009-10-27 20:19:09Z tconkling $
 
 package com.plabs.components.tasks {
+import com.pblabs.engine.entity.IEntity;
 
-public class SerialTask extends TaskContainer
+
+public interface IEntityTask
 {
-    public function SerialTask (...subtasks)
-    {
-        super(TaskContainer.TYPE_SERIAL, subtasks);
-    }
-}
 
+    function update (dt :Number, obj :IEntity) :Boolean;
+
+    function clone () :IEntityTask;
+
+}
 }

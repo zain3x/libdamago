@@ -20,8 +20,7 @@
 
 package com.plabs.components.tasks {
 
-import com.threerings.flashbang.GameObject;
-import com.threerings.flashbang.ObjectTask;
+import com.pblabs.engine.entity.IEntity;
 import com.threerings.flashbang.components.ScaleComponent;
 
 import flash.display.DisplayObject;
@@ -31,67 +30,61 @@ import mx.effects.easing.*;
 public class ScaleTask extends InterpolatingTask
 {
     public static function CreateLinear (x :Number, y :Number, time :Number,
-        disp :DisplayObject = null) :ScaleTask
+        disp :DisplayObject) :ScaleTask
     {
         return new ScaleTask(x, y, time, mx.effects.easing.Linear.easeNone, disp);
     }
 
     public static function CreateSmooth (x :Number, y :Number, time :Number,
-        disp :DisplayObject = null) :ScaleTask
+        disp :DisplayObject) :ScaleTask
     {
         return new ScaleTask(x, y, time, mx.effects.easing.Cubic.easeInOut, disp);
     }
 
     public static function CreateEaseIn (x :Number, y :Number, time :Number,
-        disp :DisplayObject = null) :ScaleTask
+        disp :DisplayObject) :ScaleTask
     {
         return new ScaleTask(x, y, time, mx.effects.easing.Cubic.easeIn, disp);
     }
 
     public static function CreateEaseOut (x :Number, y :Number, time :Number,
-        disp :DisplayObject = null) :ScaleTask
+        disp :DisplayObject) :ScaleTask
     {
         return new ScaleTask(x, y, time, mx.effects.easing.Cubic.easeOut, disp);
     }
 
-    public function ScaleTask (x :Number, y :Number, time :Number = 0,
-        easingFn :Function = null, disp :DisplayObject = null)
+    public function ScaleTask (x :Number, y :Number, time :Number,
+        easingFn :Function, disp :DisplayObject)
     {
         super(time, easingFn);
         _toX = x;
         _toY = y;
-        _dispOverride = DisplayObjectWrapper.create(disp);
+        _disp = disp;
     }
 
-    override public function update (dt :Number, obj :GameObject) :Boolean
+    override public function update (dt :Number, obj :IEntity) :Boolean
     {
-        var sc :ScaleComponent =
-            (!_dispOverride.isNull ? _dispOverride : obj as ScaleComponent);
-        if (null == sc) {
-            throw new Error("obj does not implement ScaleComponent");
-        }
-
         if (0 == _elapsedTime) {
-            _fromX = sc.scaleX;
-            _fromY = sc.scaleY;
+            _fromX = _disp.scaleX;
+            _fromY = _disp.scaleY;
         }
 
         _elapsedTime += dt;
-        sc.scaleX = interpolate(_fromX, _toX, _elapsedTime, _totalTime, _easingFn);
-        sc.scaleY = interpolate(_fromY, _toY, _elapsedTime, _totalTime, _easingFn);
+        _disp.scaleX = interpolate(_fromX, _toX, _elapsedTime, _totalTime, _easingFn);
+        _disp.scaleY = interpolate(_fromY, _toY, _elapsedTime, _totalTime, _easingFn);
         return (_elapsedTime >= _totalTime);
     }
 
-    override public function clone () :ObjectTask
+    override public function clone () :IEntityTask
     {
-        return new ScaleTask(_toX, _toY, _totalTime, _easingFn, _dispOverride.displayObject);
+        return new ScaleTask(_toX, _toY, _totalTime, _easingFn, _disp);
     }
 
     protected var _toX :Number;
     protected var _toY :Number;
     protected var _fromX :Number;
     protected var _fromY :Number;
-    protected var _dispOverride :DisplayObjectWrapper;
+    protected var _disp :DisplayObject;
 }
 
 }

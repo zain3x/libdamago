@@ -19,29 +19,21 @@
 // $Id: SelfDestructTask.as 17 2009-10-05 19:32:01Z tconkling $
 
 package com.plabs.components.tasks {
-
-import com.threerings.flashbang.ObjectMessage;
-import com.threerings.flashbang.ObjectTask;
-import com.threerings.flashbang.GameObject;
+import com.pblabs.engine.entity.IEntity;
 
 public class SelfDestructTask
-    implements ObjectTask
+    implements IEntityTask
 {
-    public function update (dt :Number, obj :GameObject) :Boolean
+    public function update (dt :Number, obj :IEntity) :Boolean
     {
-        obj.destroySelf();
+        obj.destroy();
         return true;
     }
 
-    public function clone () :ObjectTask
+    public function clone () :IEntityTask
     {
         return new SelfDestructTask();
     }
 
-    public function receiveMessage (msg :ObjectMessage) :Boolean
-    {
-        return false;
-    }
 }
-
 }
