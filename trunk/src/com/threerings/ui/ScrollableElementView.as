@@ -7,14 +7,17 @@ import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.MathUtil;
 import com.threerings.util.Predicates;
+import com.threerings.util.ValueEvent;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.InteractiveObject;
+import flash.events.EventDispatcher;
 import flash.events.MouseEvent;
-public class ScrollableElementView
+public class ScrollableElementView extends EventDispatcher
 {
 
+    public static const EVENT_INDEX_CHANGED :String = "ScrollableElementView.index";
     public function ScrollableElementView (elementContainers :Array,
                                          leftUpButton :InteractiveObject = null,
                                          bottomDownButton :InteractiveObject = null,
@@ -229,6 +232,7 @@ public class ScrollableElementView
         _topLeftIdx++;
         _topLeftIdx = MathUtil.clamp(_topLeftIdx, 0, _elements.length - 1);
         redrawElements();
+        dispatchEvent(new ValueEvent(EVENT_INDEX_CHANGED, _topLeftIdx));
         return true;
     }
 
@@ -237,6 +241,7 @@ public class ScrollableElementView
         _topLeftIdx--;
         _topLeftIdx = MathUtil.clamp(_topLeftIdx, 0, _elements.length - 1);
         redrawElements();
+        dispatchEvent(new ValueEvent(EVENT_INDEX_CHANGED, _topLeftIdx));
     }
 
     protected function scrollLeftUp1Page (...ignored) :void
@@ -244,17 +249,20 @@ public class ScrollableElementView
         var elementSize :int = _bottomRightIdx - _topLeftIdx;
         _topLeftIdx = MathUtil.clamp(_topLeftIdx - elementSize - 1, 0, _elements.length - 1);
         redrawElements();
+        dispatchEvent(new ValueEvent(EVENT_INDEX_CHANGED, _topLeftIdx));
     }
 
     protected function scrollMaxLeftUp (...ignored) :void
     {
         _topLeftIdx = 0;
         redrawElements();
+        dispatchEvent(new ValueEvent(EVENT_INDEX_CHANGED, _topLeftIdx));
     }
 
     protected function scrollMaxRightDown (...ignored) :void
     {
         while (scrollDownRight()) {}
+        dispatchEvent(new ValueEvent(EVENT_INDEX_CHANGED, _topLeftIdx));
     }
 
     protected function scrollRightDown1Page (...ignored) :void
@@ -262,6 +270,7 @@ public class ScrollableElementView
         var elementSize :int = _bottomRightIdx - _topLeftIdx;
         _topLeftIdx = MathUtil.clamp(_topLeftIdx + elementSize + 1, 0, _elements.length - elementSize - 1);
         redrawElements();
+        dispatchEvent(new ValueEvent(EVENT_INDEX_CHANGED, _topLeftIdx));
     }
 
 
