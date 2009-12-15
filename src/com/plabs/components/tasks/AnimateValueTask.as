@@ -20,90 +20,93 @@
 
 package com.plabs.components.tasks {
 
-import com.threerings.flashbang.GameObject;
-import com.threerings.flashbang.ObjectTask;
+import com.pblabs.engine.entity.IEntity;
+import com.pblabs.engine.entity.PropertyReference;
 
 import mx.effects.easing.*;
 
 public class AnimateValueTask extends InterpolatingTask
 {
-    public static function CreateLinear (boxedValue :Object, targetValue :Number, time :Number)
+    public static function CreateLinear (ref :PropertyReference, targetValue :Number, time :Number)
         :AnimateValueTask
     {
         return new AnimateValueTask(
-            boxedValue,
+            ref,
             targetValue,
             time,
             mx.effects.easing.Linear.easeNone);
     }
 
-    public static function CreateSmooth (boxedValue :Object, targetValue :Number, time :Number)
+    public static function CreateSmooth (ref :PropertyReference, targetValue :Number, time :Number)
         :AnimateValueTask
     {
         return new AnimateValueTask(
-            boxedValue,
+            ref,
             targetValue,
             time,
             mx.effects.easing.Cubic.easeInOut);
     }
 
-    public static function CreateEaseIn (boxedValue :Object, targetValue :Number, time :Number)
+    public static function CreateEaseIn (ref :PropertyReference, targetValue :Number, time :Number)
         :AnimateValueTask
     {
         return new AnimateValueTask(
-            boxedValue,
+            ref,
             targetValue,
             time,
             mx.effects.easing.Cubic.easeIn);
     }
 
-    public static function CreateEaseOut (boxedValue :Object, targetValue :Number, time :Number)
+    public static function CreateEaseOut (ref :PropertyReference, targetValue :Number, time :Number)
         :AnimateValueTask
     {
         return new AnimateValueTask(
-            boxedValue,
+            ref,
             targetValue,
             time,
             mx.effects.easing.Cubic.easeOut);
     }
 
     public function AnimateValueTask (
-        boxedValue :Object,
+        ref :PropertyReference,
         targetValue :Number,
         time :Number = 0,
         easingFn :Function = null)
     {
         super(time, easingFn);
 
-        if (null == boxedValue || !boxedValue.hasOwnProperty("value")) {
-            throw new Error("boxedValue must be non null, and must contain a 'value' property");
+        if (null == ref) {
+            throw new Error("ref must be non null, and must contain a 'value' property");
         }
 
         _to = targetValue;
-        _boxedValue = boxedValue;
+        _valueRef = ref;
     }
 
-    override public function update (dt :Number, obj :GameObject) :Boolean
+    override public function update (dt :Number, obj :IEntity) :Boolean
     {
         if (0 == _elapsedTime) {
-            _from = (_boxedValue.value as Number);
+            _from = obj.getProperty(_valueRef) as Number;
+            if (isNaN(_from)) {
+                throw new Error("_valueRef must be non null, and must be a numerical property.");
+            }
         }
 
         _elapsedTime += dt;
 
-        _boxedValue.value = interpolate(_from, _to, _elapsedTime, _totalTime, _easingFn);
+        obj.setProperty(_valueRef, interpolate(_from, _to, _elapsedTime, _totalTime, _easingFn));
 
         return (_elapsedTime >= _totalTime);
     }
 
-    override public function clone () :ObjectTask
+    override public function clone () :IEntityTask
     {
-        return new AnimateValueTask(_boxedValue, _to, _totalTime, _easingFn);
+        return new AnimateValueTask(_valueRef, _to, _totalTime, _easingFn);
     }
 
     protected var _to :Number;
     protected var _from :Number;
-    protected var _boxedValue :Object;
+    protected var _valueRef :PropertyReference;
 }
 
 }

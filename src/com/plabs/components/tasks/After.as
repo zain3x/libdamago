@@ -20,9 +20,7 @@
 
 package com.plabs.components.tasks {
 
-import com.threerings.flashbang.ObjectTask;
-
-public function After (duration :Number, task :ObjectTask) :ObjectTask
+public function After (duration :Number, task :IEntityTask) :IEntityTask
 {
     return (duration > 0 ? new SerialTask(new TimedTask(duration), task) : task);
 }

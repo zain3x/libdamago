@@ -22,9 +22,9 @@ package com.plabs.components.tasks {
 
 import com.threerings.display.ColorMatrix;
 import com.threerings.display.FilterUtil;
-import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.IEntity;
 import com.threerings.flashbang.ObjectMessage;
-import com.threerings.flashbang.ObjectTask;
+import com.threerings.flashbang.IEntityTask;
 import com.threerings.flashbang.components.SceneComponent;
 
 import flash.display.DisplayObject;
@@ -33,7 +33,7 @@ import flash.filters.ColorMatrixFilter;
 import mx.effects.easing.*;
 
 public class ColorMatrixBlendTask
-    implements ObjectTask
+    implements IEntityTask
 {
     public static function colorize (fromColor :uint, toColor :uint,
         time :Number, disp :DisplayObject = null, easingFn :Function = null,
@@ -61,7 +61,7 @@ public class ColorMatrixBlendTask
         _preserveFilters = preserveFilters;
     }
 
-    public function update (dt :Number, obj :GameObject) :Boolean
+    public function update (dt :Number, obj :IEntity) :Boolean
     {
         var sc :SceneComponent = (!_dispOverride.isNull ? _dispOverride : obj as SceneComponent);
         if (sc == null) {
@@ -89,7 +89,7 @@ public class ColorMatrixBlendTask
         return (_elapsedTime >= _totalTime);
     }
 
-    public function clone () :ObjectTask
+    public function clone () :IEntityTask
     {
         return new ColorMatrixBlendTask(_from, _to, _totalTime, _dispOverride.displayObject,
             _easingFn, _preserveFilters);

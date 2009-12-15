@@ -19,13 +19,11 @@
 // $Id: FunctionTask.as 17 2009-10-05 19:32:01Z tconkling $
 
 package com.plabs.components.tasks {
+    import com.pblabs.engine.entity.IEntity;
 
-import com.threerings.flashbang.ObjectMessage;
-import com.threerings.flashbang.ObjectTask;
-import com.threerings.flashbang.GameObject;
 
 public class FunctionTask
-    implements ObjectTask
+    implements IEntityTask
 {
     public function FunctionTask (fn :Function)
     {
@@ -36,20 +34,15 @@ public class FunctionTask
         _fn = fn;
     }
 
-    public function update (dt :Number, obj :GameObject) :Boolean
+    public function update (dt :Number, obj :IEntity) :Boolean
     {
         _fn();
         return true;
     }
 
-    public function clone () :ObjectTask
+    public function clone () :IEntityTask
     {
         return new FunctionTask(_fn);
-    }
-
-    public function receiveMessage (msg :ObjectMessage) :Boolean
-    {
-        return false;
     }
 
     protected var _fn :Function;

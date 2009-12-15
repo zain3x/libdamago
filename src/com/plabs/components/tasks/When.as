@@ -20,9 +20,9 @@
 
 package com.plabs.components.tasks {
 
-import com.threerings.flashbang.ObjectTask;
+import com.threerings.flashbang.IEntityTask;
 
-public function When (predicate :Function, task :ObjectTask) :ObjectTask
+public function When (predicate :Function, task :IEntityTask) :IEntityTask
 {
     return new SerialTask(new WaitOnPredicateTask(predicate), task);
 }

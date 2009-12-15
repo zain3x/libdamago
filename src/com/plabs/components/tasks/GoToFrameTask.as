@@ -20,14 +20,15 @@
 
 package com.plabs.components.tasks {
 
-import flash.display.MovieClip;
-
+import com.pblabs.engine.entity.IEntity;
 import com.threerings.flashbang.*;
 import com.threerings.flashbang.components.*;
 import com.threerings.flashbang.objects.*;
 
+import flash.display.MovieClip;
+
 public class GoToFrameTask
-    implements ObjectTask
+    implements IEntityTask
 {
     public function GoToFrameTask (frame :Object, scene :String = null,
         gotoAndPlay :Boolean = true, movie :MovieClip = null)
@@ -38,7 +39,7 @@ public class GoToFrameTask
         _movie = movie;
     }
 
-    public function update (dt :Number, obj :GameObject) :Boolean
+    public function update (dt :Number, obj :IEntity) :Boolean
     {
         var movieClip :MovieClip = _movie;
 
@@ -62,14 +63,9 @@ public class GoToFrameTask
         return true;
     }
 
-    public function clone () :ObjectTask
+    public function clone () :IEntityTask
     {
         return new GoToFrameTask(_frame, _scene, _gotoAndPlay, _movie);
-    }
-
-    public function receiveMessage (msg :ObjectMessage) :Boolean
-    {
-        return false;
     }
 
     protected var _frame :Object;

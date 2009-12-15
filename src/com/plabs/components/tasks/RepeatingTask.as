@@ -20,8 +20,6 @@
 
 package com.plabs.components.tasks {
 
-import com.threerings.flashbang.ObjectTask;
-
 public class RepeatingTask extends TaskContainer
 {
     public function RepeatingTask (...subtasks)

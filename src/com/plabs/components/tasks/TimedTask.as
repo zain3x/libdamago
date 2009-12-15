@@ -20,33 +20,26 @@
 
 package com.plabs.components.tasks {
 
-import com.threerings.flashbang.GameObject;
-import com.threerings.flashbang.ObjectTask;
-import com.threerings.flashbang.ObjectMessage;
+import com.pblabs.engine.entity.IEntity;
 
 public class TimedTask
-    implements ObjectTask
+    implements IEntityTask
 {
     public function TimedTask (time :Number)
     {
         _time = time;
     }
 
-    public function update (dt :Number, obj :GameObject) :Boolean
+    public function update (dt :Number, obj :IEntity) :Boolean
     {
         _elapsedTime += dt;
 
         return (_elapsedTime >= _time);
     }
 
-    public function clone () :ObjectTask
+    public function clone () :IEntityTask
     {
         return new TimedTask(_time);
-    }
-
-    public function receiveMessage (msg :ObjectMessage) :Boolean
-    {
-        return false;
     }
 
     protected var _time :Number = 0;

@@ -20,12 +20,13 @@
 
 package com.plabs.components.tasks {
 
+import com.pblabs.engine.entity.IEntity;
 import com.threerings.util.MathUtil;
 
 import mx.effects.easing.Linear;
 
 public class InterpolatingTask
-    implements EntityTask
+    implements IEntityTask
 {
     public function InterpolatingTask (time :Number = 0, easingFn :Function = null)
     {
@@ -34,13 +35,13 @@ public class InterpolatingTask
         _easingFn = (easingFn != null ? easingFn : mx.effects.easing.Linear.easeNone);
     }
 
-    public function update (dt :Number, obj :GameObject) :Boolean
+    public function update (dt :Number, obj :IEntity) :Boolean
     {
         _elapsedTime += dt;
         return (_elapsedTime >= _totalTime);
     }
 
-    public function clone () :EntityTask
+    public function clone () :IEntityTask
     {
         return new InterpolatingTask(_totalTime, _easingFn);
     }

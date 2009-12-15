@@ -20,40 +20,34 @@
 
 package com.plabs.components.tasks {
 
-import flash.display.MovieClip;
-
+import com.pblabs.engine.entity.IEntity;
 import com.threerings.flashbang.*;
 import com.threerings.flashbang.components.*;
 import com.threerings.flashbang.objects.*;
 
+import flash.display.MovieClip;
+
 import mx.effects.easing.Linear;
 
 public class PlayFramesTask
-    implements ObjectTask
+    implements IEntityTask
 {
     public function PlayFramesTask (startFrame :int, endFrame :int, totalTime :Number,
-        movie :MovieClip = null)
+        movie :MovieClip)
     {
         _startFrame = startFrame;
         _endFrame = endFrame;
         _totalTime = totalTime;
         _movie = movie;
+
+        if (null == _movie) {
+            throw new Error("Movie cannot be null");
+        }
     }
 
-    public function update (dt :Number, obj :GameObject) :Boolean
+    public function update (dt :Number, obj :IEntity) :Boolean
     {
         var movieClip :MovieClip = _movie;
-
-        // if we don't have a default movie,
-        if (null == movieClip) {
-            var sc :SceneComponent = obj as SceneComponent;
-            movieClip = (null != sc ? sc.displayObject as MovieClip : null);
-
-            if (null == movieClip) {
-                throw new Error("Can only operate on SceneComponents with MovieClip " +
-                    "DisplayObjects");
-            }
-        }
 
         _elapsedTime = Math.min(_elapsedTime + dt, _totalTime);
         var curFrame :int = Math.floor(mx.effects.easing.Linear.easeNone(
@@ -65,15 +59,11 @@ public class PlayFramesTask
         return _elapsedTime >= _totalTime;
     }
 
-    public function clone () :ObjectTask
+    public function clone () :IEntityTask
     {
         return new PlayFramesTask(_startFrame, _endFrame, _totalTime, _movie);
     }
 
-    public function receiveMessage (msg :ObjectMessage) :Boolean
-    {
-        return false;
-    }
 
     protected var _startFrame :int;
     protected var _endFrame :int;
