@@ -1,23 +1,33 @@
 
 package com.plabs.components.tasks {
+import com.pblabs.engine.core.ITickedObject;
+import com.pblabs.engine.entity.IEntity;
+import com.threerings.flashbang.pushbutton.EntityComponent;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 
 
-public class TaskComponent extends EntityTask
-    implements TickedComponent
+
+public class TaskComponent extends EntityComponent
+    implements ITickedObject
 {
-
+    public static const COMPONENT_NAME :String = "tasks";
     public function TaskComponent ()
     {
+        super(COMPONENT_NAME);
     }
+
     public function onTick (dt :Number) :void
     {
+        update(dt);
     }
+
     public function update (dt :Number) :void
     {
         _updatingTasks = true;
         _anonymousTasks.update(dt, owner);
         if (!_namedTasks.isEmpty()) {
-            var thisEntity :IEntity = this;
+            var thisEntity :IEntity = owner;
             _namedTasks.forEach(updateNamedTaskContainer);
         }
         _updatingTasks = false;
@@ -30,8 +40,8 @@ public class TaskComponent extends EntityTask
             }
         }
     }
-    
-    
+
+
         /** Adds an unnamed task to this IEntity. */
     public function addTask (task :IEntityTask) :void
     {

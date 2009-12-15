@@ -1,14 +1,16 @@
 package com.threerings.flashbang.pushbutton {
+import com.pblabs.engine.components.TickedComponent;
+import com.pblabs.engine.core.ITickedObject;
 import com.pblabs.engine.entity.IEntityComponent;
 import com.pblabs.engine.entity.PropertyReference;
 import com.threerings.flashbang.GameObject;
 import com.threerings.flashbang.Updatable;
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.Predicates;
-import com.threerings.util.ArrayUtil;
 
 import flash.events.Event;
 import flash.events.IEventDispatcher;
@@ -378,9 +380,9 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
             if (c is Updatable) {
                 Updatable(c).update(dt);
             }
-                //            else if (c is TickedComponent) {
-                //                TickedComponent(c).onTick(dt);
-                //            }
+            else if (c is ITickedObject) {
+                ITickedObject(c).onTick(dt);
+            }
         }
     }
 
