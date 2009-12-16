@@ -2,9 +2,11 @@ package com.threerings.flashbang.pushbutton.scene {
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
+import com.threerings.util.MathUtil;
 
 import flash.display.DisplayObject;
 import flash.geom.Point;
+
 /**
  * Sorts DisplayObjects by the y coordinate.  Caches values so only changed objects
  * are resorted.
@@ -85,6 +87,7 @@ public class SceneLayerYOrdering extends SceneLayer
         for each (var dirtyObj :*in _componentsToReorder) {
             var disp :DisplayObject = _sceneComponents.get(dirtyObj) as DisplayObject;
             var idx :int = ArrayUtil.indexOf(sortedComponents, disp);
+			idx = MathUtil.clamp(idx, 0, numChildren - 1);
             setChildIndex(disp, idx);
         }
 

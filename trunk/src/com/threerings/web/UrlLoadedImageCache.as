@@ -1,7 +1,6 @@
 package com.threerings.web {
 import aduros.util.F;
 
-import com.threerings.ui.DisplayUtils;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 
@@ -10,11 +9,13 @@ import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.Loader;
 import flash.display.Sprite;
+import flash.errors.IOError;
 import flash.events.Event;
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
 import flash.net.URLRequest;
 import flash.system.LoaderContext;
+
 public class UrlLoadedImageCache
 {
     public static function preloadPicFromUrl (url :String) :void
@@ -62,38 +63,48 @@ public class UrlLoadedImageCache
         if (!_holdingSprites.containsKey(url)) {
             _holdingSprites.put(url, new Array());
             _holdingCallbacks.put(url, new Array());
+			
+			
             var imageLoader :Loader = new Loader();
             var loaderContext :LoaderContext = new LoaderContext();
             loaderContext.checkPolicyFile = true;
 
             var request :URLRequest = new URLRequest(url);
-            imageLoader.contentLoaderInfo.addEventListener(Event.COMPLETE,
-                F.justOnce(F.callback(onComplete)));
-            imageLoader.load(request, loaderContext);
-
-            function onComplete () :void {
-                if (imageLoader.content != null && imageLoader.content is DisplayObject) {
-                    var bd :BitmapData = createBitmapData(imageLoader.content as DisplayObject);
-                    _urlPicCache.put(url, bd);
-
-                    var sprites :Array = _holdingSprites.get(url) as Array;
-                    var callbacks :Array = _holdingCallbacks.get(url) as Array;
-                    if (sprites != null) {
-                            //Add to the holding sprite, in case we're waiting for it.
-                        for (var ii :int = 0; ii < sprites.length; ++ii) {
-                            var toCopySprite :Sprite = sprites[ii] as Sprite;
-                            var localCallback :Function = callbacks[ii] as Function;
-                            addBitmapToSpriteAndCenterAndSize(bd, toCopySprite);
-                            if (localCallback != null) {
-                                localCallback(toCopySprite);
-                            }
-                        }
-
-                    }
-                    _holdingSprites.remove(url);
-                    _holdingCallbacks.remove(url);
-                }
-            }
+			try {
+	            imageLoader.contentLoaderInfo.addEventListener(Event.COMPLETE,
+	                F.justOnce(F.callback(onComplete)));
+	            imageLoader.load(request, loaderContext);
+	
+	            function onComplete () :void {
+	                if (imageLoader.content != null && imageLoader.content is DisplayObject) {
+	                    var bd :BitmapData = createBitmapData(imageLoader.content as DisplayObject);
+	                    _urlPicCache.put(url, bd);
+	
+	                    var sprites :Array = _holdingSprites.get(url) as Array;
+	                    var callbacks :Array = _holdingCallbacks.get(url) as Array;
+	                    if (sprites != null) {
+	                            //Add to the holding sprite, in case we're waiting for it.
+	                        for (var ii :int = 0; ii < sprites.length; ++ii) {
+	                            var toCopySprite :Sprite = sprites[ii] as Sprite;
+	                            var localCallback :Function = callbacks[ii] as Function;
+	                            addBitmapToSpriteAndCenterAndSize(bd, toCopySprite);
+	                            if (localCallback != null) {
+	                                localCallback(toCopySprite);
+	                            }
+	                        }
+	
+	                    }
+	                    _holdingSprites.remove(url);
+	                    _holdingCallbacks.remove(url);
+	                }
+	            }
+			} catch (err :IOError) {
+				trace("Failed to load " + url);
+				_holdingSprites.remove(url);
+				_holdingCallbacks.remove(url);
+			}
+			
+			
         }
 
         var holdingArray :Array = _holdingSprites.get(url) as Array;
