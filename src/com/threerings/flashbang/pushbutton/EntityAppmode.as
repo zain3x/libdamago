@@ -1,8 +1,10 @@
 package com.threerings.flashbang.pushbutton {
 import com.pblabs.engine.entity.IEntityComponent;
 import com.pblabs.engine.entity.PropertyReference;
+import com.plabs.components.tasks.TaskComponent;
 import com.threerings.flashbang.AppMode;
 import com.threerings.util.Log;
+
 public class EntityAppmode extends AppMode
 {
     public static const OBJECT_ADDED :String = "objectAdded";
@@ -177,6 +179,8 @@ public class EntityAppmode extends AppMode
 
         if (null == obj) {
             obj = new GameObjectEntity(SINGLETON_ENTITY_NAME);
+			//Add tasker, even though the game object has the same
+			obj.addComponent(new TaskComponent(), TaskComponent.COMPONENT_NAME); 
             addObject(obj);
         }
         obj.addComponent(comp, comp.name);
