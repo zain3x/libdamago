@@ -1,6 +1,5 @@
 package com.threerings.web {
-import aduros.util.F;
-
+import com.threerings.util.EventHandlerManager;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 
@@ -11,6 +10,7 @@ import flash.display.Loader;
 import flash.display.Sprite;
 import flash.errors.IOError;
 import flash.events.Event;
+import flash.events.IOErrorEvent;
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
 import flash.net.URLRequest;
@@ -71,11 +71,18 @@ public class UrlLoadedImageCache
 
             var request :URLRequest = new URLRequest(url);
 			try {
-	            imageLoader.contentLoaderInfo.addEventListener(Event.COMPLETE,
-	                F.justOnce(F.callback(onComplete)));
+				_events.registerListener(imageLoader.contentLoaderInfo, Event.COMPLETE, onComplete);
+				_events.registerListener(imageLoader, IOErrorEvent.IO_ERROR, onFail);
 	            imageLoader.load(request, loaderContext);
+				
+				function free () :void {
+					_holdingSprites.remove(url);
+					_holdingCallbacks.remove(url);
+					_events.freeAllOn(imageLoader.contentLoaderInfo);
+					_events.freeAllOn(imageLoader);
+				}
 	
-	            function onComplete () :void {
+	            function onComplete (...ignored) :void {
 	                if (imageLoader.content != null && imageLoader.content is DisplayObject) {
 	                    var bd :BitmapData = createBitmapData(imageLoader.content as DisplayObject);
 	                    _urlPicCache.put(url, bd);
@@ -94,14 +101,17 @@ public class UrlLoadedImageCache
 	                        }
 	
 	                    }
-	                    _holdingSprites.remove(url);
-	                    _holdingCallbacks.remove(url);
+						free();
 	                }
+					
 	            }
+				function onFail (e :IOErrorEvent) :void {
+					trace("URL failed to load: " + url);
+					free();
+				}
 			} catch (err :IOError) {
 				trace("Failed to load " + url);
-				_holdingSprites.remove(url);
-				_holdingCallbacks.remove(url);
+				free();
 			}
 			
 			
@@ -148,6 +158,7 @@ public class UrlLoadedImageCache
     protected static var _holdingSprites :Map = Maps.newMapOf(String);
     // Map<url:String, Array<Function>>
     protected static var _holdingCallbacks :Map = Maps.newMapOf(String);
+	protected static var _events :EventHandlerManager = new EventHandlerManager();
 
 }
 }
