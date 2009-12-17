@@ -71,8 +71,9 @@ public class ScrollableElementView extends EventDispatcher
 
     public function set index (val :int) :void
     {
-        _topLeftIdx = val;
+		_topLeftIdx = val;
         redrawElements();
+		dispatchEvent(new ValueEvent(EVENT_INDEX_CHANGED, _topLeftIdx));
     }
 
     public function indexOf (obj :*) :int
@@ -133,6 +134,9 @@ public class ScrollableElementView extends EventDispatcher
 
     public function redrawElements () :void
     {
+		_topLeftIdx = MathUtil.clamp(_topLeftIdx, 0, Math.max(0, _elements.length - 
+			_elementContainers.length));
+		
         _elementContainers.forEach(F.adapt(DisplayUtils.removeAllChildren));
 
         var containerIdx :int = 0;
