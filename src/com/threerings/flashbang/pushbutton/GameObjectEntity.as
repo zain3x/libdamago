@@ -1,6 +1,6 @@
 package com.threerings.flashbang.pushbutton {
-import com.pblabs.engine.components.TickedComponent;
 import com.pblabs.engine.core.ITickedObject;
+import com.pblabs.engine.entity.IEntity;
 import com.pblabs.engine.entity.IEntityComponent;
 import com.pblabs.engine.entity.PropertyReference;
 import com.threerings.flashbang.GameObject;
@@ -207,7 +207,7 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
 
     public function getEntitiesInGroup (groupName :String) :Array //<IEntity>
     {
-        return db.getObjectsInGroup(groupName).filter(Predicates.createIs(IEntityExtended));
+        return db.getObjectsInGroup(groupName).filter(Predicates.createIs(IEntity));
     }
 
     public function getEntity (entityName :String) :IEntityExtended
