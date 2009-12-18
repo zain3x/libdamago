@@ -72,14 +72,13 @@ public class UrlLoadedImageCache
             var request :URLRequest = new URLRequest(url);
 			try {
 				_events.registerListener(imageLoader.contentLoaderInfo, Event.COMPLETE, onComplete);
-				_events.registerListener(imageLoader, IOErrorEvent.IO_ERROR, onFail);
+				_events.registerListener(imageLoader.contentLoaderInfo, IOErrorEvent.IO_ERROR, onFail);
 	            imageLoader.load(request, loaderContext);
 				
 				function free () :void {
 					_holdingSprites.remove(url);
 					_holdingCallbacks.remove(url);
 					_events.freeAllOn(imageLoader.contentLoaderInfo);
-					_events.freeAllOn(imageLoader);
 				}
 	
 	            function onComplete (...ignored) :void {
