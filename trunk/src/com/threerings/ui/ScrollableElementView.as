@@ -17,7 +17,7 @@ import flash.events.MouseEvent;
 public class ScrollableElementView extends EventDispatcher
 {
 
-    public static const EVENT_INDEX_CHANGED :String = "ScrollableElementView.index";
+    public static const ELEMENTS_REDRAWN :String = "ScrollableElementView.index";
     public function ScrollableElementView (elementContainers :Array,
                                          leftUpButton :InteractiveObject = null,
                                          bottomDownButton :InteractiveObject = null,
@@ -73,7 +73,7 @@ public class ScrollableElementView extends EventDispatcher
     {
 		_topLeftIdx = val;
         redrawElements();
-		dispatchEvent(new ValueEvent(EVENT_INDEX_CHANGED, _topLeftIdx));
+		dispatchEvent(new ValueEvent(ELEMENTS_REDRAWN, _topLeftIdx));
     }
 
     public function indexOf (obj :*) :int
@@ -104,6 +104,7 @@ public class ScrollableElementView extends EventDispatcher
         _elementDisplayFunctions.clear();
         _topLeftIdx = 0;
         redrawElements();
+		dispatchEvent(new ValueEvent(ELEMENTS_REDRAWN, _topLeftIdx));
     }
 
     public function containerSize () :int
@@ -136,8 +137,8 @@ public class ScrollableElementView extends EventDispatcher
     {
 		_topLeftIdx = MathUtil.clamp(_topLeftIdx, 0, Math.max(0, _elements.length - 
 			_elementContainers.length));
-		
-        _elementContainers.forEach(F.adapt(DisplayUtils.removeAllChildren));
+
+		_elementContainers.forEach(F.adapt(DisplayUtils.removeAllChildren));
 
         var containerIdx :int = 0;
         _bottomRightIdx = _topLeftIdx;
@@ -160,7 +161,8 @@ public class ScrollableElementView extends EventDispatcher
     {
         ArrayUtil.removeAll(_elements, d);
         _elementDisplayFunctions.remove(d);
-        redrawElements()
+        redrawElements();
+		dispatchEvent(new ValueEvent(ELEMENTS_REDRAWN, _topLeftIdx));
     }
 
     public function removeGaps () :void
@@ -236,7 +238,7 @@ public class ScrollableElementView extends EventDispatcher
         _topLeftIdx++;
         _topLeftIdx = MathUtil.clamp(_topLeftIdx, 0, _elements.length - 1);
         redrawElements();
-        dispatchEvent(new ValueEvent(EVENT_INDEX_CHANGED, _topLeftIdx));
+        dispatchEvent(new ValueEvent(ELEMENTS_REDRAWN, _topLeftIdx));
         return true;
     }
 
@@ -245,7 +247,7 @@ public class ScrollableElementView extends EventDispatcher
         _topLeftIdx--;
         _topLeftIdx = MathUtil.clamp(_topLeftIdx, 0, _elements.length - 1);
         redrawElements();
-        dispatchEvent(new ValueEvent(EVENT_INDEX_CHANGED, _topLeftIdx));
+        dispatchEvent(new ValueEvent(ELEMENTS_REDRAWN, _topLeftIdx));
     }
 
     protected function scrollLeftUp1Page (...ignored) :void
@@ -253,20 +255,20 @@ public class ScrollableElementView extends EventDispatcher
         var elementSize :int = _bottomRightIdx - _topLeftIdx;
         _topLeftIdx = MathUtil.clamp(_topLeftIdx - elementSize - 1, 0, _elements.length - 1);
         redrawElements();
-        dispatchEvent(new ValueEvent(EVENT_INDEX_CHANGED, _topLeftIdx));
+        dispatchEvent(new ValueEvent(ELEMENTS_REDRAWN, _topLeftIdx));
     }
 
     protected function scrollMaxLeftUp (...ignored) :void
     {
         _topLeftIdx = 0;
         redrawElements();
-        dispatchEvent(new ValueEvent(EVENT_INDEX_CHANGED, _topLeftIdx));
+        dispatchEvent(new ValueEvent(ELEMENTS_REDRAWN, _topLeftIdx));
     }
 
     protected function scrollMaxRightDown (...ignored) :void
     {
         while (scrollDownRight()) {}
-        dispatchEvent(new ValueEvent(EVENT_INDEX_CHANGED, _topLeftIdx));
+        dispatchEvent(new ValueEvent(ELEMENTS_REDRAWN, _topLeftIdx));
     }
 
     protected function scrollRightDown1Page (...ignored) :void
@@ -274,52 +276,8 @@ public class ScrollableElementView extends EventDispatcher
         var elementSize :int = _bottomRightIdx - _topLeftIdx;
         _topLeftIdx = MathUtil.clamp(_topLeftIdx + elementSize + 1, 0, _elements.length - elementSize - 1);
         redrawElements();
-        dispatchEvent(new ValueEvent(EVENT_INDEX_CHANGED, _topLeftIdx));
+        dispatchEvent(new ValueEvent(ELEMENTS_REDRAWN, _topLeftIdx));
     }
-
-
-//    protected function scrollDownRight (...ignored) :Boolean
-//    {
-//        if (_bottomRightIdx == _elements.length - 1) {
-//            return false;
-//        }
-//        _topLeftIdx++;
-//        _topLeftIdx = MathUtil.clamp(_topLeftIdx, 0, _elements.length - 1);
-//        redrawElements();
-//        return true;
-//    }
-//
-//    protected function scrollLeftUp (...ignored) :void
-//    {
-//        _topLeftIdx--;
-//        _topLeftIdx = MathUtil.clamp(_topLeftIdx, 0, _elements.length - 1);
-//        redrawElements();
-//    }
-//
-//    protected function scrollLeftUp1Page (...ignored) :void
-//    {
-//        var elementSize :int = _bottomRightIdx - _topLeftIdx;
-//        _topLeftIdx = MathUtil.clamp(_topLeftIdx - elementSize - 1, 0, _elements.length - 1);
-//        redrawElements();
-//    }
-//
-//    protected function scrollMaxLeftUp (...ignored) :void
-//    {
-//        _topLeftIdx = 0;
-//        redrawElements();
-//    }
-//
-//    protected function scrollMaxRightDown (...ignored) :void
-//    {
-//        while (scrollDownRight()) {}
-//    }
-//
-//    protected function scrollRightDown1Page (...ignored) :void
-//    {
-//        var elementSize :int = _bottomRightIdx - _topLeftIdx;
-//        _topLeftIdx = MathUtil.clamp(_topLeftIdx + elementSize + 1, 0, _elements.length - elementSize - 1);
-//        redrawElements();
-//    }
 
     protected static function getObjectAsDisplayObject (obj :Object) :DisplayObject
     {
