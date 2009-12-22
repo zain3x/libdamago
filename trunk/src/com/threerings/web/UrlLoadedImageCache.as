@@ -26,7 +26,6 @@ public class UrlLoadedImageCache
 
     public static function getPicFromUrl (url :String, callback :Function = null) :Sprite
     {
-		trace("!!!!!getPicFromUrl=" + url);
         if (url == null || url.length == 0) {
             return null;
         }
@@ -60,7 +59,6 @@ public class UrlLoadedImageCache
 
     protected static function loadPicFromUrl (url :String, callback :Function = null) :Sprite
     {
-		trace("!!!!!loadPicFromUrl=" + url);
         var holdingSprite :Sprite = new Sprite();
 		
 		if (url == null || url.length == 0) {
@@ -83,18 +81,18 @@ public class UrlLoadedImageCache
 				imageLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, F.justOnce(onComplete));
 				imageLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onFail);
 				
-				imageLoader.addEventListener(IOErrorEvent.IO_ERROR, function(e :IOErrorEvent) :void {
-					trace("!!!!!!!!!!!!!");	
-				});
-				imageLoader.addEventListener(IOErrorEvent.NETWORK_ERROR, function(e :IOErrorEvent) :void {
-					trace("!!!!!!!!!!!!!");	
-				});
-				imageLoader.contentLoaderInfo.addEventListener(IOErrorEvent.NETWORK_ERROR, function(e :IOErrorEvent) :void {
-					trace("!!!!!!!!!!!!!");	
-				});
-				imageLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, function(e :IOErrorEvent) :void {
-					trace("!!!!!!!!!!!!!");	
-				});
+//				imageLoader.addEventListener(IOErrorEvent.IO_ERROR, function(e :IOErrorEvent) :void {
+//					trace("!!!!!!!!!!!!!");	
+//				});
+//				imageLoader.addEventListener(IOErrorEvent.NETWORK_ERROR, function(e :IOErrorEvent) :void {
+//					trace("!!!!!!!!!!!!!");	
+//				});
+//				imageLoader.contentLoaderInfo.addEventListener(IOErrorEvent.NETWORK_ERROR, function(e :IOErrorEvent) :void {
+//					trace("!!!!!!!!!!!!!");	
+//				});
+//				imageLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, function(e :IOErrorEvent) :void {
+//					trace("!!!!!!!!!!!!!");	
+//				});
 				
 				
 				
