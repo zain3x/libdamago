@@ -33,7 +33,7 @@ public class UrlLoadedImageCache
         if (_urlPicCache.containsKey(url)) {
             var bd :BitmapData = _urlPicCache.get(url) as BitmapData;
             var sprite :Sprite = new Sprite();
-            addBitmapToSpriteAndCenterAndSize(bd, sprite);
+			sprite.addChild(new Bitmap(bd));
             if (callback != null) {
                 callback(sprite);
             }
@@ -41,20 +41,6 @@ public class UrlLoadedImageCache
         } else {
             return loadPicFromUrl(url, callback);
         }
-    }
-
-    protected static function addBitmapToSpriteAndCenterAndSize (bd :BitmapData, sprite :Sprite) :void
-    {
-        var bm :Bitmap = new Bitmap(bd);
-//        if (maxSize > 0) {
-//            var max :int = Math.max(bm.width, bm.height);
-//            if (max > maxSize) {
-//                bm.scaleX = bm.scaleY = Number(maxSize) / max;
-//                trace("bm.scaleX=" + bm.scaleX);
-//            }
-//        }
-        sprite.addChild(bm);
-//        DisplayUtils.centerOn(bm);
     }
 
     protected static function loadPicFromUrl (url :String, callback :Function = null) :Sprite
@@ -77,68 +63,46 @@ public class UrlLoadedImageCache
             loaderContext.checkPolicyFile = true;
 
             var request :URLRequest = new URLRequest(url);
-			try {
-				imageLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, F.justOnce(onComplete));
-				imageLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onFail);
-				
-//				imageLoader.addEventListener(IOErrorEvent.IO_ERROR, function(e :IOErrorEvent) :void {
-//					trace("!!!!!!!!!!!!!");	
-//				});
-//				imageLoader.addEventListener(IOErrorEvent.NETWORK_ERROR, function(e :IOErrorEvent) :void {
-//					trace("!!!!!!!!!!!!!");	
-//				});
-//				imageLoader.contentLoaderInfo.addEventListener(IOErrorEvent.NETWORK_ERROR, function(e :IOErrorEvent) :void {
-//					trace("!!!!!!!!!!!!!");	
-//				});
-//				imageLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, function(e :IOErrorEvent) :void {
-//					trace("!!!!!!!!!!!!!");	
-//				});
-				
-				
-				
-				
-				
-	            imageLoader.load(request, loaderContext);
-				
-				function free () :void {
-					_holdingSprites.remove(url);
-					_holdingCallbacks.remove(url);
+			imageLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, F.justOnce(onComplete));
+			imageLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onFail);
+			
+            imageLoader.load(request, loaderContext);
+			
+			function free () :void {
+				_holdingSprites.remove(url);
+				_holdingCallbacks.remove(url);
+			}
+
+            function onComplete (e :Event) :void {
+                if (imageLoader.content != null && imageLoader.content is DisplayObject) {
+                    var bd :BitmapData = createBitmapData(imageLoader.content as DisplayObject);
+                    _urlPicCache.put(url, bd);
+
+                    var sprites :Array = _holdingSprites.get(url) as Array;
+                    var callbacks :Array = _holdingCallbacks.get(url) as Array;
+                    if (sprites != null) {
+                        //Add to the holding sprite, in case we're waiting for it.
+                        for (var ii :int = 0; ii < sprites.length; ++ii) {
+                            var toCopySprite :Sprite = sprites[ii] as Sprite;
+                            var localCallback :Function = callbacks[ii] as Function;
+							toCopySprite.addChild(new Bitmap(bd));
+                            if (localCallback != null) {
+                                localCallback(toCopySprite);
+                            }
+                        }
+
+                    }
+                } else {
+					trace("There is no image at " + url);
 				}
-	
-	            function onComplete (e :Event) :void {
-	                if (imageLoader.content != null && imageLoader.content is DisplayObject) {
-	                    var bd :BitmapData = createBitmapData(imageLoader.content as DisplayObject);
-	                    _urlPicCache.put(url, bd);
-	
-	                    var sprites :Array = _holdingSprites.get(url) as Array;
-	                    var callbacks :Array = _holdingCallbacks.get(url) as Array;
-	                    if (sprites != null) {
-	                            //Add to the holding sprite, in case we're waiting for it.
-	                        for (var ii :int = 0; ii < sprites.length; ++ii) {
-	                            var toCopySprite :Sprite = sprites[ii] as Sprite;
-	                            var localCallback :Function = callbacks[ii] as Function;
-	                            addBitmapToSpriteAndCenterAndSize(bd, toCopySprite);
-	                            if (localCallback != null) {
-	                                localCallback(toCopySprite);
-	                            }
-	                        }
-	
-	                    }
-	                } else {
-						trace("There is no image at " + url);
-					}
-					free();
-					
-	            }
-				function onFail (e :IOErrorEvent) :void {
-					trace("URL failed to load: " + url);
-					free();
-				}
-			} catch (err :IOError) {
-				trace("Failed to load " + url);
+				free();
+				
+            }
+			function onFail (e :IOErrorEvent) :void {
+				trace("URL failed to load: " + url);
+				trace(e.text);
 				free();
 			}
-			
 			
         }
 
