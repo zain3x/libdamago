@@ -1,5 +1,6 @@
 package com.threerings.web {
-import com.threerings.util.EventHandlerManager;
+import aduros.util.F;
+
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 
@@ -25,6 +26,7 @@ public class UrlLoadedImageCache
 
     public static function getPicFromUrl (url :String, callback :Function = null) :Sprite
     {
+		trace("!!!!!getPicFromUrl=" + url);
         if (url == null || url.length == 0) {
             return null;
         }
@@ -58,12 +60,19 @@ public class UrlLoadedImageCache
 
     protected static function loadPicFromUrl (url :String, callback :Function = null) :Sprite
     {
+		trace("!!!!!loadPicFromUrl=" + url);
         var holdingSprite :Sprite = new Sprite();
-
+		
+		if (url == null || url.length == 0) {
+			if (callback != null) {
+				callback(null);
+			}
+			return null;
+		}
+		
         if (!_holdingSprites.containsKey(url)) {
             _holdingSprites.put(url, new Array());
             _holdingCallbacks.put(url, new Array());
-			
 			
             var imageLoader :Loader = new Loader();
             var loaderContext :LoaderContext = new LoaderContext();
@@ -71,17 +80,34 @@ public class UrlLoadedImageCache
 
             var request :URLRequest = new URLRequest(url);
 			try {
-				_events.registerListener(imageLoader.contentLoaderInfo, Event.COMPLETE, onComplete);
-				_events.registerListener(imageLoader.contentLoaderInfo, IOErrorEvent.IO_ERROR, onFail);
+				imageLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, F.justOnce(onComplete));
+				imageLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onFail);
+				
+				imageLoader.addEventListener(IOErrorEvent.IO_ERROR, function(e :IOErrorEvent) :void {
+					trace("!!!!!!!!!!!!!");	
+				});
+				imageLoader.addEventListener(IOErrorEvent.NETWORK_ERROR, function(e :IOErrorEvent) :void {
+					trace("!!!!!!!!!!!!!");	
+				});
+				imageLoader.contentLoaderInfo.addEventListener(IOErrorEvent.NETWORK_ERROR, function(e :IOErrorEvent) :void {
+					trace("!!!!!!!!!!!!!");	
+				});
+				imageLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, function(e :IOErrorEvent) :void {
+					trace("!!!!!!!!!!!!!");	
+				});
+				
+				
+				
+				
+				
 	            imageLoader.load(request, loaderContext);
 				
 				function free () :void {
 					_holdingSprites.remove(url);
 					_holdingCallbacks.remove(url);
-					_events.freeAllOn(imageLoader.contentLoaderInfo);
 				}
 	
-	            function onComplete (...ignored) :void {
+	            function onComplete (e :Event) :void {
 	                if (imageLoader.content != null && imageLoader.content is DisplayObject) {
 	                    var bd :BitmapData = createBitmapData(imageLoader.content as DisplayObject);
 	                    _urlPicCache.put(url, bd);
@@ -100,8 +126,10 @@ public class UrlLoadedImageCache
 	                        }
 	
 	                    }
-						free();
-	                }
+	                } else {
+						trace("There is no image at " + url);
+					}
+					free();
 					
 	            }
 				function onFail (e :IOErrorEvent) :void {
@@ -157,7 +185,7 @@ public class UrlLoadedImageCache
     protected static var _holdingSprites :Map = Maps.newMapOf(String);
     // Map<url:String, Array<Function>>
     protected static var _holdingCallbacks :Map = Maps.newMapOf(String);
-	protected static var _events :EventHandlerManager = new EventHandlerManager();
+//	protected static var _events :EventHandlerManager = new EventHandlerManager();
 
 }
 }
