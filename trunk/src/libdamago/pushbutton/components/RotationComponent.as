@@ -20,7 +20,7 @@ public class RotationComponent extends NotifyingValueComponent
 		setValue(val);
 	}
 	
-	protected function get eventName () :String
+	override protected function get eventName () :String
 	{
 		return EVENT_NAME;
 	}
