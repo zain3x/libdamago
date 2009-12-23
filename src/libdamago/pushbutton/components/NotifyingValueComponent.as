@@ -1,5 +1,8 @@
 package libdamago.pushbutton.components {
 import com.threerings.util.ValueEvent;
+
+import flash.events.Event;
+
 public class NotifyingValueComponent extends EntityComponentEfficientDispatcher
 {
     public function setValue (val :Number) :void

@@ -45,12 +45,12 @@ public class EventDispatcherNonCloning implements IEventDispatcher
     {
 		
 		
-		var listeners :Array = _eventListeners[type] as Array;
+		var listeners :Array = _eventListeners[event.type] as Array;
 		if (listeners == null) {
 			return true;
 		}
 		
-		for (var k :Function in Array) { // no "each": iterate over keys
+		for each (var k :Function in listeners) { // no "each": iterate over keys
 			k.apply(undefined, event);
 		}
 		return true;

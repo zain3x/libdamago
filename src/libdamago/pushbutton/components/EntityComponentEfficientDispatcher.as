@@ -1,11 +1,18 @@
 package libdamago.pushbutton.components {
 import com.pblabs.engine.entity.EntityComponent;
 
+import flash.events.Event;
 import flash.events.IEventDispatcher;
+
+import libdamago.events.EventDispatcherNonCloning;
 
 public class EntityComponentEfficientDispatcher extends EntityComponent
 	implements IEventDispatcher
 {
+	public function EntityComponentEfficientDispatcher () 
+	{
+	}
+	
 	public function addEventListener (type :String, listener :Function, useCapture :Boolean = false,
 									  priority :int = 0, useWeakReference :Boolean = false) :void
 	{
@@ -44,6 +51,5 @@ public class EntityComponentEfficientDispatcher extends EntityComponent
 	}
 	
 	protected var _efficientDispatcher :IEventDispatcher;
-}
 }
 }
