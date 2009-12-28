@@ -1,6 +1,6 @@
 package com.threerings.flashbang.pushbutton {
+import com.pblabs.engine.entity.IEntity;
 import com.pblabs.engine.entity.IEntityComponent;
-import com.pblabs.engine.entity.PropertyReference;
 import com.plabs.components.tasks.TaskComponent;
 import com.threerings.flashbang.AppMode;
 import com.threerings.util.Log;
@@ -171,11 +171,11 @@ public class EntityAppmode extends AppMode
 //        return obj;
 //    }
 
-    public function addSingletonComponent (comp :IEntityComponent)
-        :PropertyReference
+    public function addSingletonComponent (comp :IEntityComponent, compName :String)
+        :String
     {
         log.info("addSingletonComponent", "comp", comp);
-        var obj :GameObjectEntity = getObjectNamed(SINGLETON_ENTITY_NAME) as GameObjectEntity;
+        var obj :GameObjectEntity = singletonEntity;
 
         if (null == obj) {
             obj = new GameObjectEntity(SINGLETON_ENTITY_NAME);
@@ -183,19 +183,24 @@ public class EntityAppmode extends AppMode
 			obj.addComponent(new TaskComponent(), TaskComponent.COMPONENT_NAME); 
             addObject(obj);
         }
-        obj.addComponent(comp, comp.name);
-        return new PropertyReference("#" + SINGLETON_ENTITY_NAME + "." + comp.name);
+        obj.addComponent(comp, compName);
+        return "#" + SINGLETON_ENTITY_NAME + "." + compName;
     }
 
     public function getSingletonComponent (name :String) :IEntityComponent
     {
-        var obj :GameObjectEntity = getObjectNamed(SINGLETON_ENTITY_NAME) as GameObjectEntity;
+        var obj :GameObjectEntity = singletonEntity;
 
         if (null == obj) {
             return null;
         }
         return obj.lookupComponentByName(name);
     }
+	
+	public function get singletonEntity () :GameObjectEntity
+	{
+		return getObjectNamed(SINGLETON_ENTITY_NAME) as GameObjectEntity;
+	}
 
     //Don't modify the array!
 //    public function getComponentsOfType (clazz :Class) :Array

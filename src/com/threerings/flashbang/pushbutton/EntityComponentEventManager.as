@@ -14,10 +14,10 @@ import flash.events.IEventDispatcher;
  * @see ../../../../../Examples/CreatingComponents.html Creating Custom Components
  * @see ../../../../../Reference/ComponentSystem.html Component System Overview
  */
-public class EntityComponent implements IEntityComponent
+public class EntityComponentEventManager implements IEntityComponent
 {
 
-    public function EntityComponent (name :String = null)
+    public function EntityComponentEventManager (name :String = null)
     {
         _name = name;
     }
@@ -60,10 +60,11 @@ public class EntityComponent implements IEntityComponent
      */
     public function register (owner :IEntity, name:String) :void
     {
-        if (isRegistered)
+        if (isRegistered) {
             throw new Error("Trying to register an already-registered component!");
-
+		}
         _owner = owner;
+		_name = name;
         onAdd();
     }
 
@@ -107,6 +108,7 @@ public class EntityComponent implements IEntityComponent
      */
     protected function onReset () :void
     {
+		_events.freeAllHandlers();
     }
 
     /**

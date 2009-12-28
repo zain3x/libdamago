@@ -1,15 +1,17 @@
 package libdamago.pushbutton.components {
-import flash.events.Event;
-import flash.events.IEventDispatcher;
-import flash.geom.Point;
+import com.pblabs.engine.entity.EntityComponent;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
-public class LocationComponent extends EntityComponentEfficientDispatcher
-	implements IEventDispatcher
+
+import flash.events.Event;
+import flash.events.IEventDispatcher;
+import flash.geom.Point;
+
+public class LocationComponent extends EntityComponent
 {
 	public static const COMPONENT_NAME :String = ClassUtil.tinyClassName(LocationComponent);
-	public static const EVENT_NAME :String = "locationChanged";
+	public static const EVENT_LOCATION_CHANGED :String = "locationChanged";
 	
 	public function get point () :Point
 	{
@@ -18,12 +20,10 @@ public class LocationComponent extends EntityComponentEfficientDispatcher
 	
 	public function set point (p :Point) :void
 	{
-		if (_x != p.x || _y != p.y) {
-			_x = p.x;
-			_y = p.y;
-			if (_efficientDispatcher != null) {
-				dispatchEvent(event);
-			}
+		_x = p.x;
+		_y = p.y;
+		if (owner != null) {
+			owner.eventDispatcher.dispatchEvent(event);
 		}
 	}
 	
@@ -34,11 +34,9 @@ public class LocationComponent extends EntityComponentEfficientDispatcher
 	
 	public function set x (val :Number) :void
 	{
-		if (_x != val) {
-			_x = val;
-			if (_efficientDispatcher != null) {
-				dispatchEvent(event);
-			}
+		_x = val;
+		if (owner != null) {
+			owner.eventDispatcher.dispatchEvent(event);
 		}
 	}
 	
@@ -49,29 +47,25 @@ public class LocationComponent extends EntityComponentEfficientDispatcher
 	
 	public function set y (val :Number) :void
 	{
-		if (_y != val) {
-			_y = val;
-			if (_efficientDispatcher != null) {
-				dispatchEvent(event);
-			}
+		_y = val;
+		if (owner != null) {
+			owner.eventDispatcher.dispatchEvent(event);
 		}
 	}
 	
 	public function setLocation (xLoc :Number, yLoc :Number) :void
 	{
-		if (_x != xLoc || _y != yLoc) {
-			_x = xLoc;
-			_y = yLoc;
-			if (_efficientDispatcher != null) {
-				dispatchEvent(event);
-			}
+		_x = xLoc;
+		_y = yLoc;
+		if (owner != null) {
+			owner.eventDispatcher.dispatchEvent(event);
 		}
 	}
 	
 	protected function get event () :Event
 	{
 		if (_event == null) {
-			_event = new ValueEvent(EVENT_NAME, this);
+			_event = new ValueEvent(EVENT_LOCATION_CHANGED, this);
 		}
 		return _event;
 	}

@@ -2,14 +2,19 @@ package com.threerings.flashbang.pushbutton.scene {
 import com.pblabs.engine.entity.PropertyReference;
 import com.threerings.flashbang.Updatable;
 import com.threerings.flashbang.components.SceneComponent;
-import com.threerings.flashbang.pushbutton.EntityComponent;
+import com.threerings.flashbang.pushbutton.EntityComponentEventManager;
 import com.threerings.util.ClassUtil;
+import com.threerings.util.Log;
 
 import flash.display.DisplayObject;
+import flash.events.Event;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+
+import libdamago.pushbutton.components.LocationComponent;
+
 //For displaying IEntitys in Scenes
-public class SceneEntityComponent extends EntityComponent
+public class SceneEntityComponent extends EntityComponentEventManager
     implements SceneComponent, Updatable
 {
     public static const COMPONENT_NAME :String = ClassUtil.tinyClassName(SceneEntityComponent);
@@ -17,11 +22,13 @@ public class SceneEntityComponent extends EntityComponent
      * If set, alpha is gotten from this property every frame.
      */
     public var alphaProperty :PropertyReference;
+	
+	public var displayObjectRef :PropertyReference;
 
     /**
      * If set, the layer index is gotten from this property every frame.
      */
-    public var layerNameProperty :PropertyReference;
+//    public var layerNameProperty :PropertyReference;
 
     /**
      * If set, position is gotten from this property every frame.
@@ -32,13 +39,12 @@ public class SceneEntityComponent extends EntityComponent
      * If set, rotation is gotten from this property every frame.
      */
     public var rotationProperty :PropertyReference;
-    public var sceneComponentName :String;
+    public var sceneRef :PropertyReference;
 
     public var sceneLayerName :String;
 
     public var xProperty :PropertyReference;
     public var yProperty :PropertyReference;
-
 
 
     /**
@@ -510,25 +516,37 @@ public class SceneEntityComponent extends EntityComponent
 
     override protected function onAdd () :void
     {
-        //Try to find our scene
-
         super.onAdd();
     }
-
-//    protected function addToScene () :void
-//    {
-////        if (
-//    }
 
     override protected function onRemove () :void
     {
         super.onRemove();
-
         // Remove ourselves from the scene when we are removed
         if (_scene) {
             _scene.removeSceneComponent(this);
         }
     }
+	
+	override protected function onReset() : void
+	{
+		super.onReset();
+		
+		if (_scene != null) {
+			_scene.removeSceneComponent(this);
+		}
+		
+		if (_displayObject == null && displayObjectRef != null) {
+			_displayObject = owner.getProperty(displayObjectRef) as DisplayObject;
+		}
+		
+		//Add ourselves to the scene
+		var scene2D :Scene2DComponent = owner.getProperty(sceneRef) as Scene2DComponent;
+		if (scene2D != null) {
+//			log.warning("onReset(), adding ourselves to the Scene2DComponent");
+			scene2D.addSceneComponent(this);
+		}
+	}
 
     protected function updateProperties () :void
     {
@@ -607,6 +625,7 @@ public class SceneEntityComponent extends EntityComponent
 //            _layerIndexDirty = false;
 //        }
     }
+	
     protected var _alpha :Number = 1;
 
     protected var _displayObject :DisplayObject;
@@ -632,5 +651,7 @@ public class SceneEntityComponent extends EntityComponent
     //    protected var _rotationOffset :Number = 0;
     //    protected var _scale :Point = new Point(1, 1);
     internal var _scene :Scene2DComponent;
+	
+	protected static const log :Log = Log.getLog(SceneEntityComponent);
 }
 }

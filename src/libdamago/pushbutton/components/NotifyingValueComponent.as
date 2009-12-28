@@ -1,18 +1,17 @@
 package libdamago.pushbutton.components {
+import com.pblabs.engine.entity.EntityComponent;
 import com.threerings.util.ValueEvent;
 
 import flash.events.Event;
 
-public class NotifyingValueComponent extends EntityComponentEfficientDispatcher
+public class NotifyingValueComponent extends EntityComponent
 {
     public function setValue (val :Number) :void
     {
-        if (_value != val) {
-            _value = val;
-            if (_efficientDispatcher != null) {
-                dispatchEvent(event);
-            }
-        }
+		_value = val;
+		if (owner != null) {
+			owner.eventDispatcher.dispatchEvent(event);
+		}
     }
 
     protected function get event () :Event
@@ -28,7 +27,6 @@ public class NotifyingValueComponent extends EntityComponentEfficientDispatcher
         throw new Error("Abstract method, override");
     }
     protected var _event :Event;
-
     protected var _value :Number = 0;
 }
 }

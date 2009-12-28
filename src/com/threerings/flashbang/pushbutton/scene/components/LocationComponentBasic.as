@@ -1,8 +1,8 @@
 package com.threerings.flashbang.pushbutton.scene.components {
 import com.threerings.flashbang.components.LocationComponent;
-import com.threerings.flashbang.pushbutton.EntityComponent;
+import com.threerings.flashbang.pushbutton.EntityComponentEventManager;
 //For debugging purposes
-public class LocationComponentBasic extends EntityComponent
+public class LocationComponentBasic extends EntityComponentEventManager
     implements LocationComponent
 {
     public static const COMPONENT_NAME :String = "location";

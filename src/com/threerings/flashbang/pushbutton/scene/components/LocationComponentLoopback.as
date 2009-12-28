@@ -1,8 +1,13 @@
 package com.threerings.flashbang.pushbutton.scene.components {
+import com.threerings.flashbang.pushbutton.EntityComponentEventManager;
 import com.threerings.flashbang.components.LocationComponent;
-import com.threerings.flashbang.pushbutton.EntityComponent;
-public class LocationComponentLoopback extends EntityComponent
-    implements LocationComponent
+
+import flash.events.Event;
+
+import libdamago.pushbutton.components.LocationComponent;
+
+public class LocationComponentLoopback extends EntityComponentEventManager
+    implements com.threerings.flashbang.components.LocationComponent
 {
     public static const COMPONENT_NAME :String = "location";
 
@@ -24,6 +29,8 @@ public class LocationComponentLoopback extends EntityComponent
     public function set x (val :Number) :void
     {
         _loc.x = val;
+		trace("avatar is changing x");
+		owner.eventDispatcher.dispatchEvent(_event);
     }
 
     public function get y () :Number
@@ -34,8 +41,10 @@ public class LocationComponentLoopback extends EntityComponent
     public function set y (val :Number) :void
     {
         _loc.y = val;
+		owner.eventDispatcher.dispatchEvent(_event);
     }
 
     protected var _loc :LocationComponent;
+	protected var _event :Event = new Event(libdamago.pushbutton.components.LocationComponent.EVENT_LOCATION_CHANGED);
 }
 }

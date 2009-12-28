@@ -1,5 +1,6 @@
 package libdamago.events {
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.ClassUtil;
 
 import flash.events.Event;
 import flash.events.IEventDispatcher;
@@ -51,7 +52,7 @@ public class EventDispatcherNonCloning implements IEventDispatcher
 		}
 		
 		for each (var k :Function in listeners) { // no "each": iterate over keys
-			k.apply(undefined, event);
+			k.call(undefined, event);
 		}
 		return true;
 		
@@ -98,6 +99,11 @@ public class EventDispatcherNonCloning implements IEventDispatcher
     {
         return hasEventListener(type);
     }
+	
+	public function toString () :String
+	{
+		return ClassUtil.tinyClassName(this);
+	}
 	
 	protected var _eventListeners :Dictionary = new Dictionary();
 	

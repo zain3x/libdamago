@@ -1,9 +1,10 @@
 package libdamago.pushbutton.components {
+import com.threerings.util.ClassUtil;
 
 public class RotationComponent extends NotifyingValueComponent
 {
 	public static const EVENT_NAME :String = "angleChanged";
-	public static const COMPONENT_NAME :String = "rotationComponent";
+	public static const COMPONENT_NAME :String = ClassUtil.tinyClassName(RotationComponent); 
 	
     public function RotationComponent ()
     {
