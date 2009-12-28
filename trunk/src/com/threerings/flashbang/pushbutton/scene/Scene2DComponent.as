@@ -1,25 +1,24 @@
 package com.threerings.flashbang.pushbutton.scene {
 import com.pblabs.engine.entity.PropertyReference;
+import flash.display.Graphics;
+import flash.display.Sprite;
+import flash.events.Event;
+import flash.geom.*;
 import com.threerings.flashbang.Updatable;
 import com.threerings.flashbang.components.LocationComponent;
-import com.threerings.flashbang.pushbutton.EntityComponent;
+import com.threerings.flashbang.pushbutton.EntityComponentEventManager;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.MathUtil;
-
-import flash.display.Graphics;
-import flash.display.Sprite;
-import flash.events.Event;
-import flash.geom.*;
 /**
  * Basic Rendering2D scene; it is given a SceneView and some
  * DisplayObjectRenderers, and makes sure that they are drawn. Extensible
  * for more complex rendering scenarios. Enforces sorting order, too.
  */
-public class Scene2DComponent extends EntityComponent
+public class Scene2DComponent extends EntityComponentEventManager
     implements Updatable
 {
     public static const COMPONENT_NAME :String = ClassUtil.tinyClassName(Scene2DComponent);
@@ -71,6 +70,17 @@ public class Scene2DComponent extends EntityComponent
         return _selfReference;
     }
 
+    public function set debug (val :Boolean) : void
+    {
+        var g :Graphics = rootSprite.graphics;
+        g.clear();
+        if (val && sceneBounds != null) {
+            g.lineStyle(1, 0xff0000);
+//            g.drawRect(
+//            DebugUtil.drawRect(this, _width, _height, 0);
+        }
+    }
+
     public function get layerCount () :int
     {
         return _layers.length;
@@ -106,24 +116,6 @@ public class Scene2DComponent extends EntityComponent
     public function get rootSprite () :Sprite
     {
         return _rootSprite;
-    }
-
-    public function get sceneView () :SceneView
-    {
-        return _sceneView;
-    }
-
-    public function set sceneView (value :SceneView) :void
-    {
-        if (_sceneView) {
-            _sceneView.removeDisplayObject(_rootSprite);
-        }
-
-        _sceneView = value;
-
-        if (_sceneView) {
-            _sceneView.addDisplayObject(_rootSprite);
-        }
     }
 
 //    public function get sceneViewBounds () :Rectangle
@@ -182,20 +174,27 @@ public class Scene2DComponent extends EntityComponent
 //        return null;
     }
 
-    public function set debug (val :Boolean) : void
-    {
-        var g :Graphics = rootSprite.graphics;
-        g.clear();
-        if (val && sceneBounds != null) {
-            g.lineStyle(1, 0xff0000);
-//            g.drawRect(
-//            DebugUtil.drawRect(this, _width, _height, 0);
-        }
-    }
-
     public function set sceneBounds (value :Rectangle) :void
     {
         _sceneBounds = value;
+    }
+
+    public function get sceneView () :SceneView
+    {
+        return _sceneView;
+    }
+
+    public function set sceneView (value :SceneView) :void
+    {
+        if (_sceneView) {
+            _sceneView.removeDisplayObject(_rootSprite);
+        }
+
+        _sceneView = value;
+
+        if (_sceneView) {
+            _sceneView.addDisplayObject(_rootSprite);
+        }
     }
 
 
@@ -298,22 +297,6 @@ public class Scene2DComponent extends EntityComponent
     public function getLayerAt (idx :uint) :SceneLayer
     {
         return _layers[idx] as SceneLayer;
-    }
-
-    public function removeSceneComponent (obj :SceneEntityComponent) :void
-    {
-        if (!_sceneComponents.containsKey(obj)) {
-            log.warning("Doesn't contain " + obj);
-            return;
-        }
-        var layer :SceneLayer = _sceneComponents.get(obj) as SceneLayer;
-
-        if (null == layer) {
-            throw new Error("No associated layer for " + obj);
-        }
-
-        layer.removeObjectInternal(obj);
-        _sceneComponents.remove(obj);
     }
 
 //    public function add (dor :DisplayObjectRenderer) :void
@@ -438,6 +421,23 @@ public class Scene2DComponent extends EntityComponent
 
 
         _transformDirty = true;
+    }
+
+    public function removeSceneComponent (obj :SceneEntityComponent) :void
+    {
+        if (!_sceneComponents.containsKey(obj)) {
+            log.warning("Doesn't contain " + obj);
+            return;
+        }
+        var layer :SceneLayer = _sceneComponents.get(obj) as SceneLayer;
+
+        if (null == layer) {
+            throw new Error("No associated layer for " + obj);
+        }
+
+        layer.removeObjectInternal(obj);
+        _sceneComponents.remove(obj);
+		obj._scene = null;
     }
 
     public function setWorldCenter (pos :Point) :void
@@ -570,6 +570,15 @@ public class Scene2DComponent extends EntityComponent
 //        trace("updating scene transform, scale=" + _rootSprite.scaleX);
     }
 
+    override protected function onRemove () :void
+    {
+        super.onRemove();
+        // Make sure we don't leave any lingering content.
+        if (_sceneView) {
+//            _sceneView.clearDisplayObjects();
+        }
+    }
+
     internal function removeLayer (layer :SceneLayer) :void
     {
         if (!ArrayUtil.contains(_layers, layer)) {
@@ -580,15 +589,6 @@ public class Scene2DComponent extends EntityComponent
         layer.detachedInternal();
         layer._parentScene = null;
         _rootSprite.removeChild(layer);
-    }
-
-    override protected function onRemove () :void
-    {
-        super.onRemove();
-        // Make sure we don't leave any lingering content.
-        if (_sceneView) {
-//            _sceneView.clearDisplayObjects();
-        }
     }
 
 //    /**
@@ -654,20 +654,20 @@ public class Scene2DComponent extends EntityComponent
     protected var _rootSprite :Sprite;
     protected var _rootTransform :Matrix = new Matrix();
 
+    protected var _sceneBounds :Rectangle = null;
+
     /** Objects mapped to layers*/
     protected var _sceneComponents :Map = Maps.newMapOf(Object);
-
-    protected var _sceneView :SceneView;
 
 //    protected var _sceneViewBoundsCache :Rectangle = new Rectangle();
 //    protected var _sceneViewName :String = null;
     protected var _sceneName :String = null;
 
+    protected var _sceneView :SceneView;
+
     protected var _selfReference :PropertyReference;
     protected var _tempPoint :Point = new Point();
     protected var _transformDirty :Boolean = true;
-
-    protected var _sceneBounds :Rectangle = null;
 
     protected var _zoom :Number = 1;
     protected static const DEFAULT_LAYER_NAME :String = "defaultLayer";

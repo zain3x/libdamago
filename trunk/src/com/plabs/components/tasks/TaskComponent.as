@@ -2,13 +2,13 @@
 package com.plabs.components.tasks {
 import com.pblabs.engine.core.ITickedObject;
 import com.pblabs.engine.entity.IEntity;
-import com.threerings.flashbang.pushbutton.EntityComponent;
+import com.threerings.flashbang.pushbutton.EntityComponentEventManager;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 
 
 
-public class TaskComponent extends EntityComponent
+public class TaskComponent extends EntityComponentEventManager
     implements ITickedObject
 {
     public static const COMPONENT_NAME :String = "tasks";

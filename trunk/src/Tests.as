@@ -21,7 +21,7 @@ import com.plabs.components.tasks.WaitForFrameTask;
 import com.plabs.components.tasks.WaitOnPredicateTask;
 import com.plabs.components.tasks.When;
 import com.threerings.flashbang.debug.FlashbangAppRunner;
-import com.threerings.flashbang.pushbutton.EntityComponent;
+import com.threerings.flashbang.pushbutton.EntityComponentEventManager;
 import com.threerings.flashbang.pushbutton.GameObjectEntity;
 import com.threerings.flashbang.pushbutton.scene.tests.TestSceneBounds;
 import com.threerings.flashbang.pushbutton.scene.tests.TestYOrderingLayer;
@@ -56,7 +56,7 @@ public class Tests extends FlashbangAppRunner
 
 //        IEntityExtended
 //        IEntityComponentEx
-        EntityComponent
+        EntityComponentEventManager
         GameObjectEntity
         queueAppMode(new TestYOrderingLayer());
         queueAppMode(new TestSceneBounds());

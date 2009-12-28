@@ -3,6 +3,8 @@ import com.pblabs.engine.core.ITickedObject;
 import com.pblabs.engine.entity.IEntity;
 import com.pblabs.engine.entity.IEntityComponent;
 import com.pblabs.engine.entity.PropertyReference;
+import flash.events.Event;
+import flash.events.IEventDispatcher;
 import com.threerings.flashbang.GameObject;
 import com.threerings.flashbang.Updatable;
 import com.threerings.util.ArrayUtil;
@@ -11,19 +13,16 @@ import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.Predicates;
-
-import flash.events.Event;
-import flash.events.IEventDispatcher;
-
+import libdamago.pushbutton.PushbuttonConsts;
 /**
  * A modification of GameObject.  Utilizes EntityComponents.
  * Rather that creating GameObjects with extra functionality via extending this class,
  * behaviour is built via adding IEntityComponents.
  *
  */
-public class GameObjectEntity extends GameObject implements IEntityExtended
+public class GameObjectEntity extends GameObject 
+	implements IEntityExtended
 {
-    public static const ENTITY_DESTROYED :String = "EntityDestroyed";
     public static const GROUP_ENTITY :String = "EntityGroup";
 
     public function GameObjectEntity (name :String = null)
@@ -31,14 +30,14 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
         _name = name;
     }
 
-    public function get components () :Array
-    {
-        return _components.concat();
-    }
-
     public function get alias () :String
     {
         return null;
+    }
+
+    public function get components () :Array
+    {
+        return _components.concat();
     }
 
     public function get dbComponent () :EntityAppmode
@@ -88,24 +87,27 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
 
     public function addComponent (component :IEntityComponent, componentName :String) :void
     {
-        if (isLiveObject) {
-            //            throw new Error("Components must be added before adding to the ObjectDB. " +
-            //                "(To add to the correct groups.  Components define groups).");
-            log.warning("Components must be added before adding to the ObjectDB to have the" +
-                " IEntity listed in the component groups. ");
-        }
+//        if (isLiveObject) {
+//            //            throw new Error("Components must be added before adding to the ObjectDB. " +
+//            //                "(To add to the correct groups.  Components define groups).");
+//            log.warning("Components must be added before adding to the ObjectDB to have the" +
+//                " IEntity listed in the component groups. ");
+//        }
 
-        if ((component.name == null || component.name != componentName) && componentName != null) {
-            EntityComponent(component).name = componentName;
-        }
+		if (componentName == null) {
+			throw new Error("componentName cannot be null");
+		}
+//        if ((component.name == null || component.name != componentName) && componentName != null) {
+//            IEntityComponent(component).name = componentName;
+//        }
 
-        if (component.name == null || component.name == "") {
-            throw new Error("component.name cannot be null.");
-        }
+//        if (component.name == null || component.name == "") {
+//            throw new Error("component.name cannot be null.");
+//        }
 
-        if (lookupComponentByName(component.name) != null) {
-            throw new Error("component already exists with name " + component.name + ":" +
-                lookupComponentByName(component.name));
+        if (lookupComponentByName(componentName) != null) {
+            throw new Error("component already exists with name " + componentName + ":" +
+                lookupComponentByName(componentName));
         }
 
         if (_componentMap.containsKey(componentName)) {
@@ -308,6 +310,23 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
         ;
     }
 
+    public function removeComponent (component :IEntityComponent) :void
+    {
+        if (!_componentMap.containsKey(component.name)) {
+            return;
+        }
+
+        //        if (!_components.doRemoveComponent(component)) {
+        //            return;
+        //        }
+        //        dbComponent.removeComponent(component);
+        component.unregister();
+
+        _componentMap.remove(component.name);
+        ArrayUtil.removeFirst(_components, component);
+        doResetComponents();
+    }
+
     public function serialize (xml :XML) :void
     {
     }
@@ -359,7 +378,7 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
     override protected function destroyed () :void
     {
         // Give listeners a chance to act before we start destroying stuff.
-        dispatchEvent(new Event(ENTITY_DESTROYED));
+        dispatchEvent(new Event(PushbuttonConsts.EVENT_ENTITY_DESTROYED));
         super.destroyed();
 
         for each (var c :IEntityComponent in _components) {
@@ -386,38 +405,23 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
         }
     }
 
-    public function removeComponent (component :IEntityComponent) :void
+    protected function doRegisterComponents () :void
     {
-        if (!_componentMap.containsKey(component.name)) {
-            return;
+        for each (var componentName :String in _componentMap.keys()) {
+			var component :IEntityComponent = _componentMap.get(componentName) as IEntityComponent;
+            // Skip ones we have already registered.
+            if (component.isRegistered) {
+                continue;
+            }
+            component.register(this, componentName);
         }
-
-        //        if (!_components.doRemoveComponent(component)) {
-        //            return;
-        //        }
-        //        dbComponent.removeComponent(component);
-        component.unregister();
-
-        _componentMap.remove(component.name);
-        ArrayUtil.removeFirst(_components, component);
-        doResetComponents();
+		doResetComponents();
     }
 
     protected function doResetComponents () :void
     {
         for each (var component :IEntityComponent in _components) {
             component.reset();
-        }
-    }
-
-    protected function doRegisterComponents () :void
-    {
-        for each (var component :IEntityComponent in _components) {
-            // Skip ones we have already registered.
-            if (component.isRegistered) {
-                continue;
-            }
-            component.register(this, component.name);
         }
     }
 
@@ -676,6 +680,7 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
 }
 }
 
+import com.pblabs.engine.entity.IEntityComponent;
 import flash.events.IEventDispatcher;
 import com.threerings.flashbang.Updatable;
 import com.threerings.util.ArrayUtil;
@@ -683,8 +688,6 @@ import com.threerings.util.DebugUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
-import com.pblabs.engine.entity.IEntityComponent;
-
 final class PropertyInfo
 {
     public var propertyName :String = null;

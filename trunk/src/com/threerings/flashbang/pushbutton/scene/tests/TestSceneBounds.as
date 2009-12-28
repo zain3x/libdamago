@@ -35,7 +35,7 @@ public class TestSceneBounds extends EntityAppmode
 //        modeSprite.addChild(_sortingLayer);
 //        registerListener(_sortingLayer, Event.ENTER_FRAME, _sortingLayer.render);
         _scene.addLayer(_sortingLayer, _layerName);
-        addSingletonComponent(_scene);
+        addSingletonComponent(_scene, Scene2DComponent.COMPONENT_NAME);
 //        addComponentViaSameNamedEntity(_scene, _sceneName);
         modeSprite.addChild(view);
 
