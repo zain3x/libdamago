@@ -1,4 +1,4 @@
-package libdamago.pushbutton.components {
+package net.amago.pbe.base {
 import com.threerings.util.ValueEvent;
 
 import flash.events.Event;

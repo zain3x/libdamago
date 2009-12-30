@@ -1,4 +1,4 @@
-package libdamago.pushbutton {
+package net.amago.pbe {
 public class PushbuttonConsts
 {
 	public static const EVENT_ENTITY_DESTROYED :String = "EntityDestroyed";

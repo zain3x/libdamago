@@ -1,4 +1,4 @@
-package libdamago.pushbutton.components {
+package net.amago.pbe.base {
 import com.pblabs.engine.entity.EntityComponent;
 
 import flash.events.Event;

@@ -1,4 +1,4 @@
-package com.threerings.geometry
+package net.amago.geometry
 {
 public class NumberUtil
 {

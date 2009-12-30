@@ -1,4 +1,4 @@
-package libdamago.events {
+package net.amago.util {
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 

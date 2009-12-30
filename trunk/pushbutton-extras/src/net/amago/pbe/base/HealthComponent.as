@@ -1,4 +1,4 @@
-package libdamago.pushbutton.components {
+package net.amago.pbe.base {
 import com.pblabs.components.basic.HealthEvent;
 import com.pblabs.engine.entity.EntityComponent;
 import com.pblabs.engine.entity.IEntity;
