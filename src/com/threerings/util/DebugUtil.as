@@ -4,9 +4,6 @@
 package com.threerings.util {
 import aduros.util.F;
 
-import com.threerings.io.ObjectInputStream;
-import com.threerings.io.ObjectOutputStream;
-import com.threerings.io.Streamable;
 import com.threerings.ui.SimpleTextButton;
 
 import flash.display.DisplayObject;
@@ -184,20 +181,20 @@ public class DebugUtil
         return b;
     }
 
-    public static function byteClone (obj :Streamable) :Streamable
-    {
-        var bytes :ByteArray = new ByteArray();
-        var output :ObjectOutputStream = new ObjectOutputStream(bytes);
-        var input :ObjectInputStream = new ObjectInputStream(bytes);
-
-        var clazz :Class = ClassUtil.getClass(obj);
-        obj.writeObject(output);
-        bytes.position = 0;
-
-        var streamed :Streamable = new clazz();
-
-        streamed.readObject(input);
-        return streamed;
-    }
+//    public static function byteClone (obj :Streamable) :Streamable
+//    {
+//        var bytes :ByteArray = new ByteArray();
+//        var output :ObjectOutputStream = new ObjectOutputStream(bytes);
+//        var input :ObjectInputStream = new ObjectInputStream(bytes);
+//
+//        var clazz :Class = ClassUtil.getClass(obj);
+//        obj.writeObject(output);
+//        bytes.position = 0;
+//
+//        var streamed :Streamable = new clazz();
+//
+//        streamed.readObject(input);
+//        return streamed;
+//    }
 }
 }
