@@ -39,12 +39,6 @@ public class SpriteBlobComponent extends DisplayObjectRenderer
         g.endFill();
     }
 	
-	override public function onFrame (dt :Number) :void
-	{
-		trace("SpriteBlobComponent.onFrame");
-		super.onFrame(dt);
-	}
-
     protected var _color :uint = 0x000000;
     protected var _radius :Number = 30;
 }
