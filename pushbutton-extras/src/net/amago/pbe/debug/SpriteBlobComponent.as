@@ -1,5 +1,6 @@
 package net.amago.pbe.debug {
 import com.pblabs.rendering2D.DisplayObjectRenderer;
+
 import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Sprite;
@@ -37,6 +38,12 @@ public class SpriteBlobComponent extends DisplayObjectRenderer
         g.drawCircle(0, 0, _radius);
         g.endFill();
     }
+	
+	override public function onFrame (dt :Number) :void
+	{
+		trace("SpriteBlobComponent.onFrame");
+		super.onFrame(dt);
+	}
 
     protected var _color :uint = 0x000000;
     protected var _radius :Number = 30;
