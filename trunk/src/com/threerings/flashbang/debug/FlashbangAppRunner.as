@@ -1,15 +1,16 @@
 package com.threerings.flashbang.debug
 {
 
-import com.threerings.ui.DisplayUtils;
-import com.threerings.ui.SimpleTextButton;
-
-import flash.display.Sprite;
-import flash.events.MouseEvent;
-
 import aduros.util.F;
+
 import com.threerings.flashbang.AppMode;
 import com.threerings.flashbang.FlashbangApp;
+import com.threerings.util.DisplayUtils;
+import com.threerings.ui.SimpleTextButton;
+
+import flash.display.SimpleButton;
+import flash.display.Sprite;
+import flash.events.MouseEvent;
 
 [SWF(width="500", height="500", frameRate="30")]
 public class FlashbangAppRunner extends Sprite
@@ -46,9 +47,9 @@ public class FlashbangAppRunner extends Sprite
         game.ctx.mainLoop.pushMode(mode);
         game.run(_bottomLayer);
 
-        var closeButton :SimpleTextButton = new SimpleTextButton("Close/Next");
-        _topLayer.addChild(closeButton);
-        closeButton.x = this.stage.stageWidth - closeButton.width;
+        var closeButton :SimpleButton = createButton();
+		_topLayer.addChild(closeButton);
+        
         closeButton.addEventListener(MouseEvent.CLICK, F.justOnce(function() :void {
                 game.shutdown();
                 DisplayUtils.detach(closeButton);
@@ -56,6 +57,13 @@ public class FlashbangAppRunner extends Sprite
                 runNextMode();
             }));
     }
+	
+	protected function createButton () :SimpleButton
+	{
+		var closeButton :SimpleTextButton = new SimpleTextButton("Close/Next");
+		closeButton.x = this.stage.stageWidth - closeButton.width;
+		return closeButton;
+	}
 
     protected var _currentMode :AppMode;
     protected var _queuedModes :Array = [];

@@ -1,7 +1,7 @@
 //
 // $Id: DisplayUtil.as 2466 2009-06-10 18:19:11Z nathan $
 
-package com.threerings.ui{
+package com.threerings.util {
 
 import aduros.util.F;
 
