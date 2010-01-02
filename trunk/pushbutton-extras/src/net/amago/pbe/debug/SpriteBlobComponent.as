@@ -1,15 +1,23 @@
 package net.amago.pbe.debug {
 import com.pblabs.rendering2D.DisplayObjectRenderer;
+import com.threerings.ui.TextBits;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Sprite;
+import flash.text.TextField;
+
 public class SpriteBlobComponent extends DisplayObjectRenderer
 {
     public function SpriteBlobComponent ()
     {
         super();
         _displayObject = new Sprite();
+		_textField = TextBits.createText("", 1.5);
+		_textField.y = -10;
+		_textField.x = -30;
+		Sprite(_displayObject).addChild(_textField);
+		_color = 0x0000ff;
         redraw();
     }
 
@@ -18,6 +26,11 @@ public class SpriteBlobComponent extends DisplayObjectRenderer
         _color = val;
         redraw();
     }
+	
+	public function set label (val :String) :void
+	{
+		_textField.text = val;
+	}
 
     override public function set displayObject (value :DisplayObject) :void
     {
@@ -40,6 +53,7 @@ public class SpriteBlobComponent extends DisplayObjectRenderer
     }
 	
     protected var _color :uint = 0x000000;
-    protected var _radius :Number = 30;
+    protected var _radius :Number = 40;
+	protected var _textField :TextField;
 }
 }
