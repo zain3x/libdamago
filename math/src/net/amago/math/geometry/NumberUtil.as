@@ -1,4 +1,4 @@
-package net.amago.geometry
+package net.amago.math.geometry
 {
 public class NumberUtil
 {

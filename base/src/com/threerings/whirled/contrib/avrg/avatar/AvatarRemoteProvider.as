@@ -1,7 +1,7 @@
 //
 // $Id: AvatarRemoteProvider.as 2467 2009-06-10 18:44:02Z nathan $
 
-package com.whirled.contrib.avrg.avatar{
+package com.threerings.whirled.contrib.avrg.avatar {
 
 import com.threerings.util.Log;
 import com.whirled.AvatarControl;

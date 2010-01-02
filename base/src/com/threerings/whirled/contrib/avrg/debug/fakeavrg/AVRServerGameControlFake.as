@@ -1,7 +1,7 @@
 //
 // $Id: AVRServerGameControlFake.as 4127 2009-07-30 22:22:40Z tim $
 
-package com.whirled.contrib.avrg.debug.fakeavrg{
+package com.threerings.whirled.contrib.avrg.debug.fakeavrg {
 
 import com.threerings.util.MethodQueue;
 import com.whirled.avrg.AVRGameControlEvent;

@@ -1,7 +1,7 @@
 //
 // $Id: DraggableSceneObject.as 3822 2009-07-21 22:36:14Z nathan $
 
-package com.whirled.contrib.avrg {
+package com.threerings.whirled.contrib.avrg {
 import com.threerings.flashbang.objects.SceneObject;
 import com.threerings.util.Log;
 import com.threerings.util.MathUtil;

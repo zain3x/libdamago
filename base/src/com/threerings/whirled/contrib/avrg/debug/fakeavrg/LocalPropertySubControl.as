@@ -1,7 +1,7 @@
 //
 // $Id: LocalPropertySubControl.as 4934 2009-09-04 17:47:44Z tim $
 
-package com.whirled.contrib.avrg.debug.fakeavrg{
+package com.threerings.whirled.contrib.avrg.debug.fakeavrg {
 
 import com.threerings.util.Map;
 import com.threerings.util.Maps;

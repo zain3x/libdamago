@@ -1,7 +1,7 @@
 //
 // $Id: LocalSubControlFake.as 4299 2009-08-05 22:35:33Z tim $
 
-package com.whirled.contrib.avrg.debug.fakeavrg{
+package com.threerings.whirled.contrib.avrg.debug.fakeavrg {
 
 import com.whirled.AbstractControl;
 import com.whirled.avrg.LocalSubControl;

@@ -1,4 +1,4 @@
-package net.amago.geometry
+package net.amago.math.geometry
 {
 import com.threerings.geom.Vector2;
 import com.threerings.util.ArrayUtil;
