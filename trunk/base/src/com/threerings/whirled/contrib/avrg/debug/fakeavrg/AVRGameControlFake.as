@@ -3,7 +3,7 @@
 //
 // Copyright (c) 2007 Three Rings Design, Inc.  Please do not redistribute.
 
-package com.whirled.contrib.avrg.debug.fakeavrg{
+package com.threerings.whirled.contrib.avrg.debug.fakeavrg {
 
 import com.whirled.ServerObject;
 import com.whirled.avrg.AVRGameControl;

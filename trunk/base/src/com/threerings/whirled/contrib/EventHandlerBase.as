@@ -1,4 +1,4 @@
-package com.whirled.contrib
+package com.threerings.whirled.contrib
 {
 import flash.events.EventDispatcher;
 import flash.events.IEventDispatcher;

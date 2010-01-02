@@ -1,7 +1,7 @@
 //
 // $Id: RoomDragger.as 2466 2009-06-10 18:19:11Z nathan $
 
-package com.whirled.contrib.avrg{
+package com.threerings.whirled.contrib.avrg {
 
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGameControlEvent;

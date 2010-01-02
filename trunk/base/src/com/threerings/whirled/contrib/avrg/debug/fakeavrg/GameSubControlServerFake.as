@@ -1,7 +1,7 @@
 //
 // $Id: GameSubControlServerFake.as 2466 2009-06-10 18:19:11Z nathan $
 
-package com.whirled.contrib.avrg.debug.fakeavrg{
+package com.threerings.whirled.contrib.avrg.debug.fakeavrg {
 
 import com.whirled.AbstractControl;
 import com.whirled.avrg.GameSubControlServer;

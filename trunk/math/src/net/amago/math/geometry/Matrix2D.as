@@ -23,7 +23,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
      */
 
-package net.amago.geometry
+package net.amago.math.geometry
 {
 
     import com.threerings.geom.Vector2;

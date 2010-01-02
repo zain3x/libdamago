@@ -1,7 +1,7 @@
 //
 // $Id: MessageMgr.as 4745 2009-08-24 19:29:37Z nathan $
 
-package com.whirled.contrib.avrg.debug.fakeavrg{
+package com.threerings.whirled.contrib.avrg.debug.fakeavrg {
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Map;
