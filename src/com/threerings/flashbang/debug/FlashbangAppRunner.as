@@ -5,8 +5,9 @@ import aduros.util.F;
 
 import com.threerings.flashbang.AppMode;
 import com.threerings.flashbang.FlashbangApp;
-import com.threerings.util.DisplayUtils;
 import com.threerings.ui.SimpleTextButton;
+import com.threerings.util.DelayUtil;
+import com.threerings.util.DisplayUtils;
 
 import flash.display.SimpleButton;
 import flash.display.Sprite;
@@ -54,14 +55,14 @@ public class FlashbangAppRunner extends Sprite
                 game.shutdown();
                 DisplayUtils.detach(closeButton);
                 _currentMode = null;
-                runNextMode();
+				DelayUtil.delayFrame(runNextMode);
             }));
     }
 	
 	protected function createButton () :SimpleButton
 	{
 		var closeButton :SimpleTextButton = new SimpleTextButton("Close/Next");
-		closeButton.x = this.stage.stageWidth - closeButton.width;
+//		closeButton.x = this.stage.stageWidth - closeButton.width;
 		return closeButton;
 	}
 
