@@ -53,7 +53,7 @@ public class SpriteBlobComponent extends DisplayObjectRenderer
     }
 	
     protected var _color :uint = 0x000000;
-    protected var _radius :Number = 40;
+    protected var _radius :Number = 10;
 	protected var _textField :TextField;
 }
 }
