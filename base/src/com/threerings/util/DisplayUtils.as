@@ -6,7 +6,6 @@ package com.threerings.util {
 import aduros.util.F;
 
 import com.threerings.text.TextFieldUtil;
-import com.threerings.util.Log;
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;
@@ -38,13 +37,13 @@ public class DisplayUtils
         }
     }
 
-    public static function removeAllChildren (parent :DisplayObjectContainer) :void
+    public static function removeAllChildren (parent :DisplayObject) :void
     {
-        if (parent == null) {
+        if (parent == null || !(parent is DisplayObjectContainer)) {
             return;
         }
-        while (parent.numChildren > 0) {
-            parent.removeChildAt(0);
+        while (DisplayObjectContainer(parent).numChildren > 0) {
+			DisplayObjectContainer(parent).removeChildAt(0);
         }
     }
 
