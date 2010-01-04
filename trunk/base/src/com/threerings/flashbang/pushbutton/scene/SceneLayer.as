@@ -1,5 +1,5 @@
 package com.threerings.flashbang.pushbutton.scene {
-import com.threerings.ui.DisplayUtils;
+import com.threerings.util.DisplayUtils;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;

@@ -3,7 +3,7 @@
 
 package com.threerings.flashbang.objects {
 
-import com.threerings.ui.DisplayUtils;
+import com.threerings.util.DisplayUtils;
 import com.threerings.util.ArrayUtil;
 
 import flash.display.DisplayObject;
