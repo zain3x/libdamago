@@ -1,5 +1,5 @@
 //
-// $Id: PlayerSubControlServerFake.as 2466 2009-06-10 18:19:11Z nathan $
+// $Id$
 
 package com.threerings.whirled.contrib.avrg.debug.fakeavrg {
 

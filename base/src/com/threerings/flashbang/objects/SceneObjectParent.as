@@ -1,5 +1,5 @@
 //
-// $Id: SceneObjectParent.as 2535 2009-06-12 15:48:44Z dion $
+// $Id$
 
 package com.threerings.flashbang.objects {
 

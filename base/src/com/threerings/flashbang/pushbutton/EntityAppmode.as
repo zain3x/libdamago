@@ -1,5 +1,6 @@
 package com.threerings.flashbang.pushbutton {
 import com.pblabs.engine.entity.IEntityComponent;
+import com.pblabs.engine.entity.PropertyReference;
 import com.threerings.flashbang.AppMode;
 import com.threerings.util.Log;
 
@@ -186,6 +187,16 @@ public class EntityAppmode extends AppMode
         obj.addComponent(comp, compName);
         return "#" + SINGLETON_ENTITY_NAME + "." + compName;
     }
+	
+	public function getSingletonProperty (prop :String, defaultValue :* = null) :*
+	{
+		return singletonEntity.getProperty(new PropertyReference(prop), defaultValue);
+	}
+	
+	public function setSingletonProperty (prop :String, val :*) :void
+	{
+		return singletonEntity.setProperty(new PropertyReference(prop), val);
+	}
 
     public function getSingletonComponent (name :String) :IEntityComponent
     {

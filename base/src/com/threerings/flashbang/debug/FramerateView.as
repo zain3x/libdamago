@@ -1,5 +1,5 @@
 //
-// $Id: FramerateView.as 4934 2009-09-04 17:47:44Z tim $
+// $Id$
 
 package com.threerings.flashbang.debug {
 

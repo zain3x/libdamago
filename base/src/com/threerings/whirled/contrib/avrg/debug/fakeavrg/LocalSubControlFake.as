@@ -1,5 +1,5 @@
 //
-// $Id: LocalSubControlFake.as 4299 2009-08-05 22:35:33Z tim $
+// $Id$
 
 package com.threerings.whirled.contrib.avrg.debug.fakeavrg {
 
