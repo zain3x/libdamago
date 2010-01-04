@@ -1,6 +1,7 @@
 package
 {
 import com.threerings.flashbang.debug.FlashbangAppRunner;
+import com.threerings.flashbang.pushbutton.scene.Scene2DComponent;
 import com.threerings.ui.bounds.Bounds;
 import com.threerings.ui.bounds.BoundsLine;
 import com.threerings.ui.bounds.BoundsPolygon;
@@ -22,6 +23,8 @@ public class Tests extends FlashbangAppRunner
 		BoundsPolygon
 		BoundsLine
 		BoundsRectangle
+		Scene2DComponent
+		Scene2Den
 //        FunctionTask
 //        GoToFrameTask
 //        TaskContainer

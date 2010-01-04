@@ -2,6 +2,7 @@ package com.threerings.ui
 {
 import com.threerings.display.DisplayUtil;
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.DisplayUtils;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;

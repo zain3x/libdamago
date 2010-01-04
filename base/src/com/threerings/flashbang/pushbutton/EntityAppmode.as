@@ -1,9 +1,9 @@
 package com.threerings.flashbang.pushbutton {
-import com.pblabs.engine.entity.IEntity;
 import com.pblabs.engine.entity.IEntityComponent;
-import com.plabs.components.tasks.TaskComponent;
 import com.threerings.flashbang.AppMode;
 import com.threerings.util.Log;
+
+import net.amago.pbe.tasks.TaskComponent;
 
 public class EntityAppmode extends AppMode
 {

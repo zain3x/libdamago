@@ -3,8 +3,6 @@ import com.pblabs.engine.core.ITickedObject;
 import com.pblabs.engine.entity.IEntity;
 import com.pblabs.engine.entity.IEntityComponent;
 import com.pblabs.engine.entity.PropertyReference;
-import flash.events.Event;
-import flash.events.IEventDispatcher;
 import com.threerings.flashbang.GameObject;
 import com.threerings.flashbang.Updatable;
 import com.threerings.util.ArrayUtil;
@@ -13,15 +11,19 @@ import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.Predicates;
-import libdamago.pushbutton.PushbuttonConsts;
+
+import flash.events.Event;
+import flash.events.IEventDispatcher;
+
+import net.amago.pbe.PushbuttonConsts;
+
 /**
  * A modification of GameObject.  Utilizes EntityComponents.
  * Rather that creating GameObjects with extra functionality via extending this class,
  * behaviour is built via adding IEntityComponents.
  *
  */
-public class GameObjectEntity extends GameObject 
-	implements IEntityExtended
+public class GameObjectEntity extends GameObject implements IEntityExtended
 {
     public static const GROUP_ENTITY :String = "EntityGroup";
 
@@ -43,6 +45,16 @@ public class GameObjectEntity extends GameObject
     public function get dbComponent () :EntityAppmode
     {
         return db as EntityAppmode;
+    }
+
+    public function get deferring () :Boolean
+    {
+        return false;
+    }
+
+    public function set deferring (value :Boolean) :void
+    {
+        throw new Error("Not implemented");
     }
 
     public function get dispatcher () :IEventDispatcher
@@ -85,25 +97,25 @@ public class GameObjectEntity extends GameObject
         return _name;
     }
 
-    public function addComponent (component :IEntityComponent, componentName :String) :void
+    public function addComponent (component :IEntityComponent, componentName :String) :Boolean
     {
-//        if (isLiveObject) {
-//            //            throw new Error("Components must be added before adding to the ObjectDB. " +
-//            //                "(To add to the correct groups.  Components define groups).");
-//            log.warning("Components must be added before adding to the ObjectDB to have the" +
-//                " IEntity listed in the component groups. ");
-//        }
+        //        if (isLiveObject) {
+        //            //            throw new Error("Components must be added before adding to the ObjectDB. " +
+        //            //                "(To add to the correct groups.  Components define groups).");
+        //            log.warning("Components must be added before adding to the ObjectDB to have the" +
+        //                " IEntity listed in the component groups. ");
+        //        }
 
-		if (componentName == null) {
-			throw new Error("componentName cannot be null");
-		}
-//        if ((component.name == null || component.name != componentName) && componentName != null) {
-//            IEntityComponent(component).name = componentName;
-//        }
+        if (componentName == null) {
+            throw new Error("componentName cannot be null");
+        }
+        //        if ((component.name == null || component.name != componentName) && componentName != null) {
+        //            IEntityComponent(component).name = componentName;
+        //        }
 
-//        if (component.name == null || component.name == "") {
-//            throw new Error("component.name cannot be null.");
-//        }
+        //        if (component.name == null || component.name == "") {
+        //            throw new Error("component.name cannot be null.");
+        //        }
 
         if (lookupComponentByName(componentName) != null) {
             throw new Error("component already exists with name " + componentName + ":" +
@@ -111,7 +123,7 @@ public class GameObjectEntity extends GameObject
         }
 
         if (_componentMap.containsKey(componentName)) {
-            return;
+            return false;
         }
 
         _componentMap.put(componentName, component);
@@ -129,6 +141,8 @@ public class GameObjectEntity extends GameObject
 
         //ObjectDB expects the groups defined on addObject, but that might not be the case for
         //IEntity
+		
+		return true;
     }
 
     public function deserialize (xml :XML, registerComponents :Boolean = true) :void
@@ -398,8 +412,7 @@ public class GameObjectEntity extends GameObject
         for each (var c :IEntityComponent in _components) {
             if (c is Updatable) {
                 Updatable(c).update(dt);
-            }
-            else if (c is ITickedObject) {
+            } else if (c is ITickedObject) {
                 ITickedObject(c).onTick(dt);
             }
         }
@@ -408,14 +421,14 @@ public class GameObjectEntity extends GameObject
     protected function doRegisterComponents () :void
     {
         for each (var componentName :String in _componentMap.keys()) {
-			var component :IEntityComponent = _componentMap.get(componentName) as IEntityComponent;
+            var component :IEntityComponent = _componentMap.get(componentName) as IEntityComponent;
             // Skip ones we have already registered.
             if (component.isRegistered) {
                 continue;
             }
             component.register(this, componentName);
         }
-		doResetComponents();
+        doResetComponents();
     }
 
     protected function doResetComponents () :void
