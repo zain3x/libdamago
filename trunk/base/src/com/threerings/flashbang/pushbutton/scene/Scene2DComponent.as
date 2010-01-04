@@ -1,24 +1,27 @@
 package com.threerings.flashbang.pushbutton.scene {
 import com.pblabs.engine.entity.PropertyReference;
-import flash.display.Graphics;
-import flash.display.Sprite;
-import flash.events.Event;
-import flash.geom.*;
 import com.threerings.flashbang.Updatable;
 import com.threerings.flashbang.components.LocationComponent;
-import com.threerings.flashbang.pushbutton.EntityComponentEventManager;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.MathUtil;
+
+import flash.display.Graphics;
+import flash.display.Sprite;
+import flash.events.Event;
+import flash.geom.*;
+
+import net.amago.pbe.base.EntityComponentListener;
+
 /**
  * Basic Rendering2D scene; it is given a SceneView and some
  * DisplayObjectRenderers, and makes sure that they are drawn. Extensible
  * for more complex rendering scenarios. Enforces sorting order, too.
  */
-public class Scene2DComponent extends EntityComponentEventManager
+public class Scene2DComponent extends EntityComponentListener
     implements Updatable
 {
     public static const COMPONENT_NAME :String = ClassUtil.tinyClassName(Scene2DComponent);

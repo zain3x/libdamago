@@ -1,16 +1,14 @@
 package com.threerings.ui.snapping {
 import com.threerings.geom.Vector2;
 import com.threerings.ui.bounds.Bounds;
-import com.threerings.ui.bounds.BoundsLine;
-import com.threerings.ui.bounds.BoundsPoint;
 import com.threerings.ui.bounds.BoundsPolygon;
 import com.threerings.util.ArrayUtil;
 
 import flash.geom.Rectangle;
 
-import com.threerings.geometry.LineSegment;
-import com.threerings.geometry.Polygon;
-import com.threerings.geometry.VectorUtil;
+import net.amago.math.geometry.LineSegment;
+import net.amago.math.geometry.Polygon;
+import net.amago.math.geometry.VectorUtil;
 
 public class SnapAnchorBoundsExclude extends SnapAnchorBounded
 {

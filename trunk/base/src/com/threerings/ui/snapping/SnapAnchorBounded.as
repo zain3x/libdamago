@@ -1,12 +1,8 @@
 package com.threerings.ui.snapping
 {
-import com.threerings.geom.Vector2;
 import com.threerings.ui.bounds.Bounds;
 
 import flash.geom.Point;
-
-import com.threerings.geometry.LineSegment;
-import com.threerings.geometry.Polygon;
 
 /**
  * This class also notifies the

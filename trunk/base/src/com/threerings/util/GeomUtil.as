@@ -2,6 +2,8 @@ package com.threerings.util
 {
 import com.threerings.geom.Vector2;
 
+import flash.geom.Rectangle;
+
 public class GeomUtil
 {
     public static function createDistribution (left :Number, top :Number, widthCount :int,
@@ -17,5 +19,10 @@ public class GeomUtil
 
         return vs;
     }
+	
+	public static function rectCenter (rect :Rectangle) :Vector2
+	{
+		return new Vector2(rect.left + rect.width / 2, rect.top + rect.height / 2);
+	}
 }
 }

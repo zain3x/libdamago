@@ -2,6 +2,7 @@ package com.threerings.ui {
 import aduros.util.F;
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.DisplayUtils;
 import com.threerings.util.EventHandlerManager;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
@@ -14,6 +15,7 @@ import flash.display.DisplayObjectContainer;
 import flash.display.InteractiveObject;
 import flash.events.EventDispatcher;
 import flash.events.MouseEvent;
+
 public class ScrollableElementView extends EventDispatcher
 {
 

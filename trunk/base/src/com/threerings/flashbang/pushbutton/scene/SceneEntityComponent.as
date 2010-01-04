@@ -2,19 +2,17 @@ package com.threerings.flashbang.pushbutton.scene {
 import com.pblabs.engine.entity.PropertyReference;
 import com.threerings.flashbang.Updatable;
 import com.threerings.flashbang.components.SceneComponent;
-import com.threerings.flashbang.pushbutton.EntityComponentEventManager;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 
 import flash.display.DisplayObject;
-import flash.events.Event;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import libdamago.pushbutton.components.LocationComponent;
+import net.amago.pbe.base.EntityComponentListener;
 
 //For displaying IEntitys in Scenes
-public class SceneEntityComponent extends EntityComponentEventManager
+public class SceneEntityComponent extends EntityComponentListener
     implements SceneComponent, Updatable
 {
     public static const COMPONENT_NAME :String = ClassUtil.tinyClassName(SceneEntityComponent);

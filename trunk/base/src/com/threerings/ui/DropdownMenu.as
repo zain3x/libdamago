@@ -1,4 +1,5 @@
 package com.threerings.ui {
+import com.threerings.util.DisplayUtils;
 import com.threerings.util.EventHandlerManager;
 import com.threerings.util.Log;
 import com.threerings.util.Util;
