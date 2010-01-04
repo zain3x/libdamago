@@ -1,8 +1,6 @@
 package com.threerings.ui.bounds
 {
 import com.threerings.geom.Vector2;
-import com.threerings.geometry.LineSegment;
-import com.threerings.geometry.Polygon;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MathUtil;
@@ -12,6 +10,10 @@ import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+
+import net.amago.math.geometry.LineSegment;
+import net.amago.math.geometry.Polygon;
+
 public class BoundsPolygon extends Bounds
 {
     public function BoundsPolygon (polygon :Polygon)
@@ -23,7 +25,7 @@ public class BoundsPolygon extends Bounds
         return _polygon.boundingBox.height;
     }
 
-    public function get polygon () :Polygon
+    public function get polygon () :net.amago.math.geometry.Polygon
     {
         return _polygon;
     }

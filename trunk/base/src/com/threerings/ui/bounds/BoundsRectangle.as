@@ -1,12 +1,10 @@
 package com.threerings.ui.bounds
 {
 import com.threerings.geom.Vector2;
-import com.threerings.util.MathUtil;
 
-import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import com.threerings.geometry.Polygon;
+import net.amago.math.geometry.Polygon;
 
 public class BoundsRectangle extends BoundsPolygon
 {
