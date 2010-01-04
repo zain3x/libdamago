@@ -1,5 +1,5 @@
 //
-// $Id: LocalPropertySubControl.as 4934 2009-09-04 17:47:44Z tim $
+// $Id$
 
 package com.threerings.whirled.contrib.avrg.debug.fakeavrg {
 

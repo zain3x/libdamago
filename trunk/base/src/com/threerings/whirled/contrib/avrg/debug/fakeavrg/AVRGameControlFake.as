@@ -1,5 +1,5 @@
 //
-// $Id: AVRGameControlFake.as 2466 2009-06-10 18:19:11Z nathan $
+// $Id$
 //
 // Copyright (c) 2007 Three Rings Design, Inc.  Please do not redistribute.
 

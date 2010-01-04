@@ -1,5 +1,5 @@
 //
-// $Id: AvatarRemoteProvider.as 2467 2009-06-10 18:44:02Z nathan $
+// $Id$
 
 package com.threerings.whirled.contrib.avrg.avatar {
 

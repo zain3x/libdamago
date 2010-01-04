@@ -1,5 +1,5 @@
 //
-// $Id: ReflectionUtil.as 4203 2009-08-04 00:43:52Z tim $
+// $Id$
 
 package com.threerings.util {
 

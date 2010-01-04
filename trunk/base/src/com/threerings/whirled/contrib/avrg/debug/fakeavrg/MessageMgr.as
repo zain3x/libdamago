@@ -1,5 +1,5 @@
 //
-// $Id: MessageMgr.as 4745 2009-08-24 19:29:37Z nathan $
+// $Id$
 
 package com.threerings.whirled.contrib.avrg.debug.fakeavrg {
 

@@ -24,7 +24,6 @@ public class Tests extends FlashbangAppRunner
 		BoundsLine
 		BoundsRectangle
 		Scene2DComponent
-		Scene2Den
 //        FunctionTask
 //        GoToFrameTask
 //        TaskContainer

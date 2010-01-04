@@ -1,5 +1,5 @@
 //
-// $Id: AVRServerGameControlFake.as 4127 2009-07-30 22:22:40Z tim $
+// $Id$
 
 package com.threerings.whirled.contrib.avrg.debug.fakeavrg {
 

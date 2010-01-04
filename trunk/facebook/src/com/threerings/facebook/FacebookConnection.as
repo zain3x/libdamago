@@ -1,5 +1,5 @@
 //
-// $Id: FacebookConnection.as 4688 2009-08-20 21:51:30Z nathan $
+// $Id$
 
 package com.threerings.facebook {
 import aduros.util.F;

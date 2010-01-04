@@ -1,5 +1,5 @@
 //
-// $Id: GenericDraggableWindow.as 3822 2009-07-21 22:36:14Z nathan $
+// $Id$
 
 package com.threerings.flashbang.debug {
 

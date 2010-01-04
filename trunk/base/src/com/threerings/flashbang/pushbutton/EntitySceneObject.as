@@ -16,7 +16,7 @@
 //
 // Copyright 2008 Three Rings Design
 //
-// $Id: SceneObject.as 17 2009-10-05 19:32:01Z tconkling $
+// $Id$
 
 package com.threerings.flashbang.pushbutton {
 

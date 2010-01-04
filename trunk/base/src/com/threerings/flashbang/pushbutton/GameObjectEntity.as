@@ -58,11 +58,6 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
         throw new Error("Not implemented");
     }
 
-    public function get dispatcher () :IEventDispatcher
-    {
-        return this;
-    }
-
     public function get eventDispatcher () :IEventDispatcher
     {
         return _dispatcher;
