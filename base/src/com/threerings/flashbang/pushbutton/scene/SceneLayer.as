@@ -23,19 +23,19 @@ public class SceneLayer extends Sprite
     {
         return _parentScene;
     }
-    public function addObject (obj :*, disp :DisplayObject = null) :void
-    {
-        if (null != _parentScene) {
-            throw new Error("If this layer is attached to a Scene, use Scene.addSceneComponent");
-        } else {
-            addObjectInternal(obj, disp);
-        }
-    }
+//    public function addObject (obj :*, disp :DisplayObject = null) :void
+//    {
+//        if (null != _parentScene) {
+//            throw new Error("If this layer is attached to a Scene, use Scene.addSceneComponent");
+//        } else {
+//            addObjectInternal(obj, disp);
+//        }
+//    }
 
-    public function containsObject (obj :*) :Boolean
-    {
-        return _sceneComponents.containsKey(obj);
-    }
+//    public function containsObject (obj :*) :Boolean
+//    {
+//        return _sceneComponents.containsKey(obj);
+//    }
 
     public function detach () :void
     {
@@ -47,14 +47,14 @@ public class SceneLayer extends Sprite
         }
     }
 
-    public function removeObject (obj :*) :void
-    {
-        if (null != _parentScene) {
-            throw new Error("If this layer is attached to a Scene, use Scene.removeSceneComponent");
-        } else {
-            removeObjectInternal(obj);
-        }
-    }
+//    public function removeObject (obj :*) :void
+//    {
+//        if (null != _parentScene) {
+//            throw new Error("If this layer is attached to a Scene, use Scene.removeSceneComponent");
+//        } else {
+//            removeObjectInternal(obj);
+//        }
+//    }
 
     //Override to do something fancy e.g. parallax, or iso sorting
     public function render (...ignored) :void
@@ -71,35 +71,35 @@ public class SceneLayer extends Sprite
     }
 
 
-    internal function addObjectInternal (obj :*, disp :DisplayObject = null) :void
+    internal function addObjectInternal (obj :SceneEntityComponent) :void
     {
         if (_sceneComponents.containsKey(obj)) {
             throw new Error("Already contains obj " + obj);
         }
 
-        if (null == disp) {
-            if (!(obj is DisplayObject)) {
-                throw new Error("If the first arg is not a DisplayObject, you must " +
-                        "supply a DisplayObject as the second argument");
-            } else {
-                disp = obj as DisplayObject;
-            }
-        }
+//        if (null == disp) {
+//            if (!(obj is DisplayObject)) {
+//                throw new Error("If the first arg is not a DisplayObject, you must " +
+//                        "supply a DisplayObject as the second argument");
+//            } else {
+//                disp = obj as DisplayObject;
+//            }
+//        }
 
-        _sceneComponents.put(obj, disp);
-        addChild(disp);
+        _sceneComponents.put(obj, obj.displayObject);
+        addChild(obj.displayObject);
         dirty = true;
-        objectAdded(obj);
+        objectAdded(obj, obj.displayObject);
     }
 
     //Subclasses override
-    protected function objectRemoved (obj :*) :void
+    protected function objectRemoved (obj :SceneEntityComponent, disp :DisplayObject) :void
     {
 
     }
 
     //Subclasses override
-    protected function objectAdded (obj :*) :void
+    protected function objectAdded (obj :SceneEntityComponent, disp :DisplayObject) :void
     {
 
     }
@@ -129,7 +129,7 @@ public class SceneLayer extends Sprite
         detached();
     }
 
-    internal function removeObjectInternal (obj :*) :void
+    internal function removeObjectInternal (obj :SceneEntityComponent) :void
     {
         if (!_sceneComponents.containsKey(obj)) {
 //            throw new Error("Doesn't contain " + obj);
@@ -141,7 +141,7 @@ public class SceneLayer extends Sprite
         DisplayUtils.detach(disp);
 //        removeChild(disp);
         dirty = true;
-        objectRemoved(obj);
+        objectRemoved(obj, disp);
     }
 
     internal function renderInternal () :void

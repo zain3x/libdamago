@@ -1,4 +1,6 @@
 package com.threerings.flashbang.pushbutton.scene {
+import aduros.util.F;
+
 import com.pblabs.engine.entity.PropertyReference;
 import com.threerings.flashbang.Updatable;
 import com.threerings.flashbang.components.SceneComponent;
@@ -22,6 +24,9 @@ public class SceneEntityComponent extends EntityComponentListener
     public var alphaProperty :PropertyReference;
 	
 	public var displayObjectRef :PropertyReference;
+	public var scaleXRef :PropertyReference;
+	public var scaleYRef :PropertyReference;
+	
 
     /**
      * If set, the layer index is gotten from this property every frame.
@@ -54,6 +59,8 @@ public class SceneEntityComponent extends EntityComponentListener
      * If set, our z-index is gotten from this property every frame.
      */
     public var zIndexProperty :PropertyReference;
+	
+	public var updateOnEvents :Array = [];
 
     public function SceneEntityComponent (displayObject :DisplayObject = null)
     {
@@ -63,6 +70,7 @@ public class SceneEntityComponent extends EntityComponentListener
 
     public function get alpha () :Number
     {
+//		return displayObject.alpha
         return _alpha;
     }
 
@@ -71,6 +79,7 @@ public class SceneEntityComponent extends EntityComponentListener
      */
     public function set alpha (value :Number) :void
     {
+//		displayObject.alpha = value;
         if (value == _alpha)
             return;
 
@@ -325,6 +334,40 @@ public class SceneEntityComponent extends EntityComponentListener
     {
         return _y;
     }
+	
+	public function get scaleX():Number
+	{
+		return _scaleX;
+	}
+	
+	/**
+	 * You can scale things on the X and Y axes.
+	 */
+	public function set scaleX (value:Number):void
+	{
+		if (value == _scaleX)
+			return;
+		
+		_scaleX = value;
+		_transformDirty = true;
+	}
+	
+	public function get scaleY():Number
+	{
+		return _scaleY;
+	}
+	
+	/**
+	 * You can scale things on the X and Y axes.
+	 */
+	public function set scaleY (value:Number):void
+	{
+		if (value == _scaleY)
+			return;
+		
+		_scaleY = value;
+		_transformDirty = true;
+	}
 
     public function set y (value :Number) :void
     {
@@ -488,6 +531,7 @@ public class SceneEntityComponent extends EntityComponentListener
      */
     public function updateTransform (updateProps :Boolean = false) :void
     {
+//		trace("updateTransform");
         if (!displayObject) {
             return;
         }
@@ -504,10 +548,16 @@ public class SceneEntityComponent extends EntityComponentListener
         //        _transformMatrix.translate(_position.x, _position.y);
 
         //        displayObject.transform.matrix = _transformMatrix;
+		displayObject.scaleX = _scaleX;
+		displayObject.scaleY = _scaleY;
         displayObject.alpha = _alpha;
         displayObject.visible = (alpha > 0);
         displayObject.x = x;
         displayObject.y = y;
+		
+//		if (SceneItemComponent(owner.lookupComponentByType(SceneItemComponent)).desc.type == SceneComponentType.STOREY) {
+//			trace(x, y);
+//		}
 
         _transformDirty = false;
     }
@@ -515,7 +565,17 @@ public class SceneEntityComponent extends EntityComponentListener
     override protected function onAdd () :void
     {
         super.onAdd();
+		for each (var eventName :String in updateOnEvents) {
+//			registerListener(owner.eventDispatcher, eventName, F.callback(update, 0));
+			registerListener(owner.eventDispatcher, eventName, F.callback(updateFromEvent, eventName));
+		}
     }
+	
+	protected function updateFromEvent (eventName :String) :void
+	{
+//		trace("updating from ", eventName);
+		update(0);
+	}
 
     override protected function onRemove () :void
     {
@@ -544,6 +604,8 @@ public class SceneEntityComponent extends EntityComponentListener
 //			log.warning("onReset(), adding ourselves to the Scene2DComponent");
 			scene2D.addSceneComponent(this);
 		}
+		
+		
 	}
 
     protected function updateProperties () :void
@@ -597,7 +659,7 @@ public class SceneEntityComponent extends EntityComponentListener
         if (null != alphaProperty) {
             alpha = owner.getProperty(alphaProperty) as Number;
         }
-
+		
         //        // Registration Point.
         //        var reg :Point = owner.getProperty(registrationPointProperty) as Point;
         //        if (reg) {
@@ -647,7 +709,8 @@ public class SceneEntityComponent extends EntityComponentListener
     //    protected var _rotation :Number = 0;
 
     //    protected var _rotationOffset :Number = 0;
-    //    protected var _scale :Point = new Point(1, 1);
+    protected var _scaleX :Number = 1
+	protected var _scaleY :Number = 1;
     internal var _scene :Scene2DComponent;
 	
 	protected static const log :Log = Log.getLog(SceneEntityComponent);

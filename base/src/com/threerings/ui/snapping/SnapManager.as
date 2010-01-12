@@ -61,6 +61,7 @@ public class SnapManager extends EventDispatcher
         _target = snapper;
         _parent.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
         handleEnterFrame();
+		handleEnterFrame();
     }
 
     public function clear () :void
@@ -114,9 +115,15 @@ public class SnapManager extends EventDispatcher
             return;
         }
 
+//		trace("\n\nbegin handleEnterFrame")
+//		trace("global bounds=" + _target.globalBounds);
         var stage :DisplayObject = _parent.stage;
         //First move it to the mouse coords
-        SnapUtil.snapCenterOfBoundsToGlobalPoint(_target, new Point(stage.mouseX, stage.mouseY));
+//		trace("stage=" + stage);
+		var mouseLoc :Point = new Point(stage.mouseX, stage.mouseY);
+		_target.snapCenterToGlobal(mouseLoc);
+//		trace("after snapping to mouse\nglobal bounds=" + _target.globalBounds);
+//		SnapUtil.snapCenterOfBoundsToGlobalPoint(_target, mouseLoc);
 
         var snapped :Boolean = false;
         var anc :ISnapAnchor;
@@ -153,6 +160,7 @@ public class SnapManager extends EventDispatcher
 
         //If nothing is snapped, inform listeners of this
         if (!snapped) {
+//			SnapUtil.snapCenterOfBoundsToGlobalPoint(_target, mouseLoc);
             dispatchEvent(new SnapEvent(null, _target));
         }
 

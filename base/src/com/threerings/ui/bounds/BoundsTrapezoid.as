@@ -23,7 +23,7 @@ public class BoundsTrapezoid extends BoundsPolygon
         _bottomLeft = new Vector2(x - bottomExtension, y + height);
         super(new Polygon([_topLeft, _topRight, _bottomRight, _bottomLeft]));
     }
-
+	
     override public function getBoundedPoint (targetX :Number, targetY :Number) :Point
     {
         var finalX :Number = targetX;

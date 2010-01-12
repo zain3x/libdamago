@@ -2,7 +2,6 @@
 // $Id$
 
 package com.threerings.util {
-
 import aduros.util.F;
 
 import com.threerings.text.TextFieldUtil;
@@ -22,157 +21,27 @@ import flash.net.URLRequest;
 import flash.system.LoaderContext;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
-
 public class DisplayUtils
 {
+    public static const BOTTOM_TO_TOP :int = 3;
     public static const LEFT_TO_RIGHT :int = 0;
     public static const RIGHT_TO_LEFT :int = 1;
     public static const TOP_TO_BOTTOM :int = 2;
-    public static const BOTTOM_TO_TOP :int = 3;
-
-    public static function detach (d :DisplayObject) :void
-    {
-        if (d != null && d.parent != null) {
-            d.parent.removeChild(d);
-        }
-    }
-
-    public static function removeAllChildren (parent :DisplayObject) :void
-    {
-        if (parent == null || !(parent is DisplayObjectContainer)) {
-            return;
-        }
-        while (DisplayObjectContainer(parent).numChildren > 0) {
-			DisplayObjectContainer(parent).removeChildAt(0);
-        }
-    }
-
-    public static function drawText (parent :DisplayObjectContainer, text :String, x :int = 0,
-        y :int = 0, center :Boolean = true, initProps :Object = null) :TextField
-    {
-        if (initProps == null) {
-            initProps = {};
-        }
-        initProps.x = x;
-        initProps.y = y;
-        initProps.selectable = false;
-        initProps.mouseEnabled = false;
-        var tf :TextField = TextFieldUtil.createField(text, initProps);
-        parent.addChild(tf);
-        if (center) {
-            tf.autoSize = TextFieldAutoSize.LEFT;
-            tf.width = tf.textWidth;
-            tf.height = tf.textHeight;
-            tf.x -= tf.width / 2;
-            tf.y -= tf.height / 2;
-
-        } else {
-            tf.autoSize = TextFieldAutoSize.LEFT;
-            tf.width = tf.textWidth;
-            tf.height = tf.textHeight;
-        }
-        return tf;
-    }
-
-    public static function distributeChildrenVertically (disp :DisplayObject, startTop :Number = 0) :void
-    {
-        if (!(disp is DisplayObjectContainer)) {
-            return;
-        }
-
-        var container :DisplayObjectContainer = DisplayObjectContainer(disp);
-        var bounds :Rectangle;
-        var child :DisplayObject;
-        for (var ii :int = 0; ii < container.numChildren; ++ii) {
-            child = container.getChildAt(ii) as DisplayObject;
-            if (child == null) {
-                continue;
-            }
-            bounds = child.getBounds(container);
-            child.y += startTop - bounds.top;
-            startTop = startTop + bounds.height;
-        }
-
-    }
-
-    public static function placeSequence (parent :DisplayObjectContainer, seq :Array, startX :int,
-        startY :int, direction :int = 0, gap :int = 5, center :Boolean = true) :void
-    {
-        if (seq == null || seq.length == 0 || parent == null) {
-            return;
-        }
-
-        for each (var d :DisplayObject in seq) {
-            if (d == null) {
-                continue;
-            }
-            parent.addChild(d);
-
-            var xAdjust :int = 0;
-            var yAdjust :int = 0;
-
-
-            if (center) {
-                if (direction == LEFT_TO_RIGHT) {
-                    xAdjust = d.width / 2;
-
-                } else if (direction == RIGHT_TO_LEFT) {
-                    xAdjust = -d.width / 2;
-                }
-                 else if (direction == TOP_TO_BOTTOM) {
-                    yAdjust = d.height / 2;
-                }
-                 else if (direction == BOTTOM_TO_TOP) {
-                    yAdjust = -d.height / 2;
-                }
-                centerOn(d, startX + xAdjust, startY + yAdjust);
-            }
-            else {
-                d.x = startX + xAdjust;
-                d.y = startY + yAdjust;
-            }
-
-            if (direction == LEFT_TO_RIGHT) {
-                startX += d.width + gap;
-
-            } else if (direction == RIGHT_TO_LEFT) {
-                startX += -(d.width + gap);
-            }
-             else if (direction == TOP_TO_BOTTOM) {
-                startY += d.height + gap;
-            }
-             else if (direction == BOTTOM_TO_TOP) {
-                startY += -(d.height + gap);
-            }
-        }
-    }
-
-    public static function distribute (seq :Array, startX :int,
-        startY :int, endX :int, endY :int) :void
-    {
-        if (seq == null || seq.length == 0) {
-            return;
-        }
-
-        var xInc :int = (endX - startX) / (seq.length + 1);
-        startX += xInc / 2;
-        var yInc :int = (endY - startY) / (seq.length + 1);
-        startY += yInc / 2;
-
-        for (var ii :int = 0; ii < seq.length; ++ii) {
-            centerOn(seq[ii], startX + ii * xInc, startY + ii * yInc);
-        }
-    }
-
-    public static function distributionPoint (index :int, length :int, startX :int,
-        startY :int, endX :int, endY :int) :Point
-    {
-        var xInc :int = (endX - startX) / (length + 1);
-        startX += xInc;
-        var yInc :int = (endY - startY) / (length + 1);
-        startY += yInc;
-        return new Point(startX + index * xInc, startY + index * yInc);
-    }
+	
+	public static function boundsUnion (displayObjects :Array, relativeTo :DisplayObject = null) 
+		:Rectangle
+	{
+		var bounds :Rectangle;
+		for each (var disp :DisplayObject in displayObjects) {
+			var dispBounds :Rectangle = disp.getBounds(relativeTo == null ? disp.stage : relativeTo);
+			if (bounds != null) {
+				bounds = bounds.union(dispBounds);
+			} else {
+				bounds = dispBounds
+			}
+		}
+		return bounds;
+	}
 
     public static function centerOn (d :DisplayObject, x :int = 0, y :int = 0) :DisplayObject
     {
@@ -195,20 +64,6 @@ public class DisplayUtils
             d.y -= (bounds.height / 2) + bounds.top;
         }
         return d;
-    }
-
-    public static function shrinkAndCenterOn (disp :DisplayObject, maxSize :int = 20) :DisplayObject
-    {
-        if (maxSize > 0) {
-            var max :int = Math.max(disp.width, disp.height);
-            if (max > maxSize) {
-                disp.scaleX = disp.scaleY = Number(maxSize) / max;
-            }
-        }
-        var s :Sprite = new Sprite()
-        s.addChild(disp);
-        DisplayUtils.centerOn(disp);
-        return s;
     }
 
     /**
@@ -240,29 +95,113 @@ public class DisplayUtils
         return bm;
     }
 
-    /**
-     * Creates a bitmap from the given DisplayObject, and positions the bitmap so that it is
-     * visually in the same position as the argument.
-     */
-    public static function substituteBitmap (d :DisplayObject) :Bitmap
+    public static function detach (d :DisplayObject) :void
     {
-        if (d == null) {
-            return null;
+        if (d != null && d.parent != null) {
+            d.parent.removeChild(d);
         }
-        if (d is Bitmap) {
-            return d as Bitmap;
-        }
-        var bm :Bitmap = convertToBitmap(d);
-        if (bm == null) {
-            return null;
+    }
+
+    public static function distribute (seq :Array, startX :int,
+        startY :int, endX :int, endY :int) :void
+    {
+        if (seq == null || seq.length == 0) {
+            return;
         }
 
+        var xInc :int = (endX - startX) / (seq.length + 1);
+        startX += xInc / 2;
+        var yInc :int = (endY - startY) / (seq.length + 1);
+        startY += yInc / 2;
+
+        for (var ii :int = 0; ii < seq.length; ++ii) {
+            centerOn(seq[ii], startX + ii * xInc, startY + ii * yInc);
+        }
+    }
+
+    public static function distributeChildrenVertically (disp :DisplayObject, startTop :Number = 0) :void
+    {
+        if (!(disp is DisplayObjectContainer)) {
+            return;
+        }
+
+        var container :DisplayObjectContainer = DisplayObjectContainer(disp);
+        var bounds :Rectangle;
+        var child :DisplayObject;
+        for (var ii :int = 0; ii < container.numChildren; ++ii) {
+            child = container.getChildAt(ii) as DisplayObject;
+            if (child == null) {
+                continue;
+            }
+            bounds = child.getBounds(container);
+            child.y += startTop - bounds.top;
+            startTop = startTop + bounds.height;
+        }
+
+    }
+
+    public static function distributionPoint (index :int, length :int, startX :int,
+        startY :int, endX :int, endY :int) :Point
+    {
+        var xInc :int = (endX - startX) / (length + 1);
+        startX += xInc;
+        var yInc :int = (endY - startY) / (length + 1);
+        startY += yInc;
+        return new Point(startX + index * xInc, startY + index * yInc);
+    }
+
+    public static function drawText (parent :DisplayObjectContainer, text :String, x :int = 0,
+        y :int = 0, center :Boolean = true, initProps :Object = null) :TextField
+    {
+        if (initProps == null) {
+            initProps = {};
+        }
+        initProps.x = x;
+        initProps.y = y;
+        initProps.selectable = false;
+        initProps.mouseEnabled = false;
+        var tf :TextField = TextFieldUtil.createField(text, initProps);
+        parent.addChild(tf);
+        if (center) {
+            tf.autoSize = TextFieldAutoSize.LEFT;
+            tf.width = tf.textWidth;
+            tf.height = tf.textHeight;
+            tf.x -= tf.width / 2;
+            tf.y -= tf.height / 2;
+
+        } else {
+            tf.autoSize = TextFieldAutoSize.LEFT;
+            tf.width = tf.textWidth;
+            tf.height = tf.textHeight;
+        }
+        return tf;
+    }
+
+    public static function getBoundsCenter (d :DisplayObject) :Point
+    {
         var bounds :Rectangle = d.getBounds(d);
+        return new Point(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
+    }
 
-        //Center it according to the offsets.
-        bm.x = bounds.left;
-        bm.y = bounds.top;
-        return bm;
+    public static function getBoundsCenterRelativeTo (d :DisplayObject, relativeTo :DisplayObject) :Point
+    {
+        var bounds :Rectangle = d.getBounds(relativeTo);
+        return new Point(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
+    }
+
+    public static function getCenterOffset (d :DisplayObject) :Point
+    {
+        return getCenterOffsetRelativeTo(d, d);
+    }
+
+    public static function getCenterOffsetRelativeTo (d :DisplayObject,
+        relativeTo :DisplayObject) :Point
+    {
+        var bounds :Rectangle = d.getBounds(relativeTo);
+        var centerX :Number = bounds.left + bounds.width / 2;
+        var centerY :Number = bounds.top + bounds.height / 2;
+
+        return new Point(centerX - d.x, centerY - d.y);
     }
 
     public static function getChildren (d :DisplayObjectContainer) :Array
@@ -319,32 +258,153 @@ public class DisplayUtils
 
         return bm;
     }
+	
+	/**
+	 * From a list of DisplayObjects on the stage, create a combined bitmap, with a 
+	 * layer order of the supplied array.
+	 */
+	public static function mergeDisplayObjects (dos :Array, preserveBounds :Boolean = false) :Bitmap
+	{
+		var bounds :Rectangle;
+		var stageBounds :Rectangle;
+		var disp :DisplayObject;
+		var origins :Array = [];
+		var origin :Point;
+		for each (disp in dos) {
+			stageBounds = disp.getBounds(disp.stage);
+			origins.push(new Point(stageBounds.left, stageBounds.top));
+			if (bounds != null) {
+				bounds = bounds.union(stageBounds);
+			} else {
+				bounds = stageBounds
+			}
+		}
+		
+		function getGlobalScale (d :DisplayObject, currentScale :Number) :Number {
+			if (d == d.stage) {
+				return currentScale;
+			} else {
+				return getGlobalScale(d.parent, d.scaleX * currentScale);
+			}
+		}
+		var scale :Number = getGlobalScale(disp, 1);
+		
+		var bd :BitmapData = new BitmapData(int(bounds.width * scale), int(bounds.height * scale), true, 0xffffff);
+		var topLeft :Point = new Point(bounds.left, bounds.top);
+		
+		for (var ii :int = 0; ii < dos.length; ++ii) {
+			disp = dos[ii] as DisplayObject;
+			origin = origins[ii] as Point;
+			var localBounds :Rectangle = disp.getBounds(disp);
+//			bd.draw(disp, new Matrix(1, 0, 0, 1, -localBounds.left + (origin.x - topLeft.x), 
+//				-localBounds.top + (origin.y - topLeft.y)));
+			bd.draw(disp, new Matrix(scale, 0, 0, scale, scale*(-localBounds.left + (origin.x - topLeft.x)), 
+				scale*(-localBounds.top + (origin.y - topLeft.y))));
+		}
+		
+		var bm :Bitmap = new Bitmap(bd);
+		return bm;
+	}
 
-    public static function getCenterOffset (d :DisplayObject) :Point
+    public static function placeSequence (parent :DisplayObjectContainer, seq :Array, startX :int,
+        startY :int, direction :int = 0, gap :int = 5, center :Boolean = true) :void
     {
-        return getCenterOffsetRelativeTo(d, d);
+        if (seq == null || seq.length == 0 || parent == null) {
+            return;
+        }
+
+        for each (var d :DisplayObject in seq) {
+            if (d == null) {
+                continue;
+            }
+            parent.addChild(d);
+
+            var xAdjust :int = 0;
+            var yAdjust :int = 0;
+
+
+            if (center) {
+                if (direction == LEFT_TO_RIGHT) {
+                    xAdjust = d.width / 2;
+
+                } else if (direction == RIGHT_TO_LEFT) {
+                    xAdjust = -d.width / 2;
+                }
+                 else if (direction == TOP_TO_BOTTOM) {
+                    yAdjust = d.height / 2;
+                }
+                 else if (direction == BOTTOM_TO_TOP) {
+                    yAdjust = -d.height / 2;
+                }
+                centerOn(d, startX + xAdjust, startY + yAdjust);
+            }
+            else {
+                d.x = startX + xAdjust;
+                d.y = startY + yAdjust;
+            }
+
+            if (direction == LEFT_TO_RIGHT) {
+                startX += d.width + gap;
+
+            } else if (direction == RIGHT_TO_LEFT) {
+                startX += -(d.width + gap);
+            }
+             else if (direction == TOP_TO_BOTTOM) {
+                startY += d.height + gap;
+            }
+             else if (direction == BOTTOM_TO_TOP) {
+                startY += -(d.height + gap);
+            }
+        }
     }
 
-    public static function getCenterOffsetRelativeTo (d :DisplayObject,
-        relativeTo :DisplayObject) :Point
+    public static function removeAllChildren (parent :DisplayObject) :void
     {
-        var bounds :Rectangle = d.getBounds(relativeTo);
-        var centerX :Number = bounds.left + bounds.width / 2;
-        var centerY :Number = bounds.top + bounds.height / 2;
-
-        return new Point(centerX - d.x, centerY - d.y);
+        if (parent == null || !(parent is DisplayObjectContainer)) {
+            return;
+        }
+        while (DisplayObjectContainer(parent).numChildren > 0) {
+			DisplayObjectContainer(parent).removeChildAt(0);
+        }
     }
 
-    public static function getBoundsCenterRelativeTo (d :DisplayObject, relativeTo :DisplayObject) :Point
+    public static function shrinkAndCenterOn (disp :DisplayObject, maxSize :int = 20) :DisplayObject
     {
-        var bounds :Rectangle = d.getBounds(relativeTo);
-        return new Point(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
+        if (maxSize > 0) {
+            var max :int = Math.max(disp.width, disp.height);
+            if (max > maxSize) {
+                disp.scaleX = disp.scaleY = Number(maxSize) / max;
+            }
+        }
+        var s :Sprite = new Sprite()
+        s.addChild(disp);
+        DisplayUtils.centerOn(disp);
+        return s;
     }
 
-    public static function getBoundsCenter (d :DisplayObject) :Point
+    /**
+     * Creates a bitmap from the given DisplayObject, and positions the bitmap so that it is
+     * visually in the same position as the argument.
+     */
+    public static function substituteBitmap (d :DisplayObject) :Bitmap
     {
+        if (d == null) {
+            return null;
+        }
+        if (d is Bitmap) {
+            return d as Bitmap;
+        }
+        var bm :Bitmap = convertToBitmap(d);
+        if (bm == null) {
+            return null;
+        }
+
         var bounds :Rectangle = d.getBounds(d);
-        return new Point(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
+
+        //Center it according to the offsets.
+        bm.x = bounds.left;
+        bm.y = bounds.top;
+        return bm;
     }
 
 

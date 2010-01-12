@@ -2,10 +2,9 @@
 // $Id$
 
 package com.threerings.ui.snapping {
+import flash.geom.Point;
 import com.threerings.ui.bounds.Bounds;
 import com.threerings.util.StringUtil;
-
-import flash.geom.Point;
 public /*abstract*/ class SnapAnchor
     implements ISnapAnchor
 {
@@ -14,6 +13,11 @@ public /*abstract*/ class SnapAnchor
         _idx = idx;
 //        _snapType = type;
         _maxSnapDistance = maxSnapDistance;
+    }
+
+    public function get bounds () :Bounds
+    {
+        throw new Error("Abstract method");
     }
 
     public function get index () :int
@@ -29,6 +33,11 @@ public /*abstract*/ class SnapAnchor
     public function set provider (val :Object) :void
     {
         _provider = val;
+    }
+
+    public function get snapDistance () :Number
+    {
+        return _maxSnapDistance;
     }
 
 //    public function get type () :SnapType
@@ -65,16 +74,6 @@ public /*abstract*/ class SnapAnchor
     protected function getGlobalSnapToPoint (d :ISnappingObject) :Point
     {
         throw new Error("Abstract method");
-    }
-
-    public function get bounds () :Bounds
-    {
-        throw new Error("Abstract method");
-    }
-
-    public function get snapDistance () :Number
-    {
-        return _maxSnapDistance;
     }
 
     protected var _idx :int;

@@ -57,6 +57,11 @@ public class TreeMap
 			var parentChildren :Array = _children.get(parent) as Array;
 			parentChildren.push(vert);
 		}
+//		trace("\n    After adding ");
+//		trace("\n    parentChildren=", parentChildren);
+//		trace("\n    rootchildren=\n      ", getChildren(root).join("\n      "));
+//			
+//		trace("\n    After adding ", vert, "\n    the tree is\n", this);
 		
 	}
 	
@@ -162,12 +167,12 @@ public class TreeMap
 		return treeString(root);
 	}
 	
-	public function treeString (vert :Hashable, s :String = "", sep :String = " ") :String
+	public function treeString (vert :Hashable, sep :String = "  ") :String
 	{
-		s += "\n" + sep + vert;
-		sep += " ";
+		var s :String = "\n" + sep + vert;
+		sep += "  ";
 		for each (var child :Hashable in getChildren(vert)) {
-			treeString(child, s, sep);
+			s += treeString(child, sep);
 		}
 		return s;
 	}

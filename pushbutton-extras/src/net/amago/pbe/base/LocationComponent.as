@@ -5,13 +5,12 @@ import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
 
 import flash.events.Event;
-import flash.events.IEventDispatcher;
 import flash.geom.Point;
 
 public class LocationComponent extends EntityComponent
 {
 	public static const COMPONENT_NAME :String = ClassUtil.tinyClassName(LocationComponent);
-	public static const EVENT_LOCATION_CHANGED :String = "locationChanged";
+	public static const CHANGED :String = "locationChanged";
 	
 	public function get point () :Point
 	{
@@ -20,10 +19,12 @@ public class LocationComponent extends EntityComponent
 	
 	public function set point (p :Point) :void
 	{
-		_x = p.x;
-		_y = p.y;
-		if (owner != null) {
-			owner.eventDispatcher.dispatchEvent(event);
+		if (_x != p.x && _y != p.y) {
+			_x = p.x;
+			_y = p.y;
+			if (owner != null) {
+				owner.eventDispatcher.dispatchEvent(event);
+			}
 		}
 	}
 	
@@ -34,9 +35,17 @@ public class LocationComponent extends EntityComponent
 	
 	public function set x (val :Number) :void
 	{
-		_x = val;
-		if (owner != null) {
-			owner.eventDispatcher.dispatchEvent(event);
+//		try {
+//			throw new Error();
+//		} catch (e :Error) {
+//			trace("Setting x");
+//			trace(e.getStackTrace());
+//		}
+		if (_x != val) {
+			_x = val;
+			if (owner != null) {
+				owner.eventDispatcher.dispatchEvent(event);
+			}
 		}
 	}
 	
@@ -47,25 +56,29 @@ public class LocationComponent extends EntityComponent
 	
 	public function set y (val :Number) :void
 	{
-		_y = val;
-		if (owner != null) {
-			owner.eventDispatcher.dispatchEvent(event);
+		if (_y != val) {
+			_y = val;
+			if (owner != null) {
+				owner.eventDispatcher.dispatchEvent(event);
+			}
 		}
 	}
 	
 	public function setLocation (xLoc :Number, yLoc :Number) :void
 	{
-		_x = xLoc;
-		_y = yLoc;
-		if (owner != null) {
-			owner.eventDispatcher.dispatchEvent(event);
+		if (_x != xLoc && _y != yLoc) {
+			_x = xLoc;
+			_y = yLoc;
+			if (owner != null) {
+				owner.eventDispatcher.dispatchEvent(event);
+			}
 		}
 	}
 	
 	protected function get event () :Event
 	{
 		if (_event == null) {
-			_event = new ValueEvent(EVENT_LOCATION_CHANGED, this);
+			_event = new ValueEvent(CHANGED, this);
 		}
 		return _event;
 	}
