@@ -13,7 +13,6 @@ import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Rectangle;
-import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 
 public class DebugUtil
@@ -169,6 +168,16 @@ public class DebugUtil
         }
         trace("Lineage: " + lineage.join(" "));
     }
+	
+	public static function getStackTrace () :String
+	{
+		try {
+			throw new Error();
+		} catch (e :Error) {
+			return e.getStackTrace();
+		}
+		return "";
+	}	
 
     public static function createButton (text :String, callback :Function,
         parent :DisplayObjectContainer, x :int = 0, y :int = 0) :SimpleTextButton
