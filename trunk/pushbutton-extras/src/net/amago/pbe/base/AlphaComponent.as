@@ -3,7 +3,7 @@ import com.threerings.util.ClassUtil;
 
 public class AlphaComponent extends NotifyingValueComponent
 {
-	public static const EVENT_NAME :String = "alphaChanged";
+	public static const CHANGED :String = ClassUtil.tinyClassName(AlphaComponent) + "Changed";
 	public static const COMPONENT_NAME :String = ClassUtil.tinyClassName(AlphaComponent); 
 	
 	public function AlphaComponent ()
@@ -23,7 +23,7 @@ public class AlphaComponent extends NotifyingValueComponent
 	
 	override protected function get eventName () :String
 	{
-		return EVENT_NAME;
+		return CHANGED;
 	}
 }
 }

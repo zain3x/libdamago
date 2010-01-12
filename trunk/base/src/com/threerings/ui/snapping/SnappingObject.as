@@ -3,11 +3,10 @@
 
 package com.threerings.ui.snapping
 {
+import flash.display.DisplayObject;
+import flash.geom.Point;
 import com.threerings.ui.bounds.Bounds;
 import com.threerings.ui.bounds.BoundsRectangle;
-
-import flash.display.DisplayObject;
-
 /**
  *
  * @author dion
@@ -15,6 +14,8 @@ import flash.display.DisplayObject;
 public class SnappingObject
     implements ISnappingObject
 {
+	
+	
     /**
      *
      * @param boundsObject The object that will have it's bounds used for snapping
@@ -33,6 +34,16 @@ public class SnappingObject
         }
 //        _rootLayer = rootLayer == null ? _boundsDisplay : rootLayer;
     }
+	
+	public function get currentSnapAnchor () :ISnapAnchor
+	{
+		return _snapAnchor;	
+	}
+	
+	public function set currentSnapAnchor (val :ISnapAnchor) :void
+	{
+		_snapAnchor = val;	
+	}
 
 //    public function get boundsDisplayObject () :DisplayObject
 //    {
@@ -60,23 +71,36 @@ public class SnappingObject
         return _bounds
     }
 
-//    public function get x () :Number
-//    {
-//        return _disp.x;
-//    }
-//    public function get y () :Number
-//    {
-//        return _disp.y;
-//    }
-//
-//    public function set x (val :Number) :void
-//    {
-//        _disp.x = val;
-//    }
-//    public function set y (val :Number) :void
-//    {
-//        _disp.y = val;
-//    }
+    public function get x () :Number
+    {
+        return _disp.x;
+    }
+
+    public function set x (val :Number) :void
+    {
+        _disp.x = val;
+    }
+    public function get y () :Number
+    {
+        return _disp.y;
+    }
+    public function set y (val :Number) :void
+    {
+        _disp.y = val;
+    }
+	
+	public function beginSnapping () :void{}
+	public function endSnapping () :void {}
+	
+	public function snapCenterToGlobal (p :Point) :void
+	{
+		SnapUtil.snapCenterOfBoundsToGlobalPoint(this, p);
+	}
+    /**
+     *
+     * @default
+     */
+    protected var _bounds :Bounds;
 
 //    public function centerOn (globalPoint :Point) :void
 //    {
@@ -91,12 +115,8 @@ public class SnappingObject
      * @default
      */
     protected var _disp :DisplayObject;
-    /**
-     *
-     * @default
-     */
-    protected var _bounds :Bounds;
-
+	
+	protected var _snapAnchor :ISnapAnchor;
 //    protected var _rootLayer :DisplayObject;
 
 }

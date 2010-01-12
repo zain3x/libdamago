@@ -1,5 +1,9 @@
 package com.threerings.flashbang.pushbutton.scene {
 import com.pblabs.engine.entity.PropertyReference;
+import flash.display.Graphics;
+import flash.display.Sprite;
+import flash.events.Event;
+import flash.geom.*;
 import com.threerings.flashbang.Updatable;
 import com.threerings.flashbang.components.LocationComponent;
 import com.threerings.util.ArrayUtil;
@@ -8,14 +12,7 @@ import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.MathUtil;
-
-import flash.display.Graphics;
-import flash.display.Sprite;
-import flash.events.Event;
-import flash.geom.*;
-
 import net.amago.pbe.base.EntityComponentListener;
-
 /**
  * Basic Rendering2D scene; it is given a SceneView and some
  * DisplayObjectRenderers, and makes sure that they are drawn. Extensible
@@ -32,7 +29,7 @@ public class Scene2DComponent extends EntityComponentListener
      *
      * @see zoom
      */
-    public var maxZoom :Number = 1;
+    public var maxZoom :Number = 5;
     /**
      * Minimum allowed zoom level.
      *
@@ -211,7 +208,7 @@ public class Scene2DComponent extends EntityComponentListener
     {
         // Make sure our zoom level stays within the desired bounds
         value = MathUtil.clamp(value, minZoom, maxZoom);
-
+		
         if (_zoom == value)
             return;
 
@@ -272,7 +269,7 @@ public class Scene2DComponent extends EntityComponentListener
         }
 
         _sceneComponents.put(obj, layer);
-        layer.addObjectInternal(obj, obj.displayObject);
+        layer.addObjectInternal(obj);
         obj._scene = this;
         dirty = true;
     }
@@ -511,6 +508,9 @@ public class Scene2DComponent extends EntityComponentListener
 //        }
 
         updateTransform();
+		
+		//Check layers
+		
 
         // Give layers a chance to sort and update.
         for each (var l :SceneLayer in _layers) {
@@ -525,6 +525,7 @@ public class Scene2DComponent extends EntityComponentListener
 
     public function updateTransform () :void
     {
+//		trace("scene updateTransform _transformDirty=", _transformDirty);
         if (_transformDirty == false) {
             return;
         }
@@ -561,6 +562,7 @@ public class Scene2DComponent extends EntityComponentListener
         _rootTransform.identity();
         _rootTransform.translate(_rootPosition.x, _rootPosition.y);
         _rootTransform.scale(zoom, zoom);
+//		trace("Scene zoom=" + zoom);
 
         // Center it appropriately.
 //        SceneAlignment.calculate(_tempPoint, SceneAlignment.TOP_LEFT, sceneView.width,
@@ -580,18 +582,6 @@ public class Scene2DComponent extends EntityComponentListener
         if (_sceneView) {
 //            _sceneView.clearDisplayObjects();
         }
-    }
-
-    internal function removeLayer (layer :SceneLayer) :void
-    {
-        if (!ArrayUtil.contains(_layers, layer)) {
-            throw new Error("No layer: " + layer);
-        }
-
-        _layers[ArrayUtil.indexOf(_layers, layer)] = null;
-        layer.detachedInternal();
-        layer._parentScene = null;
-        _rootSprite.removeChild(layer);
     }
 
 //    /**
@@ -645,6 +635,18 @@ public class Scene2DComponent extends EntityComponentListener
     protected function sceneViewResized (event :Event) :void
     {
         _transformDirty = true;
+    }
+
+    internal function removeLayer (layer :SceneLayer) :void
+    {
+        if (!ArrayUtil.contains(_layers, layer)) {
+            throw new Error("No layer: " + layer);
+        }
+
+        _layers[ArrayUtil.indexOf(_layers, layer)] = null;
+        layer.detachedInternal();
+        layer._parentScene = null;
+        _rootSprite.removeChild(layer);
     }
 
     protected var _currentWorldCenter :Point = new Point();

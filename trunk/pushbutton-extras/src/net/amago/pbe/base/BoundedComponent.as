@@ -22,6 +22,10 @@ public class BoundedComponent extends EntityComponent
 		_bounds = val;
 	}
 	
+	public function clone () :Object
+	{
+		return new BoundedComponent(_bounds.clone() as Bounds);
+	}
     protected var _bounds :Bounds;
 }
 }

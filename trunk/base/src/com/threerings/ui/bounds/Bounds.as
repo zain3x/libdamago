@@ -1,15 +1,16 @@
 package com.threerings.ui.bounds
 {
-import com.threerings.geom.Vector2;
-import com.threerings.util.ClassUtil;
-
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import com.threerings.geom.Vector2;
+import com.threerings.util.ClassUtil;
+import com.threerings.util.Cloneable;
 public class Bounds
+	implements Cloneable
 {
-
+	
     public static function centerBounds (disp :DisplayObject, localBounds :Bounds, x :Number,
         y :Number) :void
     {
@@ -41,6 +42,11 @@ public class Bounds
         disp.x = x - boundingRect.left;
         disp.y = y - boundingRect.top;
     }
+
+    public function get center () :Vector2
+    {
+        throw new Error("Abstract method");
+    }
     public function get height () :Number
     {
         throw new Error("Abstract method");
@@ -56,40 +62,12 @@ public class Bounds
         throw new Error("Abstract method missing from " + ClassUtil.tinyClassName(this));
     }
 
+	public function clone () :Object
+	{
+		throw new Error("Abstract method");
+	}
+
     public function contains (x :Number, y :Number) :Boolean
-    {
-        throw new Error("Abstract method");
-    }
-
-    public function debugDraw (s :Sprite) :void
-    {
-        throw new Error("Abstract method");
-    }
-
-    public function distanceToPoint (p :Vector2) :Number
-    {
-        throw new Error("Abstract method");
-    }
-
-    public function distance (b :Bounds) :Number
-    {
-        throw new Error("Abstract method");
-    }
-
-//    public function enforceBounds (d :DisplayObject) :void
-//    {
-//        var boundedPoint :Point = getBoundedPoint(d.x, d.y);
-//        d.x = boundedPoint.x;
-//        d.y = boundedPoint.y;
-//    }
-
-    public function getBoundedPoint (x :Number, y :Number) :Point
-    {
-        throw new Error("Abstract method");
-    }
-
-    public function getBoundedPointFromMove (originX :Number, originY :Number, targetX :Number,
-        targetY :Number) :Point
     {
         throw new Error("Abstract method");
     }
@@ -109,7 +87,35 @@ public class Bounds
         throw new Error("Abstract method");
     }
 
-    public function get center () :Vector2
+    public function debugDraw (s :Sprite) :void
+    {
+        throw new Error("Abstract method");
+    }
+
+    public function distance (b :Bounds) :Number
+    {
+        throw new Error("Abstract method");
+    }
+
+    public function distanceToPoint (p :Vector2) :Number
+    {
+        throw new Error("Abstract method");
+    }
+
+//    public function enforceBounds (d :DisplayObject) :void
+//    {
+//        var boundedPoint :Point = getBoundedPoint(d.x, d.y);
+//        d.x = boundedPoint.x;
+//        d.y = boundedPoint.y;
+//    }
+
+    public function getBoundedPoint (x :Number, y :Number) :Point
+    {
+        throw new Error("Abstract method");
+    }
+
+    public function getBoundedPointFromMove (originX :Number, originY :Number, targetX :Number,
+        targetY :Number) :Point
     {
         throw new Error("Abstract method");
     }

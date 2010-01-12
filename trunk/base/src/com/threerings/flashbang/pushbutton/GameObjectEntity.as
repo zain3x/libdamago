@@ -5,12 +5,14 @@ import com.pblabs.engine.entity.IEntityComponent;
 import com.pblabs.engine.entity.PropertyReference;
 import com.threerings.flashbang.GameObject;
 import com.threerings.flashbang.Updatable;
+import com.threerings.pbe.tasks.TaskComponent;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.Predicates;
+import com.threerings.util.StringUtil;
 
 import flash.events.Event;
 import flash.events.IEventDispatcher;
@@ -31,6 +33,7 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
     public function GameObjectEntity (name :String = null)
     {
         _name = name;
+		addComponent(new TaskComponent(), TaskComponent.COMPONENT_NAME);
     }
 
     public function get alias () :String
@@ -48,15 +51,33 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
         return db as EntityAppmode;
     }
 
-    public function get deferring () :Boolean
-    {
-        return false;
-    }
-
-    public function set deferring (value :Boolean) :void
-    {
-        throw new Error("Not implemented");
-    }
+	public function get deferring():Boolean
+	{
+		return _deferring;
+	}
+	
+	public function set deferring(value:Boolean):void
+	{
+		if(_deferring == true && value == false)
+		{
+			// Resolve everything, and everything that that resolution triggers.
+			var needReset:Boolean = _deferredComponents.length > 0;
+			while(_deferredComponents.length)
+			{
+				var pc:PendingComponent = _deferredComponents.shift() as PendingComponent;
+				pc.item.register(this, pc.name);
+			}
+			
+			// Mark deferring as done.
+			_deferring = false;
+			
+			// Fire off the reset.
+			if(needReset)
+				doResetComponents();                
+		}
+		
+		_deferring = value;
+	}
 
     public function get eventDispatcher () :IEventDispatcher
     {
@@ -80,23 +101,9 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
 
     public function addComponent (component :IEntityComponent, componentName :String) :Boolean
     {
-        //        if (isLiveObject) {
-        //            //            throw new Error("Components must be added before adding to the ObjectDB. " +
-        //            //                "(To add to the correct groups.  Components define groups).");
-        //            log.warning("Components must be added before adding to the ObjectDB to have the" +
-        //                " IEntity listed in the component groups. ");
-        //        }
-
         if (componentName == null) {
             throw new Error("componentName cannot be null");
         }
-        //        if ((component.name == null || component.name != componentName) && componentName != null) {
-        //            IEntityComponent(component).name = componentName;
-        //        }
-
-        //        if (component.name == null || component.name == "") {
-        //            throw new Error("component.name cannot be null.");
-        //        }
 
         if (lookupComponentByName(componentName) != null) {
             throw new Error("component already exists with name " + componentName + ":" +
@@ -110,19 +117,18 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
         _componentMap.put(componentName, component);
         _components.push(component);
 
-        //        if (!_components.addComponent(component, component.name)) {
-        //            return;
-        //        }
-
-        if (isLiveObject) {
-            //            dbComponent.addComponent(component);
+        if (isLiveObject && !deferring) {
             component.register(this, componentName);
             doResetComponents();
-        }
+        } else {
+			var p:PendingComponent = new PendingComponent();
+			p.item = component;
+			p.name = componentName;
+			_deferredComponents.push(p);
+			deferring = true;
+			return true;
+		}
 
-        //ObjectDB expects the groups defined on addObject, but that might not be the case for
-        //IEntity
-		
 		return true;
     }
 
@@ -200,8 +206,13 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
 
     public function lookupComponentsByType (componentType :Class) :Array
     {
-        throw new Error("Not implemented");
-        ;
+		var comps :Array = [];
+		for each (var c :IEntityComponent in _components) {
+			if (c is componentType) {
+				comps.push(c);
+			}
+		}
+		return comps;
     }
 
     public function removeComponent (component :IEntityComponent) :void
@@ -265,7 +276,8 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
         //        for each (var comp :IEntityComponent in _components.components) {
         //            dbComponent.addComponent(comp);
         //        }
-        doRegisterComponents();
+//        doRegisterComponents();
+		deferring = false;
         //        _components.doRegisterComponents(this);
     }
 
@@ -317,6 +329,17 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
             component.reset();
         }
     }
+	
+	override public function toString() : String
+	{
+		if (stringFunc != null) {
+			return stringFunc(this) as String;
+		} else if (ClassUtil.getClass(this) != GameObjectEntity) {
+			return StringUtil.simpleToString(this);
+		} else {
+			return String(_components[0]);//String the first component
+		}
+	}
 
     protected var _componentMap :Map = Maps.newMapOf(String);
     protected var _components :Array = [];
@@ -324,9 +347,21 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
 
     protected var _name :String = null;
     private var _tempPropertyInfo :PropertyInfo = new PropertyInfo();
+	
+	public var stringFunc :Function;
 
     protected static const log :Log = Log.getLog(GameObjectEntity);
+	protected var _deferredComponents:Array = new Array();
+	private var _deferring:Boolean = true;
 
+	private function traceStack () :void 
+	{
+		try {
+			throw new Error();
+		} catch (e :Error) {
+			trace(e.getStackTrace());
+		}
+	}
     private function findProperty (reference :PropertyReference, willSet :Boolean = false,
         providedPi :PropertyInfo = null, suppressErrors :Boolean = false) :PropertyInfo
     {
@@ -342,16 +377,22 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
         if (!providedPi) {
             providedPi = new PropertyInfo();
         }
+		
+		//Debugging
+		var isTraceStack :Boolean = true;
+		
 
         // Cached lookups apply only to components.
         if (reference.cachedLookup && reference.cachedLookup.length > 0) {
             var cl :Array = reference.cachedLookup;
             var cachedWalk :* = lookupComponentByName(cl[0]);
             if (!cachedWalk) {
-                if (!suppressErrors)
+                if (!suppressErrors) {
                     log.warning(this, "findProperty",
                         "Could not resolve component named '" + cl[0] + "' for property '" +
                         reference.property + "' with cached reference. ");
+					if (isTraceStack) {traceStack();}
+				}
                 //                Profiler.exit("Entity.findProperty");
                 return null;
             }
@@ -359,10 +400,12 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
             for (var i :int = 1; i < cl.length - 1; i++) {
                 cachedWalk = cachedWalk[cl[i]];
                 if (cachedWalk == null) {
-                    if (!suppressErrors)
+                    if (!suppressErrors) {
                         log.warning(this, "findProperty",
                             "Could not resolve property '" + cl[i] + "' for property reference '" +
                             reference.property + "' with cached reference");
+						if (isTraceStack) {traceStack();}
+					}
                     //                    Profiler.exit("Entity.findProperty");
                     return null;
                 }
@@ -394,6 +437,7 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
                 log.warning(this, "findProperty",
                     "Could not resolve component named '" + curLookup + "' for property '" +
                     reference.property + "'");
+				if (isTraceStack) {traceStack();}
                 //                Profiler.exit("Entity.findProperty");
                 return null;
             }
@@ -409,6 +453,7 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
                 log.warning(this, "findProperty",
                     "Could not resolve named object named '" + curLookup + "' for property '" +
                     reference.property + "'");
+				if (isTraceStack) {traceStack();}
                 //                Profiler.exit("Entity.findProperty");
                 return null;
             }
@@ -423,6 +468,7 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
                     "Could not find component '" + curLookup + "' on named entity '" +
                     (parentElem as IEntityExtended).name + "' for property '" + reference.property +
                     "'");
+				if (isTraceStack) {traceStack();}
                 //                Profiler.exit("Entity.findProperty");
                 return null;
             }
@@ -435,6 +481,7 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
                 log.warning(this, "findProperty",
                     "Could not find XML named '" + curLookup + "' for property '" + reference.
                     property + "'");
+				if (isTraceStack) {traceStack();}
                 //                Profiler.exit("Entity.findProperty");
                 return null;
             }
@@ -468,6 +515,7 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
                 log.warning(this, "findProperty",
                     "Could not find component '" + path[1] + "' in XML template '" + path[0].
                     slice(1) + "' for property '" + reference.property + "'");
+				if (isTraceStack) {traceStack();}
                 //                Profiler.exit("Entity.findProperty");
                 return null;
             }
@@ -481,6 +529,7 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
             log.warning(this, "findProperty",
                 "Got a property path that doesn't start with !, #, or @. Started with '" +
                 startChar + "' for property '" + reference.property + "'");
+			if (isTraceStack) {traceStack();}
             //            Profiler.exit("Entity.findProperty");
             return null;
         }
@@ -524,6 +573,7 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
                 log.warning(this, "findProperty",
                     "Could not resolve property '" + curLookup + "' for property reference '" +
                     reference.property + "'");
+				if (isTraceStack) {traceStack();}
                 //                Profiler.exit("Entity.findProperty");
                 return null;
             }
@@ -547,39 +597,47 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
 }
 }
 
+//import com.pblabs.engine.entity.IEntityComponent;
+//import flash.events.IEventDispatcher;
+//import com.threerings.flashbang.Updatable;
+//import com.threerings.util.ArrayUtil;
+//import com.threerings.util.DebugUtil;
+//import com.threerings.util.Log;
+//import com.threerings.util.Map;
+//import com.threerings.util.Maps;
+//final class PropertyInfo
+//{
+//    public var propertyName :String = null;
+//    public var propertyParent :Object = null;
+//
+//    public function clear () :void
+//    {
+//        propertyParent = null;
+//        propertyName = null;
+//    }
+//
+//    public function getValue () :*
+//    {
+//        try {
+//            if (propertyName)
+//                return propertyParent[propertyName];
+//            else
+//                return propertyParent;
+//        } catch (e :Error) {
+//            return null;
+//        }
+//    }
+//
+//    public function setValue (value :*) :void
+//    {
+//        propertyParent[propertyName] = value;
+//    }
+//}
+
 import com.pblabs.engine.entity.IEntityComponent;
-import flash.events.IEventDispatcher;
-import com.threerings.flashbang.Updatable;
-import com.threerings.util.ArrayUtil;
-import com.threerings.util.DebugUtil;
-import com.threerings.util.Log;
-import com.threerings.util.Map;
-import com.threerings.util.Maps;
-final class PropertyInfo
+
+final class PendingComponent
 {
-    public var propertyName :String = null;
-    public var propertyParent :Object = null;
-
-    public function clear () :void
-    {
-        propertyParent = null;
-        propertyName = null;
-    }
-
-    public function getValue () :*
-    {
-        try {
-            if (propertyName)
-                return propertyParent[propertyName];
-            else
-                return propertyParent;
-        } catch (e :Error) {
-            return null;
-        }
-    }
-
-    public function setValue (value :*) :void
-    {
-        propertyParent[propertyName] = value;
-    }
+	public var item:IEntityComponent;
+	public var name:String;
 }

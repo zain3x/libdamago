@@ -43,9 +43,9 @@ public class SceneLayerYOrdering extends SceneLayer
     }
 
     //Subclasses override
-    override protected function objectAdded (obj :*) :void
+	override protected function objectAdded (obj :SceneEntityComponent, disp :DisplayObject) :void
     {
-        super.objectAdded(obj);
+        super.objectAdded(obj, disp);
         var disp :DisplayObject = _sceneComponents.get(obj) as DisplayObject;
         //We add one to the x to force sorting of this new child.
         var loc :Point = new Point(disp.x + 1, disp.y);
@@ -56,9 +56,9 @@ public class SceneLayerYOrdering extends SceneLayer
     }
 
     //Subclasses override
-    override protected function objectRemoved (obj :*) :void
+    override protected function objectRemoved (obj :SceneEntityComponent, disp :DisplayObject) :void
     {
-        super.objectRemoved(obj);
+        super.objectRemoved(obj, disp);
         _locationCache.remove(obj);
         ArrayUtil.removeFirst(_componentsToReorder, obj);
     }
