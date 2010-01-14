@@ -337,7 +337,7 @@ public class GameObjectEntity extends GameObject implements IEntityExtended
 		} else if (ClassUtil.getClass(this) != GameObjectEntity) {
 			return StringUtil.simpleToString(this);
 		} else {
-			return String(_components[0]);//String the first component
+			return String(_components.length > 1 ? _components[1] : this);//String the first component
 		}
 	}
 

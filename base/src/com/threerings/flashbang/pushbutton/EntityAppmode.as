@@ -3,7 +3,6 @@ import com.pblabs.engine.entity.IEntity;
 import com.pblabs.engine.entity.IEntityComponent;
 import com.pblabs.engine.entity.PropertyReference;
 import com.threerings.flashbang.AppMode;
-import com.threerings.pbe.tasks.TaskComponent;
 import com.threerings.util.Log;
 
 public class EntityAppmode extends AppMode
@@ -205,20 +204,20 @@ public class EntityAppmode extends AppMode
 //		return singletonEntity.setProperty(new PropertyReference(prop), val);
 //	}
 
-//    public function getSingletonComponent (name :String) :IEntityComponent
-//    {
-//		var entity :IEntity = getObjectNamed(name) as IEntity;
-//		if (entity == null) {
-//			return null;
-//		}
-//		return entity.lookupComponentByName(name);
-////        var obj :GameObjectEntity = singletonEntity;
-////
-////        if (null == obj) {
-////            return null;
-////        }
-////        return obj.lookupComponentByName(name);
-//    }
+    public function getSingletonComponent (name :String) :IEntityComponent
+    {
+		var entity :IEntity = getObjectNamed(name) as IEntity;
+		if (entity == null) {
+			return null;
+		}
+		return entity.lookupComponentByName(name);
+//        var obj :GameObjectEntity = singletonEntity;
+//
+//        if (null == obj) {
+//            return null;
+//        }
+//        return obj.lookupComponentByName(name);
+    }
 	
 //	public function get singletonEntity () :GameObjectEntity
 //	{
@@ -647,7 +646,7 @@ public class EntityAppmode extends AppMode
     /** Elapsed time for this ObjectDB */
     protected var _elapsedTime :Number = 0;
 	
-	private var _tempPropertyInfo :PropertyInfo = new PropertyInfo();
+	protected var _tempPropertyInfo :PropertyInfo = new PropertyInfo();
 
 //    /** stores a mapping from String to Array */
 //    protected var _groupedComponentsByName :Map = Maps.newMapOf(String);
