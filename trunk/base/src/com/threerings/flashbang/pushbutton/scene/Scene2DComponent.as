@@ -1,9 +1,5 @@
 package com.threerings.flashbang.pushbutton.scene {
 import com.pblabs.engine.entity.PropertyReference;
-import flash.display.Graphics;
-import flash.display.Sprite;
-import flash.events.Event;
-import flash.geom.*;
 import com.threerings.flashbang.Updatable;
 import com.threerings.flashbang.components.LocationComponent;
 import com.threerings.util.ArrayUtil;
@@ -12,6 +8,12 @@ import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.MathUtil;
+
+import flash.display.Graphics;
+import flash.display.Sprite;
+import flash.events.Event;
+import flash.geom.*;
+
 import net.amago.pbe.base.EntityComponentListener;
 /**
  * Basic Rendering2D scene; it is given a SceneView and some
@@ -95,7 +97,25 @@ public class Scene2DComponent extends EntityComponentListener
     {
         return _rootPosition.clone();
     }
-
+	
+	public function set positionX (newX :Number) :void
+	{
+		if (_rootPosition.x == newX) {
+			return;
+		}
+		_rootPosition.x = newX;
+		_transformDirty = true;
+	}
+	
+	public function set positionY (newY :Number) :void
+	{
+		if (_rootPosition.y == newY) {
+			return;
+		}
+		_rootPosition.y = newY;
+		_transformDirty = true;
+	}
+	
     public function set position (value :Point) :void
     {
         if (!value) {
@@ -105,8 +125,9 @@ public class Scene2DComponent extends EntityComponentListener
         var newX :Number = value.x;
         var newY :Number = value.y;
 
-        if (_rootPosition.x == newX && _rootPosition.y == newY)
+        if (_rootPosition.x == newX && _rootPosition.y == newY) {
             return;
+		}
 //        trace("Setting _rootPosition.x=" + newX);
         _rootPosition.x = newX;
         _rootPosition.y = newY;
@@ -422,7 +443,7 @@ public class Scene2DComponent extends EntityComponentListener
 
         _transformDirty = true;
     }
-
+	
     public function removeSceneComponent (obj :SceneEntityComponent) :void
     {
         if (!_sceneComponents.containsKey(obj)) {

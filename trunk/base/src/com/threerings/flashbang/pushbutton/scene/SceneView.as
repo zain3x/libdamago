@@ -13,6 +13,7 @@ import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.Event;
+
 /**
  * This class can be set as the SceneView on the BaseSceneComponent class and is used
  * as the canvas to draw the objects that make up the scene. It defaults to the size
@@ -112,7 +113,7 @@ public class SceneView extends Sprite
     {
         return _debug;
     }
-
+	
     protected var _height :Number = 0;
     protected var _width :Number = 0;
     protected var _debug :Boolean;
