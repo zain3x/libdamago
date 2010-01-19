@@ -2,6 +2,7 @@ package com.threerings.ui {
 import aduros.util.F;
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.ClassUtil;
 import com.threerings.util.DisplayUtils;
 import com.threerings.util.EventHandlerManager;
 import com.threerings.util.Map;
@@ -19,7 +20,8 @@ import flash.events.MouseEvent;
 public class ScrollableElementView extends EventDispatcher
 {
 
-    public static const ELEMENTS_REDRAWN :String = "ScrollableElementView.index";
+    public static const ELEMENTS_REDRAWN :String = ClassUtil.tinyClassName(ScrollableElementView) + 
+		"ElementsRedrawn";
     public function ScrollableElementView (elementContainers :Array,
                                          leftUpButton :InteractiveObject = null,
                                          bottomDownButton :InteractiveObject = null,
