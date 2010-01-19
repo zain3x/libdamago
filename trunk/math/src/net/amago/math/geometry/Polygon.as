@@ -1049,7 +1049,7 @@ public class Polygon
 
     public function toString () :String
     {
-        return "\nPolygon[" + _vertices.join(",    ") + "]";
+        return "Polygon[" + _vertices.join(",    ") + "]";
     }
 
     public function translate (dx :Number, dy :Number) :Polygon
