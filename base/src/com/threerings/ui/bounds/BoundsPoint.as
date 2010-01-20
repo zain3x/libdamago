@@ -1,14 +1,15 @@
 package com.threerings.ui.bounds
 {
-import flash.display.DisplayObject;
-import flash.display.Sprite;
-import flash.geom.Point;
-import flash.geom.Rectangle;
 import com.threerings.geom.Vector2;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.DebugUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MathUtil;
+
+import flash.display.DisplayObject;
+import flash.display.Sprite;
+import flash.geom.Point;
+import flash.geom.Rectangle;
 public class BoundsPoint extends Bounds
 {
     public function BoundsPoint (x :Number, y :Number)
@@ -62,7 +63,7 @@ public class BoundsPoint extends Bounds
 
     override public function convertToGlobal (localDisp :DisplayObject) :Bounds
     {
-        var p1 :Vector2 = Vector2.fromPoint(localDisp.localToGlobal(_point.toPoint()));
+        var p1 :Point = localDisp.localToGlobal(_point.toPoint());
         return new BoundsPoint(p1.x, p1.y);
     }
 

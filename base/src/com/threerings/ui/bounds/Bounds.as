@@ -1,12 +1,13 @@
 package com.threerings.ui.bounds
 {
+import com.threerings.geom.Vector2;
+import com.threerings.util.ClassUtil;
+import com.threerings.util.Cloneable;
+
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-import com.threerings.geom.Vector2;
-import com.threerings.util.ClassUtil;
-import com.threerings.util.Cloneable;
 public class Bounds
 	implements Cloneable
 {
@@ -21,6 +22,9 @@ public class Bounds
 
     public static function convertToGlobal (localBounds :Bounds, localDisp :DisplayObject) :Bounds
     {
+		if (localBounds == null || localDisp == null) {
+			throw new Error("localBounds=" + localBounds + ", localDisp=" + localDisp);
+		}
         return localBounds.convertToGlobal(localDisp);
 //        var globalTranslate :Point = localDisp.localToGlobal(new Point(0, 0));
 //        var globalBounds :Bounds = localBounds.translate(globalTranslate.x, globalTranslate.y);
