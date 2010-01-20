@@ -39,6 +39,15 @@ public /*abstract*/ class SnapAnchor
     {
         return _maxSnapDistance;
     }
+	
+	public function get userData () :*
+	{
+		return _userData;
+	}
+	public function set userData (val :*) :void
+	{
+		_userData = val;
+	}
 
 //    public function get type () :SnapType
 //    {
@@ -68,18 +77,19 @@ public /*abstract*/ class SnapAnchor
 
     public function toString () :String
     {
-        return StringUtil.simpleToString(this, ["type", "index"]);
+        return StringUtil.simpleToString(this, ["index", "userData", "provider"]);
     }
 
     protected function getGlobalSnapToPoint (d :ISnappingObject) :Point
     {
         throw new Error("Abstract method");
     }
-
     protected var _idx :int;
     protected var _maxSnapDistance :Number;
 
     protected var _provider :Object;
+
+	protected var _userData :*;
 //    protected var _snapType :SnapType;
 }
 }

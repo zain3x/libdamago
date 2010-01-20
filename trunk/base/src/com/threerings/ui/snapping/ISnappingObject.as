@@ -13,7 +13,7 @@ public interface ISnappingObject
 	function snapCenterToGlobal (p :Point) :void;
 	
 	function beginSnapping () :void;
-	function endSnapping () :void;
+	function endSnapping (anc :ISnapAnchor = null) :void;
 
     /**
      * x and y are GLOBAL coords.  Convert if necessary.
