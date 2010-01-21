@@ -11,7 +11,7 @@ public interface ISearchable
      * @param    Row that the node is in.
      * @return The INode instance.
      */
-    function getNodeUnder (x :Number, y :Number) :INode;
+//    function getNodeUnder (x :Number, y :Number) :INode;
     /**
      * Gets the terrain transition cost between one node type and another.
      * @param    The first node.
