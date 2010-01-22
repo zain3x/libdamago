@@ -25,6 +25,7 @@ public class Scene2DComponent extends EntityComponentListener
 {
     public static const COMPONENT_NAME :String = ClassUtil.tinyClassName(Scene2DComponent);
     public var dirty :Boolean;
+	
 
     /**
      * Maximum allowed zoom level.

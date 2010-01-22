@@ -5,9 +5,11 @@ import com.pblabs.engine.entity.PropertyReference;
 import com.threerings.flashbang.Updatable;
 import com.threerings.flashbang.components.SceneComponent;
 import com.threerings.util.ClassUtil;
+import com.threerings.util.DebugUtil;
 import com.threerings.util.Log;
 
 import flash.display.DisplayObject;
+import flash.display.Sprite;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
@@ -61,7 +63,9 @@ public class SceneEntityComponent extends EntityComponentListener
     public var zIndexProperty :PropertyReference;
 	
 	public var updateOnEvents :Array = [];
-
+	
+	public var autoAttach :Boolean = true;
+	
     public function SceneEntityComponent (displayObject :DisplayObject = null)
     {
         super();
@@ -464,6 +468,32 @@ public class SceneEntityComponent extends EntityComponentListener
         _zIndex = value;
         _zIndexDirty = true;
     }
+	
+	public function attach () :void
+	{
+		if (_displayObject == null && displayObjectRef != null) {
+			_displayObject = owner.getProperty(displayObjectRef) as DisplayObject;
+		}
+		
+		var scene2D :Scene2DComponent = owner.getProperty(sceneRef) as Scene2DComponent;
+		if (_scene == scene2D) {
+			log.warning("attach", "_scene", _scene, "scene2D", scene2D);
+			return;
+		} 
+		//Add ourselves to the scene
+		if (scene2D != null) {
+			scene2D.addSceneComponent(this);
+		} else {
+			log.warning("attach", "scene2D", scene2D);
+		}
+	}
+	
+	public function detach () :void
+	{
+		if (_scene != null) {
+			_scene.removeSceneComponent(this);
+		}
+	}
 
     public function update (dt :Number) :void
     {
@@ -535,11 +565,15 @@ public class SceneEntityComponent extends EntityComponentListener
         if (!displayObject) {
             return;
         }
+		
 
         if (updateProps) {
             updateProperties();
         }
 
+		if (_scene == null) {
+			return;
+		}
         //        _transformMatrix.identity();
         //        _transformMatrix.scale(_scale.x, _scale.y);
         //        _transformMatrix.translate(-_registrationPoint.x * _scale.x,
@@ -581,31 +615,18 @@ public class SceneEntityComponent extends EntityComponentListener
     {
         super.onRemove();
         // Remove ourselves from the scene when we are removed
-        if (_scene) {
-            _scene.removeSceneComponent(this);
-        }
+		detach();
     }
 	
 	override protected function onReset() : void
 	{
 		super.onReset();
 		
-		if (_scene != null) {
-			_scene.removeSceneComponent(this);
+		detach();
+		
+		if (autoAttach) {
+			attach();
 		}
-		
-		if (_displayObject == null && displayObjectRef != null) {
-			_displayObject = owner.getProperty(displayObjectRef) as DisplayObject;
-		}
-		
-		//Add ourselves to the scene
-		var scene2D :Scene2DComponent = owner.getProperty(sceneRef) as Scene2DComponent;
-		if (scene2D != null) {
-//			log.warning("onReset(), adding ourselves to the Scene2DComponent");
-			scene2D.addSceneComponent(this);
-		}
-		
-		
 	}
 
     protected function updateProperties () :void
