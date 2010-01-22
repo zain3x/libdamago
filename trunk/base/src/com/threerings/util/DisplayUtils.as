@@ -2,6 +2,10 @@
 // $Id$
 
 package com.threerings.util {
+import aduros.util.F;
+
+import com.threerings.text.TextFieldUtil;
+
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
@@ -17,8 +21,6 @@ import flash.net.URLRequest;
 import flash.system.LoaderContext;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
-import com.threerings.text.TextFieldUtil;
-import aduros.util.F;
 
 public class DisplayUtils
 {
@@ -70,7 +72,8 @@ public class DisplayUtils
      * Converts any DisplayObject into a Bitmap.  This can increase the graphical
      * performance of complex MovieClips.
      */
-    public static function convertToBitmap (d :DisplayObject, forceCopy :Boolean = false) :Bitmap
+    public static function convertToBitmap (d :DisplayObject, forceCopy :Boolean = false, 
+		scale :Number = 1) :Bitmap
     {
         if (d == null) {
             return null;
@@ -87,9 +90,10 @@ public class DisplayUtils
         if (int(bounds.width) == 0 || int(bounds.height) == 0) {
             return null;
         }
-        var bd :BitmapData = new BitmapData(int(bounds.width), int(bounds.height), true, 0xffffff);
+        var bd :BitmapData = new BitmapData(int(bounds.width * scale), int(bounds.height * scale), 
+			true, 0xffffff);
 
-        bd.draw(d, new Matrix(1, 0, 0, 1, -bounds.left, -bounds.top));
+        bd.draw(d, new Matrix(scale, 0, 0, scale, -bounds.left * scale, -bounds.top * scale));
 
         var bm :Bitmap = new Bitmap(bd);
         return bm;
@@ -265,11 +269,13 @@ public class DisplayUtils
      * From a list of DisplayObjects on the stage, create a combined bitmap, with a
      * layer order of the supplied array.
      */
-    public static function mergeDisplayObjects (dos :Array, preserveBounds :Boolean = false) :Bitmap
+    public static function mergeDisplayObjects (dos :Array, scale :Number = 1, 
+		preserveBounds :Boolean = false) :Bitmap
     {
         if (dos == null || dos.length == 0) {
             return null;
         }
+		trace("mergeDisplayObjects, scale=" + scale);
         var bounds :Rectangle;
         var stageBounds :Rectangle;
         var disp :DisplayObject;
@@ -292,7 +298,7 @@ public class DisplayUtils
                 return getGlobalScale(d.parent, d.scaleX * currentScale);
             }
         }
-        var scale :Number = getGlobalScale(disp, 1);
+//        var scale :Number = getGlobalScale(disp, 1);
 
         var bd :BitmapData = new BitmapData(int(bounds.width * scale), int(bounds.height * scale),
             true, 0xffffff);
@@ -419,15 +425,16 @@ public class DisplayUtils
      * Creates a bitmap from the given DisplayObject, and positions the bitmap so that it is
      * visually in the same position as the argument.
      */
-    public static function substituteBitmap (d :DisplayObject) :Bitmap
+    public static function substituteBitmap (d :DisplayObject, scale :Number = 1) :Bitmap
     {
+		trace("substituteBitmap, scale=" + scale);
         if (d == null) {
             return null;
         }
         if (d is Bitmap) {
             return d as Bitmap;
         }
-        var bm :Bitmap = convertToBitmap(d);
+        var bm :Bitmap = convertToBitmap(d, true, scale);
         if (bm == null) {
             return null;
         }
@@ -435,8 +442,10 @@ public class DisplayUtils
         var bounds :Rectangle = d.getBounds(d);
 
         //Center it according to the offsets.
-        bm.x = bounds.left;
-        bm.y = bounds.top;
+//        bm.x = bounds.left * scale;
+//        bm.y = bounds.top * scale;
+        bm.x = bounds.left * scale;
+        bm.y = bounds.top * scale;
         return bm;
     }
 
