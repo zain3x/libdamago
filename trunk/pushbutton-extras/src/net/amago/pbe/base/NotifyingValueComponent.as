@@ -26,6 +26,7 @@ public class NotifyingValueComponent extends EntityComponent
     {
         throw new Error("Abstract method, override");
     }
+	
     protected var _event :Event;
     protected var _value :Number = 0;
 }
