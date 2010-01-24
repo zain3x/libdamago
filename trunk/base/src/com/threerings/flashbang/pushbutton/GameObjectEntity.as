@@ -403,7 +403,14 @@ package com.threerings.flashbang.pushbutton {
 				}
 				
 				for (var i :int = 1; i < cl.length - 1; i++) {
-					cachedWalk = cachedWalk[cl[i]];
+					
+					if (cachedWalk is IEntity) {
+						cachedWalk = IEntity(cachedWalk).lookupComponentByName(cl[i]);	
+					} else {
+						cachedWalk = cachedWalk[cl[i]];
+					}
+					
+					
 					if (cachedWalk == null) {
 						if (!suppressErrors) {
 							log.warning(this, "findProperty",
@@ -550,10 +557,15 @@ package com.threerings.flashbang.pushbutton {
 				// Try the next element in the path.
 				var oldParentElem :* = parentElem;
 				try {
-					if (parentElem is XML || parentElem is XMLList)
+					if (parentElem is XML || parentElem is XMLList) {
 						parentElem = parentElem.child(curLookup);
-					else
-						parentElem = parentElem[curLookup];
+					} else { 
+						if (parentElem is IEntity) {
+							parentElem = IEntity(parentElem).lookupComponentByName(curLookup);	
+						} else {
+							parentElem = parentElem[curLookup];
+						}
+					}
 				} catch (e :Error) {
 					parentElem = null;
 				}
