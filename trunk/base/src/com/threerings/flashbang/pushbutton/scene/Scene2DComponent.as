@@ -1,7 +1,6 @@
 package com.threerings.flashbang.pushbutton.scene {
 import com.pblabs.engine.entity.PropertyReference;
 import com.threerings.flashbang.Updatable;
-import com.threerings.flashbang.components.LocationComponent;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
@@ -15,6 +14,8 @@ import flash.events.Event;
 import flash.geom.*;
 
 import net.amago.pbe.base.EntityComponentListener;
+import net.amago.pbe.base.LocationComponent;
+
 /**
  * Basic Rendering2D scene; it is given a SceneView and some
  * DisplayObjectRenderers, and makes sure that they are drawn. Extensible
