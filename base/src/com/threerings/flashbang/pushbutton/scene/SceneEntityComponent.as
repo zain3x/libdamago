@@ -502,9 +502,19 @@ public class SceneEntityComponent extends EntityComponentListener
         if (!displayObject) {
             return;
         }
+		
+		
+//		displayObject.scaleX = owner.getProperty(scaleXRefy, 1) as Number;
+//		displayObject.scaleY = owner.getProperty(scaleYRef, 1) as Number;
+//		displayObject.alpha = owner.getProperty(alphaProperty, 1) as Number;
+//		displayObject.visible = (displayObject.alpha > 0);
+//		displayObject.x = owner.getProperty(xProperty, 0) as Number;
+//		displayObject.y = owner.getProperty(yProperty, 0) as Number;
 //        trace("updating", x, y);
-
-        updateProperties();
+		
+		if (_isDirty) {
+        	updateProperties();
+		}
 
         // Now that we've read all our properties, apply them to our transform.
         if (_transformDirty) {
@@ -608,6 +618,7 @@ public class SceneEntityComponent extends EntityComponentListener
 	protected function updateFromEvent (eventName :String) :void
 	{
 //		trace("updating from ", eventName);
+		_isDirty = true;
 		update(0);
 	}
 
@@ -631,6 +642,8 @@ public class SceneEntityComponent extends EntityComponentListener
 
     protected function updateProperties () :void
     {
+		_transformDirty = true;
+		_isDirty = false;
         // Sync our zIndex.
 //        if (zIndexProperty) {
 //            zIndex = owner.getProperty(zIndexProperty, zIndex);

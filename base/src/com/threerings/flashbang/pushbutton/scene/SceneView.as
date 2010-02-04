@@ -25,8 +25,10 @@ import flash.events.Event;
 public class SceneView extends Sprite
 {
     public static const NAME :String = "SceneView";
+	public var debugDrawBounds :Boolean = false;
 
-    public function SceneView (width :Number = 0, height :Number = 0)
+    public function SceneView (width :Number = 0, height :Number = 0, 
+		backgroundColor :uint = 0xffffff)
     {
         name = NAME;
 
@@ -36,6 +38,8 @@ public class SceneView extends Sprite
             this.width = width;
             this.height = height;
         }
+		
+		DebugUtil.fillRect(this, _width, _height, backgroundColor, 1);
     }
 
     protected function handleAddedToStage (...ignored) :void
@@ -54,7 +58,7 @@ public class SceneView extends Sprite
     override public function set height (value :Number) :void
     {
         _height = value;
-        debugDrawBounds();
+		drawBounds();
     }
 
     override public function get width () :Number
@@ -65,7 +69,7 @@ public class SceneView extends Sprite
     override public function set width (value :Number) :void
     {
         _width = value;
-        debugDrawBounds();
+		drawBounds();
     }
 
     public function addDisplayObject (dobj :DisplayObject) :void
@@ -80,13 +84,15 @@ public class SceneView extends Sprite
         }
     }
 
-    protected function debugDrawBounds () :void
+    protected function drawBounds () :void
     {
-        var g :Graphics = graphics;
-        g.clear();
-        g.lineStyle(1, 1);
-        DebugUtil.fillRect(this, _width, _height, 0xffffff, 1);
-        DebugUtil.drawRect(this, _width, _height, 0xff0000);
+		if (debugDrawBounds) {
+	        var g :Graphics = graphics;
+	        g.clear();
+	        g.lineStyle(1, 1);
+	        
+	        DebugUtil.drawRect(this, _width, _height, 0xff0000);
+		} 
     }
 
     public function removeDisplayObject (dObj :DisplayObject) :void
