@@ -275,7 +275,7 @@ public class DisplayUtils
         if (dos == null || dos.length == 0) {
             return null;
         }
-		trace("mergeDisplayObjects, scale=" + scale);
+//		trace("mergeDisplayObjects, scale=" + scale);
         var bounds :Rectangle;
         var stageBounds :Rectangle;
         var disp :DisplayObject;

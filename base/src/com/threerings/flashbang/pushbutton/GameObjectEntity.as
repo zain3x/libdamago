@@ -8,6 +8,7 @@ package com.threerings.flashbang.pushbutton {
 	import com.threerings.pbe.tasks.TaskComponent;
 	import com.threerings.util.ArrayUtil;
 	import com.threerings.util.ClassUtil;
+	import com.threerings.util.DebugUtil;
 	import com.threerings.util.Log;
 	import com.threerings.util.Map;
 	import com.threerings.util.Maps;
@@ -170,7 +171,7 @@ package com.threerings.flashbang.pushbutton {
 		public function getProperty (property :PropertyReference, defaultVal :* = null) :*
 		{
 			// Look up the property.
-			var info :PropertyInfo = findProperty(property, false, _tempPropertyInfo);
+			var info :PropertyInfo = findProperty(property, false, _tempPropertyInfo, true);
 			var result :* = null;
 			
 			// Get value if any.
@@ -370,6 +371,10 @@ package com.threerings.flashbang.pushbutton {
 		private function findProperty (reference :PropertyReference, willSet :Boolean = false,
 									   providedPi :PropertyInfo = null, suppressErrors :Boolean = false) :PropertyInfo
 		{
+//			trace("findProperty " + (reference == null ? "null" : reference.property));
+//			if (reference != null && reference.property == "@FixtureComponent.desc") {
+//				trace(DebugUtil.getStackTrace());
+//			}
 			// TODO: we use appendChild but relookup the results, can we just use return value?
 			
 			// Early out if we got a null property reference.
@@ -384,8 +389,7 @@ package com.threerings.flashbang.pushbutton {
 			}
 			
 			//Debugging
-			var isTraceStack :Boolean = true;
-			
+			var isTraceStack :Boolean = false;
 			
 			// Cached lookups apply only to components.
 			if (reference.cachedLookup && reference.cachedLookup.length > 0) {

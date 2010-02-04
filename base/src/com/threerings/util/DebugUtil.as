@@ -2,10 +2,6 @@
 // $Id$
 
 package com.threerings.util {
-import aduros.util.F;
-
-import com.threerings.ui.SimpleTextButton;
-
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
@@ -14,7 +10,8 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Rectangle;
 import flash.utils.Dictionary;
-
+import com.threerings.ui.SimpleTextButton;
+import aduros.util.F;
 public class DebugUtil
 {
 
@@ -30,16 +27,37 @@ public class DebugUtil
         }
     }
 
-    public static function drawBoundingRect (layer :Sprite, rootContainer :DisplayObjectContainer,
-        color :int = 0xffffff, alpha :Number = 0) :void
+    public static function createButton (text :String, callback :Function,
+        parent :DisplayObjectContainer, x :int = 0, y :int = 0) :SimpleTextButton
     {
-        var bounds :Rectangle = rootContainer.getBounds(rootContainer);
-        var g :Graphics = layer.graphics;
-        g.clear();
-        g.beginFill(color, alpha);
-        g.drawRect(bounds.left, bounds.top, bounds.width, bounds.height);
-        g.endFill();
+        var b :SimpleTextButton = new SimpleTextButton(text);
+        b.x = x;
+        b.y = y;
+        b.addEventListener(MouseEvent.CLICK, F.callback(callback));
+        parent.addChild(b);
+        return b;
     }
+
+    public static function dictToString (h :Dictionary) :String
+    {
+        var sb :String = "";
+
+        if (h == null) {
+            return sb;
+        }
+        for each (var key :Object in h) {
+            sb += "\n" + key + "=" + h[key];
+        }
+        return sb;
+    }
+	
+	public static function drawBoundingRect (layer :Sprite, rootContainer :DisplayObjectContainer,
+											 color :int = 0x000000, alpha :Number = 1) :void
+	{
+		var bounds :Rectangle = rootContainer.getBounds(rootContainer);
+		var g :Graphics = layer.graphics;
+		g.drawRect(bounds.left, bounds.top, bounds.width, bounds.height);
+	}
 
     public static function drawDot (s :Sprite, color :int = 0x00ffff, r :Number = 10, x :int = 0,
         y :int = 0) :void
@@ -67,6 +85,17 @@ public class DebugUtil
         g.lineStyle(1, color, alpha);
         g.drawRect(0, 0, width, height);
     }
+
+    public static function fillBoundingRect (layer :Sprite, rootContainer :DisplayObjectContainer,
+        color :int = 0xffffff, alpha :Number = 0) :void
+    {
+        var bounds :Rectangle = rootContainer.getBounds(rootContainer);
+        var g :Graphics = layer.graphics;
+        g.clear();
+        g.beginFill(color, alpha);
+        g.drawRect(bounds.left, bounds.top, bounds.width, bounds.height);
+        g.endFill();
+    }
     public static function fillDot (s :Sprite, color :int = 0x00ffff, r :Number = 10, x :int = 0,
         y :int = 0) :void
     {
@@ -84,6 +113,16 @@ public class DebugUtil
         g.drawRect(0, 0, width, height);
         g.endFill();
     }
+	
+	public static function getStackTrace () :String
+	{
+		try {
+			throw new Error();
+		} catch (e :Error) {
+			return e.getStackTrace();
+		}
+		return "";
+	}
 
     public static function mapToProp (arr :Array, propName :String) :Array
     {
@@ -105,19 +144,6 @@ public class DebugUtil
         return sb;
     }
 
-    public static function dictToString (h :Dictionary) :String
-    {
-        var sb :String = "";
-
-        if (h == null) {
-            return sb;
-        }
-        for each (var key :Object in h) {
-            sb += "\n" + key + "=" + h[key];
-        }
-        return sb;
-    }
-
     public static function traceCallback (s :String) :Function
     {
         return F.callback(function () :void {
@@ -131,7 +157,7 @@ public class DebugUtil
         if (d == null) {
             return;
         }
-        trace(space + d + ".name=" + d.name + "  loc=" + d.x, d.y);
+        trace(space + extendedDisplayObjectName(d));
 
         if (d is SimpleButton) {
             traceDisplayChildren(SimpleButton(d).upState, space + "  ");
@@ -151,7 +177,6 @@ public class DebugUtil
 
             }
         }
-
     }
 
     public static function traceParentage (d :DisplayObject, space :String = " ") :void
@@ -160,36 +185,25 @@ public class DebugUtil
             return;
         }
 
-        var lineage :Array = [ d.name ];
+        var lineage :Array = [ extendedDisplayObjectName(d) ];
         var current :DisplayObject = d.parent;
         while (current != null) {
-            lineage.unshift(current.name + "(" + ClassUtil.tinyClassName(current) + ")");
+            lineage.unshift(extendedDisplayObjectName(current));
             current = current.parent;
         }
-        trace("Lineage: " + lineage.join(" "));
+		
+		for (var ii :int = 0; ii < lineage.length; ++ii) {
+			lineage[ii] = space + lineage[ii];
+			space = space + "  ";
+		}
+		
+        trace("Lineage:\n" + lineage.join("\n"));
     }
 	
-	public static function getStackTrace () :String
+	protected static function extendedDisplayObjectName (d :DisplayObject) :String
 	{
-		try {
-			throw new Error();
-		} catch (e :Error) {
-			return e.getStackTrace();
-		}
-		return "";
-	}	
-
-    public static function createButton (text :String, callback :Function,
-        parent :DisplayObjectContainer, x :int = 0, y :int = 0) :SimpleTextButton
-    {
-        var b :SimpleTextButton = new SimpleTextButton(text);
-        b.x = x;
-        b.y = y;
-        b.addEventListener(MouseEvent.CLICK, F.callback(callback));
-        parent.addChild(b);
-        return b;
-    }
-
+		return d + ".name=" + d.name + "  loc=" + d.x + " " + d.y;
+	}
 //    public static function byteClone (obj :Streamable) :Streamable
 //    {
 //        var bytes :ByteArray = new ByteArray();
