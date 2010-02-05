@@ -597,6 +597,14 @@ public class Scene2DComponent extends EntityComponentListener
 
 //        trace("updating scene transform, scale=" + _rootSprite.scaleX);
     }
+	
+	public function get currentViewRect () :Rectangle
+	{
+		if (_sceneView == null) {
+			return null;
+		}
+		return new Rectangle(-_rootPosition.x, -_rootPosition.y, _sceneView.width, _sceneView.height);
+	}
 
     override protected function onRemove () :void
     {

@@ -7,13 +7,11 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.threerings.flashbang.pushbutton.scene {
-import com.threerings.util.DebugUtil;
-
 import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.Event;
-
+import com.threerings.util.DebugUtil;
 /**
  * This class can be set as the SceneView on the BaseSceneComponent class and is used
  * as the canvas to draw the objects that make up the scene. It defaults to the size
@@ -25,6 +23,7 @@ import flash.events.Event;
 public class SceneView extends Sprite
 {
     public static const NAME :String = "SceneView";
+
 	public var debugDrawBounds :Boolean = false;
 
     public function SceneView (width :Number = 0, height :Number = 0, 
@@ -42,12 +41,19 @@ public class SceneView extends Sprite
 		DebugUtil.fillRect(this, _width, _height, backgroundColor, 1);
     }
 
-    protected function handleAddedToStage (...ignored) :void
+    public function get debug () :Boolean
     {
-        removeEventListener(Event.ADDED_TO_STAGE, handleAddedToStage);
-        // Intelligent default size.
-        width = stage.stageWidth;
-        height = stage.stageHeight;
+        return _debug;
+    }
+
+    public function set debug (val :Boolean) : void
+    {
+        _debug = val;
+        var g :Graphics = this.graphics;
+        g.clear();
+        if (_debug) {
+            DebugUtil.drawRect(this, _width, _height, 0);
+        }
     }
 
     override public function get height () :Number
@@ -84,6 +90,16 @@ public class SceneView extends Sprite
         }
     }
 
+    public function removeDisplayObject (dObj :DisplayObject) :void
+    {
+        removeChild(dObj);
+    }
+
+    public function setDisplayObjectIndex (dObj :DisplayObject, index :int) :void
+    {
+        setChildIndex(dObj, index);
+    }
+
     protected function drawBounds () :void
     {
 		if (debugDrawBounds) {
@@ -95,34 +111,17 @@ public class SceneView extends Sprite
 		} 
     }
 
-    public function removeDisplayObject (dObj :DisplayObject) :void
+    protected function handleAddedToStage (...ignored) :void
     {
-        removeChild(dObj);
+        removeEventListener(Event.ADDED_TO_STAGE, handleAddedToStage);
+        // Intelligent default size.
+        width = stage.stageWidth;
+        height = stage.stageHeight;
     }
 
-    public function setDisplayObjectIndex (dObj :DisplayObject, index :int) :void
-    {
-        setChildIndex(dObj, index);
-    }
-
-    public function set debug (val :Boolean) : void
-    {
-        _debug = val;
-        var g :Graphics = this.graphics;
-        g.clear();
-        if (_debug) {
-            DebugUtil.drawRect(this, _width, _height, 0);
-        }
-    }
-
-    public function get debug () :Boolean
-    {
-        return _debug;
-    }
+    protected var _debug :Boolean;
 	
     protected var _height :Number = 0;
     protected var _width :Number = 0;
-    protected var _debug :Boolean;
-
 }
 }
