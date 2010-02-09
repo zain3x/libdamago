@@ -88,6 +88,8 @@ public class DisplayUtils
         }
 
         if (int(bounds.width) == 0 || int(bounds.height) == 0) {
+			log.error("convertToBitmap", "int(bounds.width)", int(bounds.width), 
+				"int(bounds.height)", int(bounds.height));
             return null;
         }
         var bd :BitmapData = new BitmapData(int(bounds.width * scale), int(bounds.height * scale), 
@@ -427,7 +429,7 @@ public class DisplayUtils
      */
     public static function substituteBitmap (d :DisplayObject, scale :Number = 1) :Bitmap
     {
-		trace("substituteBitmap, scale=" + scale);
+		trace("substituteBitmap, scale=" + scale + ", d=" + d);
         if (d == null) {
             return null;
         }
@@ -436,6 +438,7 @@ public class DisplayUtils
         }
         var bm :Bitmap = convertToBitmap(d, true, scale);
         if (bm == null) {
+			log.error("substituteBitmap", "d", d, "scale", scale, "bm", bm);
             return null;
         }
 

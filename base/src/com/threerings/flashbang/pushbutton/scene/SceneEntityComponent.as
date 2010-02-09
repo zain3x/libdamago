@@ -499,7 +499,7 @@ public class SceneEntityComponent extends EntityComponentListener
     {
         // Lookup and apply properties. This only makes adjustments to the
         // underlying DisplayObject if necessary.
-        if (!displayObject) {
+        if (displayObject == null || displayObject.parent == null) {
             return;
         }
 		
@@ -619,7 +619,7 @@ public class SceneEntityComponent extends EntityComponentListener
 	{
 //		trace("updating from ", eventName);
 		_isDirty = true;
-		update(0);
+//		update(0);
 	}
 
     override protected function onRemove () :void
