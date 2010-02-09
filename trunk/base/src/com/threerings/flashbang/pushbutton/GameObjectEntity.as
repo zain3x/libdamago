@@ -3,12 +3,12 @@ package com.threerings.flashbang.pushbutton {
 	import com.pblabs.engine.entity.IEntity;
 	import com.pblabs.engine.entity.IEntityComponent;
 	import com.pblabs.engine.entity.PropertyReference;
+	import com.threerings.downtown.SimpleProfiler;
 	import com.threerings.flashbang.GameObject;
 	import com.threerings.flashbang.Updatable;
 	import com.threerings.pbe.tasks.TaskComponent;
 	import com.threerings.util.ArrayUtil;
 	import com.threerings.util.ClassUtil;
-	import com.threerings.util.DebugUtil;
 	import com.threerings.util.Log;
 	import com.threerings.util.Map;
 	import com.threerings.util.Maps;
@@ -17,6 +17,7 @@ package com.threerings.flashbang.pushbutton {
 	
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
+	import flash.utils.getTimer;
 	
 	import net.amago.pbe.PushbuttonConsts;
 	import net.amago.util.EventDispatcherNonCloning;
@@ -59,6 +60,8 @@ package com.threerings.flashbang.pushbutton {
 		
 		public function set deferring(value:Boolean):void
 		{
+			var before :int;
+			var after :int;
 			if(_deferring == true && value == false)
 			{
 				// Resolve everything, and everything that that resolution triggers.
@@ -66,7 +69,10 @@ package com.threerings.flashbang.pushbutton {
 				while(_deferredComponents.length)
 				{
 					var pc:PendingComponent = _deferredComponents.shift() as PendingComponent;
+					before = getTimer();
 					pc.item.register(this, pc.name);
+					after = getTimer();
+					SimpleProfiler.addTime("Register:" + ClassUtil.tinyClassName(pc.item), (after - before));
 				}
 				
 				// Mark deferring as done.
@@ -331,8 +337,13 @@ package com.threerings.flashbang.pushbutton {
 		
 		protected function doResetComponents () :void
 		{
+			var before :int;
+			var after :int;
 			for each (var component :IEntityComponent in _components) {
+				before = getTimer();
 				component.reset();
+				after = getTimer();
+				SimpleProfiler.addTime("Reset:" + ClassUtil.tinyClassName(component), (after - before)); 
 			}
 		}
 		
