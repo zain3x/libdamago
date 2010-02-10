@@ -471,11 +471,6 @@ public class Scene2DComponent extends EntityComponentListener
         position = transformWorldToScreen(pos);
     }
 
-//    public function sortSpatials (array :Array) :void
-//    {
-//        // Subclasses can set how things are sorted.
-//    }
-
     public function transformSceneToScreen (inPos :Point) :Point
     {
         return _rootSprite.localToGlobal(inPos);
@@ -593,7 +588,6 @@ public class Scene2DComponent extends EntityComponentListener
 //        _rootTransform.translate(_tempPoint.x, _tempPoint.y);
 
         _rootSprite.transform.matrix = _rootTransform;
-
 
 //        trace("updating scene transform, scale=" + _rootSprite.scaleX);
     }
