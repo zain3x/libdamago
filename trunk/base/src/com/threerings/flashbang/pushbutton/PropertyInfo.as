@@ -1,12 +1,6 @@
 package com.threerings.flashbang.pushbutton {
-import com.pblabs.engine.entity.IEntityComponent;
-import flash.events.IEventDispatcher;
-import com.threerings.flashbang.Updatable;
-import com.threerings.util.ArrayUtil;
-import com.threerings.util.DebugUtil;
-import com.threerings.util.Log;
-import com.threerings.util.Map;
-import com.threerings.util.Maps;
+import com.pblabs.engine.entity.IEntity;
+
 final public class PropertyInfo
 {
     public var propertyName :String = null;
@@ -21,10 +15,16 @@ final public class PropertyInfo
     public function getValue () :*
     {
         try {
-            if (propertyName)
-                return propertyParent[propertyName];
-            else
+            if (propertyName) {
+				if (propertyParent is IEntity) {
+					return IEntity(propertyParent).lookupComponentByName(propertyName);			
+				} else {
+	                return propertyParent[propertyName];
+				}
+			}
+            else {
                 return propertyParent;
+			}
         } catch (e :Error) {
             return null;
         }
