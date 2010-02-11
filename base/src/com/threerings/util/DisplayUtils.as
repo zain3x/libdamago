@@ -429,7 +429,6 @@ public class DisplayUtils
      */
     public static function substituteBitmap (d :DisplayObject, scale :Number = 1) :Bitmap
     {
-		trace("substituteBitmap, scale=" + scale + ", d=" + d);
         if (d == null) {
             return null;
         }
@@ -445,8 +444,6 @@ public class DisplayUtils
         var bounds :Rectangle = d.getBounds(d);
 
         //Center it according to the offsets.
-//        bm.x = bounds.left * scale;
-//        bm.y = bounds.top * scale;
         bm.x = bounds.left * scale;
         bm.y = bounds.top * scale;
         return bm;

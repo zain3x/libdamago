@@ -3,6 +3,9 @@ package com.threerings.flashbang.pushbutton {
 	import com.pblabs.engine.entity.IEntity;
 	import com.pblabs.engine.entity.IEntityComponent;
 	import com.pblabs.engine.entity.PropertyReference;
+	import flash.events.Event;
+	import flash.events.IEventDispatcher;
+	import flash.utils.getTimer;
 	import com.threerings.downtown.SimpleProfiler;
 	import com.threerings.flashbang.GameObject;
 	import com.threerings.flashbang.Updatable;
@@ -14,14 +17,8 @@ package com.threerings.flashbang.pushbutton {
 	import com.threerings.util.Maps;
 	import com.threerings.util.Predicates;
 	import com.threerings.util.StringUtil;
-	
-	import flash.events.Event;
-	import flash.events.IEventDispatcher;
-	import flash.utils.getTimer;
-	
 	import net.amago.pbe.PushbuttonConsts;
 	import net.amago.util.EventDispatcherNonCloning;
-	
 	/**
 	 * A modification of GameObject.  Utilizes EntityComponents.
 	 * Rather that creating GameObjects with extra functionality via extending this class,
@@ -31,6 +28,8 @@ package com.threerings.flashbang.pushbutton {
 	public class GameObjectEntity extends GameObject implements IEntityExtended
 	{
 		public static const GROUP_ENTITY :String = "EntityGroup";
+		
+		public var stringFunc :Function;
 		
 		public function GameObjectEntity (name :String = null)
 		{
@@ -282,6 +281,20 @@ package com.threerings.flashbang.pushbutton {
 			return super.getObjectGroup(groupNum - (numComponents + 1));
 		}
 		
+		override public function toString() : String
+		{
+			if (!isLiveObject) {
+				return "Destroyed Object";
+			}
+			if (stringFunc != null) {
+				return stringFunc(this) as String;
+			} else if (ClassUtil.getClass(this) != GameObjectEntity) {
+				return StringUtil.simpleToString(this);
+			} else {
+				return String(_components.length > 1 ? _components[1] : this);//String the first component
+			}
+		}
+		
 		override protected function addedToDB () :void
 		{
 			super.addedToDB();
@@ -347,38 +360,17 @@ package com.threerings.flashbang.pushbutton {
 			}
 		}
 		
-		override public function toString() : String
-		{
-			if (stringFunc != null) {
-				return stringFunc(this) as String;
-			} else if (ClassUtil.getClass(this) != GameObjectEntity) {
-				return StringUtil.simpleToString(this);
-			} else {
-				return String(_components.length > 1 ? _components[1] : this);//String the first component
-			}
-		}
-		
 		protected var _componentMap :Map = Maps.newMapOf(String);
 		protected var _components :Array = [];
+		protected var _deferredComponents:Array = new Array();
+		private var _deferring:Boolean = true;
 		protected var _dispatcher :IEventDispatcher = new EventDispatcherNonCloning();
 		
 		protected var _name :String = null;
 		private var _tempPropertyInfo :PropertyInfo = new PropertyInfo();
 		
-		public var stringFunc :Function;
-		
 		protected static const log :Log = Log.getLog(GameObjectEntity);
-		protected var _deferredComponents:Array = new Array();
-		private var _deferring:Boolean = true;
-		
-		private function traceStack () :void 
-		{
-			try {
-				throw new Error();
-			} catch (e :Error) {
-				trace(e.getStackTrace());
-			}
-		}
+
 		private function findProperty (reference :PropertyReference, willSet :Boolean = false,
 									   providedPi :PropertyInfo = null, suppressErrors :Boolean = false) :PropertyInfo
 		{
@@ -626,6 +618,15 @@ package com.threerings.flashbang.pushbutton {
 			//        Profiler.exit("Entity.findProperty");
 			return null;
 		}
+		
+		private function traceStack () :void 
+		{
+			try {
+				throw new Error();
+			} catch (e :Error) {
+				trace(e.getStackTrace());
+			}
+		}
 	}
 }
 
@@ -667,7 +668,6 @@ package com.threerings.flashbang.pushbutton {
 //}
 
 import com.pblabs.engine.entity.IEntityComponent;
-
 final class PendingComponent
 {
 	public var item:IEntityComponent;
