@@ -11,12 +11,6 @@ public class EntityComponentListener extends EntityComponent
 		_events.freeAllHandlers();
 	}
 	
-//	override protected function onReset() : void
-//	{
-//		super.onReset();
-////		_events.freeAllHandlers();
-//	}
-	
 	/**
 	 * Adds the specified listener to the specified dispatcher for the specified event.
 	 *

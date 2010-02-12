@@ -4,7 +4,7 @@ import com.pblabs.engine.entity.IEntity;
 
 import flash.events.IEventDispatcher;
 
-public interface IEntityExtended extends IEntity, Tasker
+public interface IEntityExtended extends IEntity
 {
     function get globalDispatcher () :IEventDispatcher;
 
