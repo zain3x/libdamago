@@ -23,7 +23,6 @@ package com.threerings.flashbang.pushbutton {
 	
 	import net.amago.pbe.PushbuttonConsts;
 	import net.amago.util.EventDispatcherNonCloning;
-
 	/**
 	 * A modification of GameObject.  Utilizes EntityComponents.
 	 * Rather that creating GameObjects with extra functionality via extending this class,
@@ -35,24 +34,7 @@ package com.threerings.flashbang.pushbutton {
 		public static const GROUP_ENTITY :String = "EntityGroup";
 		
 		public var stringFunc :Function;
-		
-		public function set owningGroup(value:PBGroup):void
-		{
-			throw new Error(ClassUtil.tinyClassName(GameObjectEntity) + 
-				".set owningGroup: Not implemented");
-		}
-		
-		public function get owningGroup():PBGroup
-		{
-			throw new Error(ClassUtil.tinyClassName(GameObjectEntity) + 
-				".get owningGroup: Not implemented");
-		}
-		
-		
-		public function get debugcomponents () :Array
-		{
-			return _components != null ? _components.concat() : [];
-		}
+
 		public function GameObjectEntity (name :String = null)
 		{
 			_name = name;
@@ -72,6 +54,12 @@ package com.threerings.flashbang.pushbutton {
 		public function get dbComponent () :EntityAppmode
 		{
 			return db as EntityAppmode;
+		}
+		
+		
+		public function get debugcomponents () :Array
+		{
+			return _components != null ? _components.concat() : [];
 		}
 		
 		public function get deferring():Boolean
@@ -132,6 +120,18 @@ package com.threerings.flashbang.pushbutton {
 			return _name;
 		}
 		
+		public function get owningGroup():PBGroup
+		{
+			throw new Error(ClassUtil.tinyClassName(GameObjectEntity) + 
+				".get owningGroup: Not implemented");
+		}
+		
+		public function set owningGroup(value:PBGroup):void
+		{
+			throw new Error(ClassUtil.tinyClassName(GameObjectEntity) + 
+				".set owningGroup: Not implemented");
+		}
+		
 		public function addComponent (component :IEntityComponent, componentName :String) :Boolean
 		{
 			if (componentName == null) {
@@ -150,6 +150,10 @@ package com.threerings.flashbang.pushbutton {
 			_componentMap.put(componentName, component);
 			_components.push(component);
 			
+//			if (isLiveObject) {
+//				throw new Error(ClassUtil.tinyClassName(this) + " cannot handle adding components" +
+//					" after adding to the ObjectDB: it fucks with the ObjectDB groups.");
+//			}
 			if (isLiveObject && !deferring) {
 				component.register(this, componentName);
 				doResetComponents();
@@ -252,6 +256,11 @@ package com.threerings.flashbang.pushbutton {
 		{
 			if (!_componentMap.containsKey(component.name)) {
 				return;
+			}
+			
+			if (isLiveObject) {
+				throw new Error(ClassUtil.tinyClassName(this) + " cannot handle removing " +
+					"components while still a live GameObject: it fucks with the ObjectDB groups.");
 			}
 			
 			//        if (!_components.doRemoveComponent(component)) {
