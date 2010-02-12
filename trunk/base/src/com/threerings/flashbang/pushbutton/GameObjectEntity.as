@@ -29,7 +29,7 @@ package com.threerings.flashbang.pushbutton {
 	 * behaviour is built via adding IEntityComponents.
 	 *
 	 */
-	public class GameObjectEntity extends GameObject implements IEntityExtended
+	public class GameObjectEntity extends GameObject implements IEntity
 	{
 		public static const GROUP_ENTITY :String = "EntityGroup";
 		
