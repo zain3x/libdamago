@@ -6,6 +6,7 @@ package com.threerings.flashbang.pushbutton {
 	import com.pblabs.engine.entity.PropertyReference;
 	import com.threerings.downtown.SimpleProfiler;
 	import com.threerings.flashbang.GameObject;
+	import com.threerings.flashbang.ObjectDB;
 	import com.threerings.flashbang.Updatable;
 	import com.threerings.pbe.tasks.TaskComponent;
 	import com.threerings.util.ArrayUtil;
@@ -181,7 +182,7 @@ package com.threerings.flashbang.pushbutton {
 		
 		public function doesPropertyExist (property :PropertyReference) :Boolean
 		{
-			return findProperty(property, false, _tempPropertyInfo, true) != null;
+			return findProperty(db, this, property, false, _tempPropertyInfo, true) != null;
 		}
 		
 		public function getEntitiesInGroup (groupName :String) :Array //<IEntity>
@@ -189,15 +190,15 @@ package com.threerings.flashbang.pushbutton {
 			return db.getObjectsInGroup(groupName).filter(Predicates.createIs(IEntity));
 		}
 		
-		public function getEntity (entityName :String) :IEntityExtended
+		public function getEntity (entityName :String) :IEntity
 		{
-			return db.getObjectNamed(entityName) as IEntityExtended;
+			return db.getObjectNamed(entityName) as IEntity;
 		}
 		
 		public function getProperty (property :PropertyReference, defaultVal :* = null) :*
 		{
 			// Look up the property.
-			var info :PropertyInfo = findProperty(property, false, _tempPropertyInfo, true);
+			var info :PropertyInfo = findProperty(db, this, property, false, _tempPropertyInfo, true);
 			var result :* = null;
 			
 			// Get value if any.
@@ -271,7 +272,7 @@ package com.threerings.flashbang.pushbutton {
 		public function setProperty (property :PropertyReference, value :*) :void
 		{
 			// Look up and set.
-			var info :PropertyInfo = findProperty(property, true, _tempPropertyInfo);
+			var info :PropertyInfo = findProperty(db, this, property, true, _tempPropertyInfo);
 			if (info != null) {
 				info.setValue(value);
 			} else {
@@ -392,8 +393,9 @@ package com.threerings.flashbang.pushbutton {
 		
 		protected static const log :Log = Log.getLog(GameObjectEntity);
 
-		private function findProperty (reference :PropertyReference, willSet :Boolean = false,
-									   providedPi :PropertyInfo = null, suppressErrors :Boolean = false) :PropertyInfo
+		internal static function findProperty (db :ObjectDB, entity :IEntity, 
+			reference :PropertyReference, willSet :Boolean = false, providedPi :PropertyInfo = null, 
+			suppressErrors :Boolean = false) :PropertyInfo
 		{
 //			trace("findProperty " + (reference == null ? "null" : reference.property));
 //			if (reference != null && reference.property == "@FixtureComponent.desc") {
@@ -418,10 +420,10 @@ package com.threerings.flashbang.pushbutton {
 			// Cached lookups apply only to components.
 			if (reference.cachedLookup && reference.cachedLookup.length > 0) {
 				var cl :Array = reference.cachedLookup;
-				var cachedWalk :* = lookupComponentByName(cl[0]);
+				var cachedWalk :* = entity.lookupComponentByName(cl[0]);
 				if (!cachedWalk) {
 					if (!suppressErrors) {
-						log.warning(this, "findProperty",
+						log.warning("findProperty",
 							"Could not resolve component named '" + cl[0] + "' for property '" +
 							reference.property + "' with cached reference. ");
 						if (isTraceStack) {traceStack();}
@@ -441,7 +443,7 @@ package com.threerings.flashbang.pushbutton {
 					
 					if (cachedWalk == null) {
 						if (!suppressErrors) {
-							log.warning(this, "findProperty",
+							log.warning("findProperty",
 								"Could not resolve property '" + cl[i] + "' for property reference '" +
 								reference.property + "' with cached reference");
 							if (isTraceStack) {traceStack();}
@@ -472,9 +474,9 @@ package com.threerings.flashbang.pushbutton {
 			var parentElem :*;
 			if (startChar == "@") {
 				// Component reference, look up the component by name.
-				parentElem = lookupComponentByName(curLookup);
+				parentElem = entity.lookupComponentByName(curLookup);
 				if (!parentElem) {
-					log.warning(this, "findProperty",
+					log.warning("findProperty",
 						"Could not resolve component named '" + curLookup + "' for property '" +
 						reference.property + "'");
 					if (isTraceStack) {traceStack();}
@@ -490,7 +492,7 @@ package com.threerings.flashbang.pushbutton {
 				//            parentElem = NameManager.instance.lookup(curLookup);
 				parentElem = db.getObjectNamed(curLookup);
 				if (!parentElem) {
-					log.warning(this, "findProperty",
+					log.warning("findProperty",
 						"Could not resolve named object named '" + curLookup + "' for property '" +
 						reference.property + "'");
 					if (isTraceStack) {traceStack();}
@@ -502,11 +504,11 @@ package com.threerings.flashbang.pushbutton {
 				curIdx++;
 				curLookup = path[1];
 				var comLookup :IEntityComponent =
-					(parentElem as IEntityExtended).lookupComponentByName(curLookup);
+					(parentElem as IEntity).lookupComponentByName(curLookup);
 				if (!comLookup) {
-					log.warning(this, "findProperty",
+					log.warning("findProperty",
 						"Could not find component '" + curLookup + "' on named entity '" +
-						(parentElem as IEntityExtended).name + "' for property '" + reference.property +
+						(parentElem as IEntity).name + "' for property '" + reference.property +
 						"'");
 					if (isTraceStack) {traceStack();}
 					//                Profiler.exit("Entity.findProperty");
@@ -518,7 +520,7 @@ package com.threerings.flashbang.pushbutton {
 				// templates and entities - no groups.
 				//            parentElem = TemplateManager.instance.getXML(curLookup, "template", "entity");
 				if (!parentElem) {
-					log.warning(this, "findProperty",
+					log.warning("findProperty",
 						"Could not find XML named '" + curLookup + "' for property '" + reference.
 						property + "'");
 					if (isTraceStack) {traceStack();}
@@ -552,7 +554,7 @@ package com.threerings.flashbang.pushbutton {
 				
 				// Error if we don't have it!
 				if (!nextElem) {
-					log.warning(this, "findProperty",
+					log.warning("findProperty",
 						"Could not find component '" + path[1] + "' in XML template '" + path[0].
 						slice(1) + "' for property '" + reference.property + "'");
 					if (isTraceStack) {traceStack();}
@@ -566,7 +568,7 @@ package com.threerings.flashbang.pushbutton {
 				// Indicate we are dealing with xml.
 				isTemplateXML = true;
 			} else {
-				log.warning(this, "findProperty",
+				log.warning("findProperty",
 					"Got a property path that doesn't start with !, #, or @. Started with '" +
 					startChar + "' for property '" + reference.property + "'");
 				if (isTraceStack) {traceStack();}
@@ -615,7 +617,7 @@ package com.threerings.flashbang.pushbutton {
 				}
 				
 				if (gotEmpty) {
-					log.warning(this, "findProperty",
+					log.warning("findProperty",
 						"Could not resolve property '" + curLookup + "' for property reference '" +
 						reference.property + "'");
 					if (isTraceStack) {traceStack();}
@@ -640,7 +642,7 @@ package com.threerings.flashbang.pushbutton {
 			return null;
 		}
 		
-		private function traceStack () :void 
+		internal static function traceStack () :void 
 		{
 			try {
 				throw new Error();
