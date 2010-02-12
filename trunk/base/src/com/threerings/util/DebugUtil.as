@@ -138,7 +138,7 @@ public class DebugUtil
         if (h == null) {
             return sb;
         }
-        for each (var key :Object in h.keys()) {
+        for each (var key :* in h.keys()) {
             sb += "\n" + key + "=" + h.get(key);
         }
         return sb;

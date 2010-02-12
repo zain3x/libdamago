@@ -1,11 +1,9 @@
 package com.threerings.flashbang.pushbutton {
 	import com.pblabs.engine.core.ITickedObject;
+	import com.pblabs.engine.core.PBGroup;
 	import com.pblabs.engine.entity.IEntity;
 	import com.pblabs.engine.entity.IEntityComponent;
 	import com.pblabs.engine.entity.PropertyReference;
-	import flash.events.Event;
-	import flash.events.IEventDispatcher;
-	import flash.utils.getTimer;
 	import com.threerings.downtown.SimpleProfiler;
 	import com.threerings.flashbang.GameObject;
 	import com.threerings.flashbang.Updatable;
@@ -17,8 +15,14 @@ package com.threerings.flashbang.pushbutton {
 	import com.threerings.util.Maps;
 	import com.threerings.util.Predicates;
 	import com.threerings.util.StringUtil;
+	
+	import flash.events.Event;
+	import flash.events.IEventDispatcher;
+	import flash.utils.getTimer;
+	
 	import net.amago.pbe.PushbuttonConsts;
 	import net.amago.util.EventDispatcherNonCloning;
+
 	/**
 	 * A modification of GameObject.  Utilizes EntityComponents.
 	 * Rather that creating GameObjects with extra functionality via extending this class,
@@ -31,6 +35,23 @@ package com.threerings.flashbang.pushbutton {
 		
 		public var stringFunc :Function;
 		
+		public function set owningGroup(value:PBGroup):void
+		{
+			throw new Error(ClassUtil.tinyClassName(GameObjectEntity) + 
+				".set owningGroup: Not implemented");
+		}
+		
+		public function get owningGroup():PBGroup
+		{
+			throw new Error(ClassUtil.tinyClassName(GameObjectEntity) + 
+				".get owningGroup: Not implemented");
+		}
+		
+		
+		public function get debugcomponents () :Array
+		{
+			return _components != null ? _components.concat() : [];
+		}
 		public function GameObjectEntity (name :String = null)
 		{
 			_name = name;
