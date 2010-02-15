@@ -2,6 +2,10 @@
 // $Id$
 
 package com.threerings.util {
+import aduros.util.F;
+
+import com.threerings.ui.SimpleTextButton;
+
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
@@ -10,8 +14,6 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Rectangle;
 import flash.utils.Dictionary;
-import com.threerings.ui.SimpleTextButton;
-import aduros.util.F;
 public class DebugUtil
 {
 
@@ -85,6 +87,23 @@ public class DebugUtil
         g.lineStyle(1, color, alpha);
         g.drawRect(0, 0, width, height);
     }
+	
+	public static function drawRectangle (layer :Sprite, rect :Rectangle, color :int = 0x000000,
+									 alpha :Number = 1) :void
+	{
+		var g :Graphics = layer.graphics;
+		g.lineStyle(1, color, alpha);
+		g.drawRect(rect.left, rect.top, rect.width, rect.height);
+	}
+	
+	public static function fillRectangle (layer :Sprite, rect :Rectangle, color :int = 0x000000,
+										  alpha :Number = 1) :void
+	{
+		var g :Graphics = layer.graphics;
+		g.beginFill(color, alpha);
+		g.drawRect(rect.left, rect.top, rect.width, rect.height);
+		g.endFill();
+	}
 
     public static function fillBoundingRect (layer :Sprite, rootContainer :DisplayObjectContainer,
         color :int = 0xffffff, alpha :Number = 0) :void

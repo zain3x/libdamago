@@ -59,7 +59,10 @@ package com.threerings.flashbang.pushbutton {
 		
 		public function get debugcomponents () :Array
 		{
-			return _components != null ? _components.concat() : [];
+			return _components != null ? _components.map(
+				function (c :IEntityComponent, ... _) :String {
+					return "\n" + c.name + "=" + c
+				}) : [];
 		}
 		
 		public function get deferring():Boolean
@@ -314,6 +317,9 @@ package com.threerings.flashbang.pushbutton {
 		
 		override public function toString() : String
 		{
+			if (stringFunc == null) {
+				return super.toString();
+			}
 			if (!isLiveObject) {
 				return "Destroyed Object";
 			}
