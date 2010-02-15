@@ -49,6 +49,11 @@ public class EntityAppmode extends AppMode
 		return result;
 	}
 	
+	public function getPropertyFromPropString (propertyString :String, defaultVal :* = null) :*
+	{
+		return getProperty(new PropertyReference(propertyString), defaultVal);
+	}
+	
     public function getSingletonComponent (name :String) :IEntityComponent
     {
 		var entity :IEntity = getObjectNamed(name) as IEntity;
