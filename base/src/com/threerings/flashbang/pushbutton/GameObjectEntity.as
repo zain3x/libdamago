@@ -5,6 +5,7 @@ package com.threerings.flashbang.pushbutton {
 	import com.pblabs.engine.entity.IEntityComponent;
 	import com.pblabs.engine.entity.PropertyReference;
 	import com.threerings.downtown.SimpleProfiler;
+	import com.threerings.downtown.debug.Profiler;
 	import com.threerings.flashbang.GameObject;
 	import com.threerings.flashbang.ObjectDB;
 	import com.threerings.flashbang.Updatable;
@@ -23,6 +24,7 @@ package com.threerings.flashbang.pushbutton {
 	
 	import net.amago.pbe.PushbuttonConsts;
 	import net.amago.util.EventDispatcherNonCloning;
+
 	/**
 	 * A modification of GameObject.  Utilizes EntityComponents.
 	 * Rather that creating GameObjects with extra functionality via extending this class,
@@ -166,8 +168,8 @@ package com.threerings.flashbang.pushbutton {
 				p.name = componentName;
 				_deferredComponents.push(p);
 				deferring = true;
-				return true;
 			}
+			
 			
 			return true;
 		}
@@ -175,10 +177,6 @@ package com.threerings.flashbang.pushbutton {
 		public function deserialize (xml :XML, registerComponents :Boolean = true) :void
 		{
 		}
-		
-		//    public function addComponent (component:IEntityComponent, componentName:String) :void
-		//    {
-		//    }
 		
 		public function destroy () :void
 		{
@@ -297,9 +295,7 @@ package com.threerings.flashbang.pushbutton {
 		
 		override public function destroySelf () :void
 		{
-			if (isLiveObject) {
-				super.destroySelf();
-			}
+			super.destroySelf();
 		}
 		
 		//GameObjectEntity groups include the component classnames.
@@ -347,17 +343,12 @@ package com.threerings.flashbang.pushbutton {
 		{
 			// Give listeners a chance to act before we start destroying stuff.
 			dispatchEvent(new Event(PushbuttonConsts.EVENT_ENTITY_DESTROYED));
-			super.destroyed();
 			
 			for each (var c :IEntityComponent in _components) {
 				c.unregister();
 			}
 			_components = null;
 			_componentMap.clear();
-			//        for each (var comp :IEntityComponent in _components.components) {
-			//            dbComponent.removeComponent(comp);
-			//        }
-			//        _components.shutdown();
 		}
 		
 		override protected function update (dt :Number) :void

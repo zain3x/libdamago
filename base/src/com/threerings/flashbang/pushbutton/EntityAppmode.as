@@ -3,7 +3,11 @@ import com.pblabs.engine.entity.IEntity;
 import com.pblabs.engine.entity.IEntityComponent;
 import com.pblabs.engine.entity.PropertyReference;
 import com.threerings.flashbang.AppMode;
+import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.GameObjectRef;
+import com.threerings.flashbang.debug.Profiler;
 import com.threerings.util.Log;
+
 public class EntityAppmode extends AppMode
 {
     public static const OBJECT_ADDED :String = "objectAdded";
@@ -13,7 +17,7 @@ public class EntityAppmode extends AppMode
     {
         super();
     }
-
+	
     public function get elapsedTime () :Number
     {
         return _elapsedTime;
