@@ -11,13 +11,8 @@
       <compilerSourcePathEntry kind="1" linkType="1" path="lib/libaduros/src"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="lib/facebook/source/actionscript"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="lib/flashbang/src"/>
-      <compilerSourcePathEntry kind="1" linkType="1" path="facebook/src"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="lib/pushbuttonengine/src"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="/Users/dion/Documents/storage/projects/pushbutton-tasks/src"/>
-      <compilerSourcePathEntry kind="1" linkType="1" path="pushbutton-extras/src"/>
-      <compilerSourcePathEntry kind="1" linkType="1" path="math/src"/>
-      <compilerSourcePathEntry kind="1" linkType="1" path="base/src"/>
-      <compilerSourcePathEntry kind="1" linkType="1" path="pathfinding/src"/>
     </compilerSourcePath>
     <libraryPath defaultLinkType="1">
       <libraryPathEntry kind="4" path="">
