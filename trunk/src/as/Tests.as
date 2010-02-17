@@ -1,4 +1,4 @@
-package
+package 
 {
 import com.threerings.flashbang.debug.FlashbangAppRunner;
 import com.threerings.flashbang.pushbutton.scene.Scene2DComponent;
