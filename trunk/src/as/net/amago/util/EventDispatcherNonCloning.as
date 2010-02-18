@@ -1,10 +1,12 @@
 package net.amago.util {
-import flash.events.Event;
-import flash.events.IEventDispatcher;
-import flash.utils.Dictionary;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
+import com.threerings.util.Util;
+
+import flash.events.Event;
+import flash.events.IEventDispatcher;
+import flash.utils.Dictionary;
 
 /**
  * Different implementation of IEventDispatcher.  Events are not cloned, so can safely be
@@ -84,7 +86,8 @@ public class EventDispatcherNonCloning implements IEventDispatcher
 
     public function toString () :String
     {
-        return ClassUtil.tinyClassName(this);
+        return ClassUtil.tinyClassName(this) + "eventListeners=" + Util.keys(_eventListeners) +
+			":" + Util.values(_eventListeners);
     }
 
     public function willTrigger (type :String) :Boolean

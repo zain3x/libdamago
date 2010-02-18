@@ -4,14 +4,13 @@ package com.threerings.flashbang.pushbutton {
 	import com.pblabs.engine.entity.IEntity;
 	import com.pblabs.engine.entity.IEntityComponent;
 	import com.pblabs.engine.entity.PropertyReference;
-	import com.threerings.downtown.SimpleProfiler;
-	import com.threerings.downtown.debug.Profiler;
 	import com.threerings.flashbang.GameObject;
 	import com.threerings.flashbang.ObjectDB;
 	import com.threerings.flashbang.Updatable;
 	import com.threerings.pbe.tasks.TaskComponent;
 	import com.threerings.util.ArrayUtil;
 	import com.threerings.util.ClassUtil;
+	import com.threerings.util.DebugUtil;
 	import com.threerings.util.Log;
 	import com.threerings.util.Map;
 	import com.threerings.util.Maps;
@@ -24,7 +23,7 @@ package com.threerings.flashbang.pushbutton {
 	
 	import net.amago.pbe.PushbuttonConsts;
 	import net.amago.util.EventDispatcherNonCloning;
-
+	
 	/**
 	 * A modification of GameObject.  Utilizes EntityComponents.
 	 * Rather that creating GameObjects with extra functionality via extending this class,
@@ -36,7 +35,7 @@ package com.threerings.flashbang.pushbutton {
 		public static const GROUP_ENTITY :String = "EntityGroup";
 		
 		public var stringFunc :Function;
-
+		
 		public function GameObjectEntity (name :String = null)
 		{
 			_name = name;
@@ -86,7 +85,6 @@ package com.threerings.flashbang.pushbutton {
 					before = getTimer();
 					pc.item.register(this, pc.name);
 					after = getTimer();
-					SimpleProfiler.addTime("Register:" + ClassUtil.tinyClassName(pc.item), (after - before));
 				}
 				
 				// Mark deferring as done.
@@ -155,10 +153,10 @@ package com.threerings.flashbang.pushbutton {
 			_componentMap.put(componentName, component);
 			_components.push(component);
 			
-//			if (isLiveObject) {
-//				throw new Error(ClassUtil.tinyClassName(this) + " cannot handle adding components" +
-//					" after adding to the ObjectDB: it fucks with the ObjectDB groups.");
-//			}
+			//			if (isLiveObject) {
+			//				throw new Error(ClassUtil.tinyClassName(this) + " cannot handle adding components" +
+			//					" after adding to the ObjectDB: it fucks with the ObjectDB groups.");
+			//			}
 			if (isLiveObject && !deferring) {
 				component.register(this, componentName);
 				doResetComponents();
@@ -384,7 +382,6 @@ package com.threerings.flashbang.pushbutton {
 				before = getTimer();
 				component.reset();
 				after = getTimer();
-				SimpleProfiler.addTime("Reset:" + ClassUtil.tinyClassName(component), (after - before)); 
 			}
 		}
 		
@@ -398,20 +395,22 @@ package com.threerings.flashbang.pushbutton {
 		private var _tempPropertyInfo :PropertyInfo = new PropertyInfo();
 		
 		protected static const log :Log = Log.getLog(GameObjectEntity);
-
+		
 		internal static function findProperty (db :ObjectDB, entity :IEntity, 
-			reference :PropertyReference, willSet :Boolean = false, providedPi :PropertyInfo = null, 
-			suppressErrors :Boolean = false) :PropertyInfo
+											   reference :PropertyReference, willSet :Boolean = false, providedPi :PropertyInfo = null, 
+											   suppressErrors :Boolean = false) :PropertyInfo
 		{
-//			trace("findProperty " + (reference == null ? "null" : reference.property));
-//			if (reference != null && reference.property == "@FixtureComponent.desc") {
-//				trace(DebugUtil.getStackTrace());
-//			}
+			//			trace("findProperty " + (reference == null ? "null" : reference.property));
+			//			if (reference != null && reference.property == "@FixtureComponent.desc") {
+			//				trace(DebugUtil.getStackTrace());
+			//			}
 			// TODO: we use appendChild but relookup the results, can we just use return value?
 			
 			// Early out if we got a null property reference.
-			if (!reference || reference.property == null || reference.property == "")
+			if (!reference || reference.property == null || reference.property == "") {
 				return null;
+			}
+			//			Profiler.enter("Entity.findProperty " + reference.property);
 			
 			//        Profiler.enter("Entity.findProperty");
 			
@@ -434,6 +433,7 @@ package com.threerings.flashbang.pushbutton {
 							reference.property + "' with cached reference. ");
 						if (isTraceStack) {traceStack();}
 					}
+					//					Profiler.exit("Entity.findProperty " + reference.property);
 					//                Profiler.exit("Entity.findProperty");
 					return null;
 				}
@@ -454,6 +454,7 @@ package com.threerings.flashbang.pushbutton {
 								reference.property + "' with cached reference");
 							if (isTraceStack) {traceStack();}
 						}
+						//						Profiler.exit("Entity.findProperty " + reference.property);
 						//                    Profiler.exit("Entity.findProperty");
 						return null;
 					}
@@ -462,6 +463,7 @@ package com.threerings.flashbang.pushbutton {
 				var cachedPi :PropertyInfo = providedPi;
 				cachedPi.propertyParent = cachedWalk;
 				cachedPi.propertyName = (cl.length > 1) ? cl[cl.length - 1] : null;
+				//				Profiler.exit("Entity.findProperty " + reference.property);
 				//            Profiler.exit("Entity.findProperty");
 				return cachedPi;
 			}
@@ -486,6 +488,7 @@ package com.threerings.flashbang.pushbutton {
 						"Could not resolve component named '" + curLookup + "' for property '" +
 						reference.property + "'");
 					if (isTraceStack) {traceStack();}
+					//					Profiler.exit("Entity.findProperty " + reference.property);
 					//                Profiler.exit("Entity.findProperty");
 					return null;
 				}
@@ -502,6 +505,7 @@ package com.threerings.flashbang.pushbutton {
 						"Could not resolve named object named '" + curLookup + "' for property '" +
 						reference.property + "'");
 					if (isTraceStack) {traceStack();}
+					//					Profiler.exit("Entity.findProperty " + reference.property);
 					//                Profiler.exit("Entity.findProperty");
 					return null;
 				}
@@ -517,6 +521,7 @@ package com.threerings.flashbang.pushbutton {
 						(parentElem as IEntity).name + "' for property '" + reference.property +
 						"'");
 					if (isTraceStack) {traceStack();}
+					//					Profiler.exit("Entity.findProperty " + reference.property);
 					//                Profiler.exit("Entity.findProperty");
 					return null;
 				}
@@ -530,6 +535,7 @@ package com.threerings.flashbang.pushbutton {
 						"Could not find XML named '" + curLookup + "' for property '" + reference.
 						property + "'");
 					if (isTraceStack) {traceStack();}
+					//					Profiler.exit("Entity.findProperty " + reference.property);
 					//                Profiler.exit("Entity.findProperty");
 					return null;
 				}
@@ -564,6 +570,7 @@ package com.threerings.flashbang.pushbutton {
 						"Could not find component '" + path[1] + "' in XML template '" + path[0].
 						slice(1) + "' for property '" + reference.property + "'");
 					if (isTraceStack) {traceStack();}
+					//					Profiler.exit("Entity.findProperty " + reference.property);
 					//                Profiler.exit("Entity.findProperty");
 					return null;
 				}
@@ -578,6 +585,7 @@ package com.threerings.flashbang.pushbutton {
 					"Got a property path that doesn't start with !, #, or @. Started with '" +
 					startChar + "' for property '" + reference.property + "'");
 				if (isTraceStack) {traceStack();}
+				//				Profiler.exit("Entity.findProperty " + reference.property);
 				//            Profiler.exit("Entity.findProperty");
 				return null;
 			}
@@ -627,6 +635,7 @@ package com.threerings.flashbang.pushbutton {
 						"Could not resolve property '" + curLookup + "' for property reference '" +
 						reference.property + "'");
 					if (isTraceStack) {traceStack();}
+					//					Profiler.exit("Entity.findProperty " + reference.property);
 					//                Profiler.exit("Entity.findProperty");
 					return null;
 				}
@@ -640,21 +649,18 @@ package com.threerings.flashbang.pushbutton {
 				var pi :PropertyInfo = providedPi;
 				pi.propertyParent = parentElem;
 				pi.propertyName = curLookup;
+				//				Profiler.exit("Entity.findProperty " + reference.property);
 				//            Profiler.exit("Entity.findProperty");
 				return pi;
 			}
-			
+			//			Profiler.exit("Entity.findProperty " + reference.property);
 			//        Profiler.exit("Entity.findProperty");
 			return null;
 		}
 		
 		internal static function traceStack () :void 
 		{
-			try {
-				throw new Error();
-			} catch (e :Error) {
-				trace(e.getStackTrace());
-			}
+			trace(DebugUtil.getStackTrace());
 		}
 	}
 }
