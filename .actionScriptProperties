@@ -8,10 +8,10 @@
       <compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/ooo-libs/nenya/src/as"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/ooo-libs/vilya/src/as"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/ooo-libs/whirled/src/as"/>
-      <compilerSourcePathEntry kind="1" linkType="1" path="lib/libaduros/src"/>
+      <compilerSourcePathEntry kind="1" linkType="1" path="lib/libaduros"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="lib/facebook/source/actionscript"/>
-      <compilerSourcePathEntry kind="1" linkType="1" path="lib/flashbang/src"/>
-      <compilerSourcePathEntry kind="1" linkType="1" path="lib/pushbuttonengine/src"/>
+      <compilerSourcePathEntry kind="1" linkType="1" path="lib/flashbang"/>
+      <compilerSourcePathEntry kind="1" linkType="1" path="lib/pushbuttonengine"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="/Users/dion/Documents/storage/projects/pushbutton-tasks/src"/>
     </compilerSourcePath>
     <libraryPath defaultLinkType="1">
@@ -20,10 +20,10 @@
           <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation_charts.swc" useDefaultLinkType="false"/>
           <libraryPathEntry kind="1" linkType="1" path="${PROJECT_FRAMEWORKS}/locale/{locale}"/>
           <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/qtp.swc" useDefaultLinkType="false"/>
-          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/charts.swc" useDefaultLinkType="false"/>
           <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/rpc.swc" useDefaultLinkType="false"/>
-          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/datavisualization.swc" useDefaultLinkType="false"/>
+          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/charts.swc" useDefaultLinkType="false"/>
           <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/framework.swc" useDefaultLinkType="false"/>
+          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/datavisualization.swc" useDefaultLinkType="false"/>
           <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation.swc" useDefaultLinkType="false"/>
           <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation_dmv.swc" useDefaultLinkType="false"/>
           <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation_flashflexkit.swc" useDefaultLinkType="false"/>
