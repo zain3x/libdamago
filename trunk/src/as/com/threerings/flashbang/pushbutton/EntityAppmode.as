@@ -17,9 +17,11 @@ package com.threerings.flashbang.pushbutton {
 			super();
 		}
 		
-		public function get allObjects () :Array
+		public function get allObjects () :Array //<GameObject
 		{
-			return _allObjects;
+			return _allObjects.map(function (ref :GameObjectRef, ... _) :GameObject {
+				return ref.object;
+			});
 		}
 		
 		//	public function getAllObjects () :Array
