@@ -4,6 +4,9 @@ package com.threerings.flashbang.pushbutton {
 	import com.pblabs.engine.entity.IEntity;
 	import com.pblabs.engine.entity.IEntityComponent;
 	import com.pblabs.engine.entity.PropertyReference;
+	import flash.events.Event;
+	import flash.events.IEventDispatcher;
+	import flash.utils.getTimer;
 	import com.threerings.flashbang.GameObject;
 	import com.threerings.flashbang.ObjectDB;
 	import com.threerings.flashbang.Updatable;
@@ -16,14 +19,8 @@ package com.threerings.flashbang.pushbutton {
 	import com.threerings.util.Maps;
 	import com.threerings.util.Predicates;
 	import com.threerings.util.StringUtil;
-	
-	import flash.events.Event;
-	import flash.events.IEventDispatcher;
-	import flash.utils.getTimer;
-	
 	import net.amago.pbe.PushbuttonConsts;
 	import net.amago.util.EventDispatcherNonCloning;
-	
 	/**
 	 * A modification of GameObject.  Utilizes EntityComponents.
 	 * Rather that creating GameObjects with extra functionality via extending this class,
@@ -153,10 +150,6 @@ package com.threerings.flashbang.pushbutton {
 			_componentMap.put(componentName, component);
 			_components.push(component);
 			
-			//			if (isLiveObject) {
-			//				throw new Error(ClassUtil.tinyClassName(this) + " cannot handle adding components" +
-			//					" after adding to the ObjectDB: it fucks with the ObjectDB groups.");
-			//			}
 			if (isLiveObject && !deferring) {
 				component.register(this, componentName);
 				doResetComponents();
@@ -253,24 +246,7 @@ package com.threerings.flashbang.pushbutton {
 		
 		public function removeComponent (component :IEntityComponent) :void
 		{
-			if (!_componentMap.containsKey(component.name)) {
-				return;
-			}
-			
-			if (isLiveObject) {
-				throw new Error(ClassUtil.tinyClassName(this) + " cannot handle removing " +
-					"components while still a live GameObject: it fucks with the ObjectDB groups.");
-			}
-			
-			//        if (!_components.doRemoveComponent(component)) {
-			//            return;
-			//        }
-			//        dbComponent.removeComponent(component);
-			component.unregister();
-			
-			_componentMap.remove(component.name);
-			ArrayUtil.removeFirst(_components, component);
-			doResetComponents();
+			removeComponentInternal(component, true);
 		}
 		
 		public function serialize (xml :XML) :void
@@ -329,19 +305,11 @@ package com.threerings.flashbang.pushbutton {
 		override protected function addedToDB () :void
 		{
 			super.addedToDB();
-			//        for each (var comp :IEntityComponent in _components.components) {
-			//            dbComponent.addComponent(comp);
-			//        }
-			//        doRegisterComponents();
 			deferring = false;
-			//        _components.doRegisterComponents(this);
 		}
 		
 		override protected function destroyed () :void
 		{
-			// Give listeners a chance to act before we start destroying stuff.
-			dispatchEvent(new Event(PushbuttonConsts.EVENT_ENTITY_DESTROYED));
-			
 			for each (var c :IEntityComponent in _components) {
 				c.unregister();
 			}
@@ -385,6 +353,27 @@ package com.threerings.flashbang.pushbutton {
 			}
 		}
 		
+		internal function removeComponentInternal (component :IEntityComponent, 
+			reset :Boolean = true) :void
+		{
+			if (!_componentMap.containsKey(component.name)) {
+				return;
+			}
+			
+			if (isLiveObject) {
+				throw new Error(ClassUtil.tinyClassName(this) + " cannot handle removing " +
+					"components while still a live GameObject: it fucks with the ObjectDB groups.");
+			}
+			
+			component.unregister();
+			
+			_componentMap.remove(component.name);
+			ArrayUtil.removeFirst(_components, component);
+			if (reset) {
+				doResetComponents();
+			}
+		}
+		
 		protected var _componentMap :Map = Maps.newMapOf(String);
 		protected var _components :Array = [];
 		protected var _deferredComponents:Array = new Array();
@@ -400,19 +389,10 @@ package com.threerings.flashbang.pushbutton {
 											   reference :PropertyReference, willSet :Boolean = false, providedPi :PropertyInfo = null, 
 											   suppressErrors :Boolean = false) :PropertyInfo
 		{
-			//			trace("findProperty " + (reference == null ? "null" : reference.property));
-			//			if (reference != null && reference.property == "@FixtureComponent.desc") {
-			//				trace(DebugUtil.getStackTrace());
-			//			}
-			// TODO: we use appendChild but relookup the results, can we just use return value?
-			
 			// Early out if we got a null property reference.
 			if (!reference || reference.property == null || reference.property == "") {
 				return null;
 			}
-			//			Profiler.enter("Entity.findProperty " + reference.property);
-			
-			//        Profiler.enter("Entity.findProperty");
 			
 			// Must have a propertyInfo to operate with.
 			if (!providedPi) {
@@ -433,8 +413,6 @@ package com.threerings.flashbang.pushbutton {
 							reference.property + "' with cached reference. ");
 						if (isTraceStack) {traceStack();}
 					}
-					//					Profiler.exit("Entity.findProperty " + reference.property);
-					//                Profiler.exit("Entity.findProperty");
 					return null;
 				}
 				
@@ -664,43 +642,6 @@ package com.threerings.flashbang.pushbutton {
 		}
 	}
 }
-
-//import com.pblabs.engine.entity.IEntityComponent;
-//import flash.events.IEventDispatcher;
-//import com.threerings.flashbang.Updatable;
-//import com.threerings.util.ArrayUtil;
-//import com.threerings.util.DebugUtil;
-//import com.threerings.util.Log;
-//import com.threerings.util.Map;
-//import com.threerings.util.Maps;
-//final class PropertyInfo
-//{
-//    public var propertyName :String = null;
-//    public var propertyParent :Object = null;
-//
-//    public function clear () :void
-//    {
-//        propertyParent = null;
-//        propertyName = null;
-//    }
-//
-//    public function getValue () :*
-//    {
-//        try {
-//            if (propertyName)
-//                return propertyParent[propertyName];
-//            else
-//                return propertyParent;
-//        } catch (e :Error) {
-//            return null;
-//        }
-//    }
-//
-//    public function setValue (value :*) :void
-//    {
-//        propertyParent[propertyName] = value;
-//    }
-//}
 
 import com.pblabs.engine.entity.IEntityComponent;
 final class PendingComponent
