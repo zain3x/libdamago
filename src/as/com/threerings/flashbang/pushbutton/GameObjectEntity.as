@@ -19,7 +19,6 @@ package com.threerings.flashbang.pushbutton {
 	import com.threerings.util.Maps;
 	import com.threerings.util.Predicates;
 	import com.threerings.util.StringUtil;
-	import net.amago.pbe.PushbuttonConsts;
 	import net.amago.util.EventDispatcherNonCloning;
 	/**
 	 * A modification of GameObject.  Utilizes EntityComponents.
@@ -251,6 +250,7 @@ package com.threerings.flashbang.pushbutton {
 		
 		public function serialize (xml :XML) :void
 		{
+			log.warning("serialize() not implemented"); 
 		}
 		
 		public function setProperty (property :PropertyReference, value :*) :void
@@ -265,11 +265,6 @@ package com.threerings.flashbang.pushbutton {
 			
 			// Clean up to avoid dangling references.
 			_tempPropertyInfo.clear();
-		}
-		
-		override public function destroySelf () :void
-		{
-			super.destroySelf();
 		}
 		
 		//GameObjectEntity groups include the component classnames.
@@ -377,17 +372,17 @@ package com.threerings.flashbang.pushbutton {
 		protected var _componentMap :Map = Maps.newMapOf(String);
 		protected var _components :Array = [];
 		protected var _deferredComponents:Array = new Array();
-		private var _deferring:Boolean = true;
+		protected var _deferring:Boolean = true;
 		protected var _dispatcher :IEventDispatcher = new EventDispatcherNonCloning();
 		
 		protected var _name :String = null;
-		private var _tempPropertyInfo :PropertyInfo = new PropertyInfo();
+		protected var _tempPropertyInfo :PropertyInfo = new PropertyInfo();
 		
 		protected static const log :Log = Log.getLog(GameObjectEntity);
 		
 		internal static function findProperty (db :ObjectDB, entity :IEntity, 
-											   reference :PropertyReference, willSet :Boolean = false, providedPi :PropertyInfo = null, 
-											   suppressErrors :Boolean = false) :PropertyInfo
+			reference :PropertyReference, willSet :Boolean = false, providedPi :PropertyInfo = null, 
+			suppressErrors :Boolean = false) :PropertyInfo
 		{
 			// Early out if we got a null property reference.
 			if (!reference || reference.property == null || reference.property == "") {
