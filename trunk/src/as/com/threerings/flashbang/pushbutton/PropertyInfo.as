@@ -15,7 +15,7 @@ final public class PropertyInfo
     public function getValue () :*
     {
         try {
-            if (propertyName) {
+            if (propertyName != null) {
 				if (propertyParent is IEntity) {
 					return IEntity(propertyParent).lookupComponentByName(propertyName);			
 				} else {
