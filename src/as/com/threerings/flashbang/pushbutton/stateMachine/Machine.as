@@ -1,11 +1,21 @@
+/*******************************************************************************
+ * PushButton Engine
+ * Copyright (C) 2009 PushButton Labs, LLC
+ * For more information see http://www.pushbuttonengine.com
+ *
+ * This file is licensed under the terms of the MIT license, which is included
+ * in the License.html file at the root directory of this SDK.
+ *
+ * This is an copy of Machine.as from PushButton Labs, adapted for Three Rings Flashbang.
+ *
+ ******************************************************************************/
 package com.threerings.flashbang.pushbutton.stateMachine {
 import com.pblabs.components.stateMachine.IMachine;
 import com.pblabs.components.stateMachine.IState;
 import com.pblabs.components.stateMachine.TransitionEvent;
 import com.pblabs.engine.entity.IPropertyBag;
-import com.threerings.util.Log;
-
 import flash.utils.Dictionary;
+import com.threerings.util.Log;
 
 /**
  * Implementation of IMachine; probably any custom FSM would be based on this.
@@ -36,9 +46,10 @@ public class Machine implements IMachine
 
     public function set currentStateName (value :String) :void
     {
-        if (!setCurrentState(value))
+        if (!setCurrentState(value)) {
             log.warning(this, "set currentStateName",
                 "Could not transition to state '" + value + "'");
+        }
     }
 
     /**
@@ -67,8 +78,9 @@ public class Machine implements IMachine
     public function getCurrentState () :IState
     {
         // DefaultState - we get it if no state is set.
-        if (!_currentState)
+        if (_currentState == null) {
             setCurrentState(defaultState);
+        }
 
         return _currentState;
     }
@@ -85,9 +97,11 @@ public class Machine implements IMachine
 
     public function getStateName (state :IState) :String
     {
-        for (var name :String in states)
-            if (states[name] == state)
+        for (var name :String in states) {
+            if (states[name] == state) {
                 return name;
+            }
+        }
 
         return null;
     }
@@ -95,8 +109,9 @@ public class Machine implements IMachine
     public function setCurrentState (name :String) :Boolean
     {
         var newState :IState = getState(name);
-        if (!newState)
+        if (newState == null) {
             return false;
+        }
 
         var oldState :IState = _currentState;
         _setNewState = true;
@@ -105,17 +120,18 @@ public class Machine implements IMachine
         _currentState = newState;
 
         // Old state gets notified it is changing out.
-        if (oldState)
+        if (oldState != null) {
             oldState.exit(this);
+        }
 
         // New state finds out it is coming in.    
         newState.enter(this);
 
         // Note the time at which we entered this state.             
-//        _enteredStateTime = PBE.processManager.virtualTime;
+        //        _enteredStateTime = PBE.processManager.virtualTime;
 
         // Fire a transition event, if we have a dispatcher.
-        if (_propertyBag) {
+        if (_propertyBag != null) {
             var te :TransitionEvent = new TransitionEvent(TransitionEvent.TRANSITION);
             te.oldState = oldState;
             te.oldStateName = getStateName(oldState);
@@ -133,16 +149,18 @@ public class Machine implements IMachine
         _setNewState = false;
 
         // DefaultState - we get it if no state is set.
-        if (!_currentState)
+        if (_currentState == null) {
             setCurrentState(defaultState);
+        }
 
-        if (_currentState)
+        if (_currentState != null) {
             _currentState.tick(this);
+        }
 
         // If didn't set a new state, it counts as transitioning to the
         // current state. This updates prev/current state so we can tell
         // if we just transitioned into our current state.
-        if (_setNewState == false && _currentState) {
+        if (_setNewState == false && _currentState != null) {
             _previousState = _currentState;
         }
     }
@@ -153,7 +171,7 @@ public class Machine implements IMachine
 
     protected var _propertyBag :IPropertyBag = null;
     protected var _setNewState :Boolean = false;
+
     protected static const log :Log = Log.getLog(Machine);
-    
 }
 }
