@@ -215,6 +215,7 @@ package com.threerings.flashbang.pushbutton {
 		
 		public function initialize (name :String = null, alias :String = null) :void
 		{
+            //Not implemented
 		}
 		
 		public function lookupComponentByName (componentName :String) :IEntityComponent
@@ -316,6 +317,9 @@ package com.threerings.flashbang.pushbutton {
 		{
 			super.update(dt);
 			for each (var c :IEntityComponent in _components) {
+                if (!isLiveObject) {
+                    break;
+                }
 				if (c is Updatable) {
 					Updatable(c).update(dt);
 				} else if (c is ITickedObject) {
