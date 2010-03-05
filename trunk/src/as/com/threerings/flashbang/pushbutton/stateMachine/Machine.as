@@ -14,8 +14,10 @@ import com.pblabs.components.stateMachine.IMachine;
 import com.pblabs.components.stateMachine.IState;
 import com.pblabs.components.stateMachine.TransitionEvent;
 import com.pblabs.engine.entity.IPropertyBag;
-import flash.utils.Dictionary;
+import com.threerings.util.DebugUtil;
 import com.threerings.util.Log;
+
+import flash.utils.Dictionary;
 
 /**
  * Implementation of IMachine; probably any custom FSM would be based on this.
@@ -126,9 +128,6 @@ public class Machine implements IMachine
 
         // New state finds out it is coming in.    
         newState.enter(this);
-
-        // Note the time at which we entered this state.             
-        //        _enteredStateTime = PBE.processManager.virtualTime;
 
         // Fire a transition event, if we have a dispatcher.
         if (_propertyBag != null) {
