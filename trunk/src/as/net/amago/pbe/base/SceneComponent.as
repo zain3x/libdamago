@@ -10,7 +10,7 @@ public class SceneComponent extends EntityComponent
 {
 	public static const COMPONENT_NAME :String = ClassUtil.tinyClassName(SceneComponent);
 	public static const CHANGED :String = COMPONENT_NAME + "Changed";
-	
+    
 	public function SceneComponent (disp :DisplayObject = null)
 	{
 		_displayObject = disp;
