@@ -1,33 +1,30 @@
 package com.threerings.flashbang.pushbutton.scene {
-import aduros.util.F;
-
 import com.pblabs.engine.entity.PropertyReference;
+import flash.display.DisplayObject;
+import flash.display.Sprite;
+import flash.geom.Point;
+import flash.geom.Rectangle;
 import com.threerings.flashbang.Updatable;
 import com.threerings.flashbang.components.SceneComponent;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.DebugUtil;
 import com.threerings.util.Log;
-
-import flash.display.DisplayObject;
-import flash.display.Sprite;
-import flash.geom.Point;
-import flash.geom.Rectangle;
-
+import aduros.util.F;
 import net.amago.pbe.base.EntityComponentListener;
-
 //For displaying IEntitys in Scenes
 public class SceneEntityComponent extends EntityComponentListener
     implements SceneComponent, Updatable
 {
     public static const COMPONENT_NAME :String = ClassUtil.tinyClassName(SceneEntityComponent);
+
     /**
      * If set, alpha is gotten from this property every frame.
      */
     public var alphaProperty :PropertyReference;
 	
+	public var autoAttach :Boolean = true;
+	
 	public var displayObjectRef :PropertyReference;
-	public var scaleXRef :PropertyReference;
-	public var scaleYRef :PropertyReference;
 	
 
     /**
@@ -44,9 +41,13 @@ public class SceneEntityComponent extends EntityComponentListener
      * If set, rotation is gotten from this property every frame.
      */
     public var rotationProperty :PropertyReference;
-    public var sceneRef :PropertyReference;
+	public var scaleXRef :PropertyReference;
+	public var scaleYRef :PropertyReference;
 
     public var sceneLayerName :String;
+    public var sceneRef :PropertyReference;
+	
+	public var updateOnEvents :Array = [];
 
     public var xProperty :PropertyReference;
     public var yProperty :PropertyReference;
@@ -61,10 +62,6 @@ public class SceneEntityComponent extends EntityComponentListener
      * If set, our z-index is gotten from this property every frame.
      */
     public var zIndexProperty :PropertyReference;
-	
-	public var updateOnEvents :Array = [];
-	
-	public var autoAttach :Boolean = true;
 	
     public function SceneEntityComponent (displayObject :DisplayObject = null)
     {
@@ -184,6 +181,40 @@ public class SceneEntityComponent extends EntityComponentListener
         //        _position.y = posY;
         //        _transformDirty = true;
     }
+	
+	public function get scaleX():Number
+	{
+		return _scaleX;
+	}
+	
+	/**
+	 * You can scale things on the X and Y axes.
+	 */
+	public function set scaleX (value:Number):void
+	{
+		if (value == _scaleX)
+			return;
+		
+		_scaleX = value;
+		_transformDirty = true;
+	}
+	
+	public function get scaleY():Number
+	{
+		return _scaleY;
+	}
+	
+	/**
+	 * You can scale things on the X and Y axes.
+	 */
+	public function set scaleY (value:Number):void
+	{
+		if (value == _scaleY)
+			return;
+		
+		_scaleY = value;
+		_transformDirty = true;
+	}
 
     //
     //    public function get registrationPoint () :Point
@@ -338,40 +369,6 @@ public class SceneEntityComponent extends EntityComponentListener
     {
         return _y;
     }
-	
-	public function get scaleX():Number
-	{
-		return _scaleX;
-	}
-	
-	/**
-	 * You can scale things on the X and Y axes.
-	 */
-	public function set scaleX (value:Number):void
-	{
-		if (value == _scaleX)
-			return;
-		
-		_scaleX = value;
-		_transformDirty = true;
-	}
-	
-	public function get scaleY():Number
-	{
-		return _scaleY;
-	}
-	
-	/**
-	 * You can scale things on the X and Y axes.
-	 */
-	public function set scaleY (value:Number):void
-	{
-		if (value == _scaleY)
-			return;
-		
-		_scaleY = value;
-		_transformDirty = true;
-	}
 
     public function set y (value :Number) :void
     {
@@ -614,13 +611,6 @@ public class SceneEntityComponent extends EntityComponentListener
 			registerListener(owner.eventDispatcher, eventName, F.callback(updateFromEvent, eventName));
 		}
     }
-	
-	protected function updateFromEvent (eventName :String) :void
-	{
-//		trace("updating from ", eventName);
-		_isDirty = true;
-//		update(0);
-	}
 
     override protected function onRemove () :void
     {
@@ -638,6 +628,13 @@ public class SceneEntityComponent extends EntityComponentListener
 		if (autoAttach) {
 			attach();
 		}
+	}
+	
+	protected function updateFromEvent (eventName :String) :void
+	{
+//		trace("updating from ", eventName);
+		_isDirty = true;
+//		update(0);
 	}
 
     protected function updateProperties () :void
@@ -730,6 +727,13 @@ public class SceneEntityComponent extends EntityComponentListener
 
     protected var _layerIndex :int = 0;
     protected var _layerIndexDirty :Boolean = true;
+    //    protected var _position :Point = new Point();
+    //    protected var _registrationPoint :Point = new Point();
+    //    protected var _rotation :Number = 0;
+
+    //    protected var _rotationOffset :Number = 0;
+    protected var _scaleX :Number = 1
+	protected var _scaleY :Number = 1;
 
     protected var _transformDirty :Boolean = true;
 
@@ -738,13 +742,7 @@ public class SceneEntityComponent extends EntityComponentListener
 
     protected var _zIndex :int = 0;
     protected var _zIndexDirty :Boolean = true;
-    //    protected var _position :Point = new Point();
-    //    protected var _registrationPoint :Point = new Point();
-    //    protected var _rotation :Number = 0;
 
-    //    protected var _rotationOffset :Number = 0;
-    protected var _scaleX :Number = 1
-	protected var _scaleY :Number = 1;
     internal var _scene :Scene2DComponent;
 	
 	protected static const log :Log = Log.getLog(SceneEntityComponent);
