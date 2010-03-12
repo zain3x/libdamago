@@ -317,7 +317,7 @@ package com.threerings.flashbang.pushbutton {
 		{
 			super.update(dt);
 			for each (var c :IEntityComponent in _components) {
-                if (!isLiveObject) {
+                if (!isLiveObject) {//A component may trigger a destroy call.
                     break;
                 }
 				if (c is Updatable) {
@@ -398,20 +398,12 @@ package com.threerings.flashbang.pushbutton {
 				providedPi = new PropertyInfo();
 			}
 			
-			//Debugging
-			var isTraceStack :Boolean = false;
-			
 			// Cached lookups apply only to components.
 			if (reference.cachedLookup && reference.cachedLookup.length > 0) {
 				var cl :Array = reference.cachedLookup;
 				var cachedWalk :* = entity.lookupComponentByName(cl[0]);
 				if (!cachedWalk) {
-					if (!suppressErrors) {
-						log.warning("findProperty",
-							"Could not resolve component named '" + cl[0] + "' for property '" +
-							reference.property + "' with cached reference. ");
-						if (isTraceStack) {traceStack();}
-					}
+                    handleMissingProperty(suppressErrors, reference, cl[0]);
 					return null;
 				}
 				
@@ -425,14 +417,7 @@ package com.threerings.flashbang.pushbutton {
 					
 					
 					if (cachedWalk == null) {
-						if (!suppressErrors) {
-							log.warning("findProperty",
-								"Could not resolve property '" + cl[i] + "' for property reference '" +
-								reference.property + "' with cached reference");
-							if (isTraceStack) {traceStack();}
-						}
-						//						Profiler.exit("Entity.findProperty " + reference.property);
-						//                    Profiler.exit("Entity.findProperty");
+                        handleMissingProperty(suppressErrors, reference, cl[i]);
 						return null;
 					}
 				}
@@ -461,12 +446,7 @@ package com.threerings.flashbang.pushbutton {
 				// Component reference, look up the component by name.
 				parentElem = entity.lookupComponentByName(curLookup);
 				if (!parentElem) {
-					log.warning("findProperty",
-						"Could not resolve component named '" + curLookup + "' for property '" +
-						reference.property + "'");
-					if (isTraceStack) {traceStack();}
-					//					Profiler.exit("Entity.findProperty " + reference.property);
-					//                Profiler.exit("Entity.findProperty");
+                    handleMissingProperty(suppressErrors, reference, curLookup);
 					return null;
 				}
 				
@@ -478,12 +458,7 @@ package com.threerings.flashbang.pushbutton {
 				//            parentElem = NameManager.instance.lookup(curLookup);
 				parentElem = db.getObjectNamed(curLookup);
 				if (!parentElem) {
-					log.warning("findProperty",
-						"Could not resolve named object named '" + curLookup + "' for property '" +
-						reference.property + "'");
-					if (isTraceStack) {traceStack();}
-					//					Profiler.exit("Entity.findProperty " + reference.property);
-					//                Profiler.exit("Entity.findProperty");
+                    handleMissingProperty(suppressErrors, reference, curLookup);
 					return null;
 				}
 				
@@ -493,13 +468,9 @@ package com.threerings.flashbang.pushbutton {
 				var comLookup :IEntityComponent =
 					(parentElem as IEntity).lookupComponentByName(curLookup);
 				if (!comLookup) {
-					log.warning("findProperty",
-						"Could not find component '" + curLookup + "' on named entity '" +
-						(parentElem as IEntity).name + "' for property '" + reference.property +
-						"'");
-					if (isTraceStack) {traceStack();}
-					//					Profiler.exit("Entity.findProperty " + reference.property);
-					//                Profiler.exit("Entity.findProperty");
+                    handleMissingProperty(suppressErrors, reference, curLookup,
+						"Could not find component on named entity '" +
+                        (parentElem as IEntity).name + "'");
 					return null;
 				}
 				parentElem = comLookup;
@@ -508,12 +479,8 @@ package com.threerings.flashbang.pushbutton {
 				// templates and entities - no groups.
 				//            parentElem = TemplateManager.instance.getXML(curLookup, "template", "entity");
 				if (!parentElem) {
-					log.warning("findProperty",
-						"Could not find XML named '" + curLookup + "' for property '" + reference.
-						property + "'");
-					if (isTraceStack) {traceStack();}
-					//					Profiler.exit("Entity.findProperty " + reference.property);
-					//                Profiler.exit("Entity.findProperty");
+                    handleMissingProperty(suppressErrors, reference, curLookup,
+						"Could not find XML name");
 					return null;
 				}
 				
@@ -543,12 +510,9 @@ package com.threerings.flashbang.pushbutton {
 				
 				// Error if we don't have it!
 				if (!nextElem) {
-					log.warning("findProperty",
+                    handleMissingProperty(suppressErrors, reference, null,
 						"Could not find component '" + path[1] + "' in XML template '" + path[0].
 						slice(1) + "' for property '" + reference.property + "'");
-					if (isTraceStack) {traceStack();}
-					//					Profiler.exit("Entity.findProperty " + reference.property);
-					//                Profiler.exit("Entity.findProperty");
 					return null;
 				}
 				
@@ -558,12 +522,8 @@ package com.threerings.flashbang.pushbutton {
 				// Indicate we are dealing with xml.
 				isTemplateXML = true;
 			} else {
-				log.warning("findProperty",
-					"Got a property path that doesn't start with !, #, or @. Started with '" +
-					startChar + "' for property '" + reference.property + "'");
-				if (isTraceStack) {traceStack();}
-				//				Profiler.exit("Entity.findProperty " + reference.property);
-				//            Profiler.exit("Entity.findProperty");
+				handleMissingProperty(suppressErrors, reference, startChar,
+                    "Got a property path that doesn't start with !, #, or @");
 				return null;
 			}
 			
@@ -608,12 +568,7 @@ package com.threerings.flashbang.pushbutton {
 				}
 				
 				if (gotEmpty) {
-					log.warning("findProperty",
-						"Could not resolve property '" + curLookup + "' for property reference '" +
-						reference.property + "'");
-					if (isTraceStack) {traceStack();}
-					//					Profiler.exit("Entity.findProperty " + reference.property);
-					//                Profiler.exit("Entity.findProperty");
+                    handleMissingProperty(suppressErrors, reference, curLookup);
 					return null;
 				}
 				
@@ -635,10 +590,18 @@ package com.threerings.flashbang.pushbutton {
 			return null;
 		}
 		
-		internal static function traceStack () :void 
-		{
-			trace(DebugUtil.getStackTrace());
-		}
+        internal static function handleMissingProperty (suppressErrors :Boolean,
+            reference :PropertyReference, context :Object, msg :String = null) :void 
+        {
+            if (suppressErrors) {
+                return;
+            }
+            if (msg == null) {
+                msg = "findProperty couldn't resolve";
+            }
+            log.warning(msg, "context", context, "ref", reference.property);
+            trace(DebugUtil.getStackTrace());
+        }
 	}
 }
 
