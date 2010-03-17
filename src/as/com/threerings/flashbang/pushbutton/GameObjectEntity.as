@@ -4,9 +4,6 @@ package com.threerings.flashbang.pushbutton {
 	import com.pblabs.engine.entity.IEntity;
 	import com.pblabs.engine.entity.IEntityComponent;
 	import com.pblabs.engine.entity.PropertyReference;
-	import flash.events.Event;
-	import flash.events.IEventDispatcher;
-	import flash.utils.getTimer;
 	import com.threerings.flashbang.GameObject;
 	import com.threerings.flashbang.ObjectDB;
 	import com.threerings.flashbang.Updatable;
@@ -19,6 +16,10 @@ package com.threerings.flashbang.pushbutton {
 	import com.threerings.util.Maps;
 	import com.threerings.util.Predicates;
 	import com.threerings.util.StringUtil;
+	
+	import flash.events.IEventDispatcher;
+	import flash.utils.getTimer;
+	
 	import net.amago.util.EventDispatcherNonCloning;
 	/**
 	 * A modification of GameObject.  Utilizes EntityComponents.
@@ -170,9 +171,7 @@ package com.threerings.flashbang.pushbutton {
 		
 		public function destroy () :void
 		{
-			if (isLiveObject) {
-				destroySelf();
-			}
+			destroySelf();
 		}
 		
 		public function doesPropertyExist (property :PropertyReference) :Boolean
@@ -246,7 +245,7 @@ package com.threerings.flashbang.pushbutton {
 		
 		public function removeComponent (component :IEntityComponent) :void
 		{
-			removeComponentInternal(component, true);
+			removeComponentInternal(component, isLiveObject);
 		}
 		
 		public function serialize (xml :XML) :void
@@ -268,19 +267,19 @@ package com.threerings.flashbang.pushbutton {
 			_tempPropertyInfo.clear();
 		}
 		
-		//GameObjectEntity groups include the component classnames.
-		override public function getObjectGroup (groupNum :int) :String
-		{
-			if (groupNum == 0) {
-				return GROUP_ENTITY;
-			}
-			var numComponents :int = _components != null ? _components.length : 0;
-			if (numComponents > 0 && groupNum - 1 < numComponents) {
-				return ClassUtil.getClassName(_components[groupNum - 1]);
-			}
-			return super.getObjectGroup(groupNum - (numComponents + 1));
-		}
-		
+//		//GameObjectEntity groups include the component classnames.
+//		override public function getObjectGroup (groupNum :int) :String
+//		{
+//			if (groupNum == 0) {
+//				return GROUP_ENTITY;
+//			}
+//			var numComponents :int = _components != null ? _components.length : 0;
+//			if (numComponents > 0 && groupNum - 1 < numComponents) {
+//				return ClassUtil.getClassName(_components[groupNum - 1]);
+//			}
+//			return super.getObjectGroup(groupNum - (numComponents + 1));
+//		}
+//		
 		override public function toString() : String
 		{
 			if (stringFunc == null) {
@@ -364,13 +363,20 @@ package com.threerings.flashbang.pushbutton {
 					"components while still a live GameObject: it fucks with the ObjectDB groups.");
 			}
 			
-			component.unregister();
+            //Remove from the deferred components
+            ArrayUtil.removeFirstIf(_deferredComponents, 
+                Predicates.createPropertyEquals("item", component));
+            
+            if (component.isRegistered) {
+			    component.unregister();
+            }
 			
 			_componentMap.remove(component.name);
 			ArrayUtil.removeFirst(_components, component);
 			if (reset) {
 				doResetComponents();
 			}
+            
 		}
 		
 		protected var _componentMap :Map = Maps.newMapOf(String);
