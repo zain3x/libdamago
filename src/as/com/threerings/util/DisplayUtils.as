@@ -293,15 +293,6 @@ public class DisplayUtils
             }
         }
 
-        function getGlobalScale (d :DisplayObject, currentScale :Number) :Number {
-            if (d == null || d.stage == null || d == d.stage) {
-                return currentScale;
-            } else {
-                return getGlobalScale(d.parent, d.scaleX * currentScale);
-            }
-        }
-//        var scale :Number = getGlobalScale(disp, 1);
-
         var bd :BitmapData = new BitmapData(int(bounds.width * scale), int(bounds.height * scale),
             true, 0xffffff);
         var topLeft :Point = new Point(bounds.left, bounds.top);
@@ -387,13 +378,7 @@ public class DisplayUtils
             log.error("screenShot", "d", disp, "d.stage", disp == null ? null : disp.stage);
             return null;
         }
-        function getGlobalScale (d :DisplayObject, currentScale :Number) :Number {
-            if (d == null || d.stage == null || d == d.stage) {
-                return currentScale;
-            } else {
-                return getGlobalScale(d.parent, d.scaleX * currentScale);
-            }
-        }
+        
         var scale :Number = getGlobalScale(disp, 1);
         var bd :BitmapData = new BitmapData(disp.stage.stageWidth, disp.stage.stageHeight, true,
             0xffffff);
@@ -407,6 +392,15 @@ public class DisplayUtils
 
         var bm :Bitmap = new Bitmap(bd);
         return bm;
+    }
+    
+    public static function getGlobalScale (d :DisplayObject, currentScale :Number = 1) :Number 
+    {
+        if (d == null || d.stage == null || d == d.stage) {
+            return currentScale;
+        } else {
+            return getGlobalScale(d.parent, d.scaleX * currentScale);
+        }
     }
 
     public static function shrinkAndCenterOn (disp :DisplayObject, maxSize :int = 20) :DisplayObject
@@ -446,6 +440,9 @@ public class DisplayUtils
         //Center it according to the offsets.
         bm.x = bounds.left * scale;
         bm.y = bounds.top * scale;
+        
+//        bm.x = bounds.left;
+//        bm.y = bounds.top;
         return bm;
     }
 
