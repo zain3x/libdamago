@@ -21,6 +21,7 @@ package com.threerings.flashbang.pushbutton {
 	import flash.utils.getTimer;
 	
 	import net.amago.util.EventDispatcherNonCloning;
+
 	/**
 	 * A modification of GameObject.  Utilizes EntityComponents.
 	 * Rather that creating GameObjects with extra functionality via extending this class,
@@ -161,7 +162,6 @@ package com.threerings.flashbang.pushbutton {
 				deferring = true;
 			}
 			
-			
 			return true;
 		}
 		
@@ -171,7 +171,9 @@ package com.threerings.flashbang.pushbutton {
 		
 		public function destroy () :void
 		{
-			destroySelf();
+            if (isLiveObject) {
+			    destroySelf();
+            }
 		}
 		
 		public function doesPropertyExist (property :PropertyReference) :Boolean
