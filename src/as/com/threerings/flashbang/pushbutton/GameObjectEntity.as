@@ -1,4 +1,5 @@
 package com.threerings.flashbang.pushbutton {
+	import com.pblabs.engine.core.IAnimatedObject;
 	import com.pblabs.engine.core.ITickedObject;
 	import com.pblabs.engine.core.PBGroup;
 	import com.pblabs.engine.entity.IEntity;
@@ -316,16 +317,16 @@ package com.threerings.flashbang.pushbutton {
 		
 		override protected function update (dt :Number) :void
 		{
-			super.update(dt);
 			for each (var c :IEntityComponent in _components) {
                 if (!isLiveObject) {//A component may trigger a destroy call.
                     break;
                 }
-				if (c is Updatable) {
-					Updatable(c).update(dt);
-				} else if (c is ITickedObject) {
+				if (c is ITickedObject) {
 					ITickedObject(c).onTick(dt);
 				}
+                if (c is IAnimatedObject) {
+                    IAnimatedObject(c).onFrame(dt);
+                }
 			}
 		}
 		

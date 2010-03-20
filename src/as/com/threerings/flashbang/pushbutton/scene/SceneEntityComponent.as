@@ -1,19 +1,21 @@
 package com.threerings.flashbang.pushbutton.scene {
+import aduros.util.F;
+
+import com.pblabs.engine.core.IAnimatedObject;
 import com.pblabs.engine.entity.PropertyReference;
-import flash.display.DisplayObject;
-import flash.display.Sprite;
-import flash.geom.Point;
-import flash.geom.Rectangle;
-import com.threerings.flashbang.Updatable;
 import com.threerings.flashbang.components.SceneComponent;
 import com.threerings.util.ClassUtil;
-import com.threerings.util.DebugUtil;
 import com.threerings.util.Log;
-import aduros.util.F;
+
+import flash.display.DisplayObject;
+import flash.geom.Point;
+import flash.geom.Rectangle;
+
 import net.amago.pbe.base.EntityComponentListener;
+
 //For displaying IEntitys in Scenes
 public class SceneEntityComponent extends EntityComponentListener
-    implements SceneComponent, Updatable
+    implements SceneComponent, IAnimatedObject
 {
     public static const COMPONENT_NAME :String = ClassUtil.tinyClassName(SceneEntityComponent);
 
@@ -492,7 +494,7 @@ public class SceneEntityComponent extends EntityComponentListener
 		}
 	}
 
-    public function update (dt :Number) :void
+    public function onFrame (dt :Number) :void
     {
         // Lookup and apply properties. This only makes adjustments to the
         // underlying DisplayObject if necessary.
@@ -607,7 +609,6 @@ public class SceneEntityComponent extends EntityComponentListener
     {
         super.onAdd();
 		for each (var eventName :String in updateOnEvents) {
-//			registerListener(owner.eventDispatcher, eventName, F.callback(update, 0));
 			registerListener(owner.eventDispatcher, eventName, F.callback(updateFromEvent, eventName));
 		}
     }
@@ -630,11 +631,9 @@ public class SceneEntityComponent extends EntityComponentListener
 		}
 	}
 	
-	protected function updateFromEvent (eventName :String) :void
+	protected function updateFromEvent (... _) :void
 	{
-//		trace("updating from ", eventName);
 		_isDirty = true;
-//		update(0);
 	}
 
     protected function updateProperties () :void
