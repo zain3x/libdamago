@@ -7,11 +7,14 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.threerings.flashbang.pushbutton.scene {
+import com.pblabs.rendering2D.ui.IUITarget;
+import com.threerings.util.DebugUtil;
+
 import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.Event;
-import com.threerings.util.DebugUtil;
+
 /**
  * This class can be set as the SceneView on the BaseSceneComponent class and is used
  * as the canvas to draw the objects that make up the scene. It defaults to the size
@@ -20,7 +23,8 @@ import com.threerings.util.DebugUtil;
  * <p>Currently this is just a stub, and exists for clarity and potential expandability in
  * the future.</p>
  */
-public class SceneView extends Sprite
+public class SceneView extends Sprite 
+    implements IUITarget
 {
     public static const NAME :String = "SceneView";
 

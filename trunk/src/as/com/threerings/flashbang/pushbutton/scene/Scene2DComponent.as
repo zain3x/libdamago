@@ -1,6 +1,6 @@
 package com.threerings.flashbang.pushbutton.scene {
+	import com.pblabs.engine.core.IAnimatedObject;
 	import com.pblabs.engine.entity.PropertyReference;
-	import com.threerings.flashbang.Updatable;
 	import com.threerings.util.ArrayUtil;
 	import com.threerings.util.ClassUtil;
 	import com.threerings.util.Log;
@@ -22,7 +22,7 @@ package com.threerings.flashbang.pushbutton.scene {
 	 * for more complex rendering scenarios. Enforces sorting order, too.
 	 */
 	public class Scene2DComponent extends EntityComponentListener
-		implements Updatable
+		implements IAnimatedObject
 	{
 		public static const COMPONENT_NAME :String = ClassUtil.tinyClassName(Scene2DComponent);
 		public var dirty :Boolean;
@@ -503,7 +503,7 @@ package com.threerings.flashbang.pushbutton.scene {
 			return _rootSprite.localToGlobal(inPos);
 		}
 		
-		public function update (dt :Number) :void
+		public function onFrame (dt :Number) :void
 		{
 			//        trace("updating scene");
 			if (!sceneView) {
