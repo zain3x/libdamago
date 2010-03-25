@@ -3,11 +3,10 @@
 
 package com.threerings.ui.snapping
 {
-import com.threerings.ui.bounds.Bounds;
-import com.threerings.ui.bounds.BoundsRectangle;
-
 import flash.display.DisplayObject;
 import flash.geom.Point;
+import com.threerings.ui.bounds.Bounds;
+import com.threerings.ui.bounds.BoundsRectangle;
 /**
  *
  * @author dion
@@ -91,12 +90,16 @@ public class SnappingObject
     }
 	
 	public function beginSnapping () :void{}
+    
 	public function endSnapping (anc :ISnapAnchor = null) :void {}
 	
 	public function snapCenterToGlobal (p :Point) :void
 	{
 		SnapUtil.snapCenterOfBoundsToGlobalPoint(this, p);
 	}
+    
+    public function snapped (anchor :ISnapAnchor) :void{}
+
     /**
      *
      * @default
@@ -119,6 +122,5 @@ public class SnappingObject
 	
 	protected var _snapAnchor :ISnapAnchor;
 //    protected var _rootLayer :DisplayObject;
-
 }
 }

@@ -73,6 +73,7 @@ public /*abstract*/ class SnapAnchor
     {
         var snapPoint :Point = getGlobalSnapToPoint(snappable);
         SnapUtil.snapCenterOfBoundsToGlobalPoint(snappable, snapPoint);
+        snappable.snapped(this);
     }
 
     public function toString () :String
@@ -90,6 +91,5 @@ public /*abstract*/ class SnapAnchor
     protected var _provider :Object;
 
 	protected var _userData :*;
-//    protected var _snapType :SnapType;
 }
 }

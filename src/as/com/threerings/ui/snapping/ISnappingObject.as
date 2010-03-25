@@ -14,6 +14,7 @@ public interface ISnappingObject
 	
 	function beginSnapping () :void;
 	function endSnapping (anc :ISnapAnchor = null) :void;
+    function snapped (anchor :ISnapAnchor) :void;
 
     /**
      * x and y are GLOBAL coords.  Convert if necessary.
