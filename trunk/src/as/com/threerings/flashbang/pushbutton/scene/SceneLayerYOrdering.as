@@ -66,9 +66,8 @@ public class SceneLayerYOrdering extends SceneLayer
     protected function checkSceneComponentForLocationChange (obj :*, previousLoc :Point) :void
     {
         var disp :DisplayObject = _sceneComponents.get(obj) as DisplayObject;
-        if (previousLoc.x != disp.x || previousLoc.y != disp.y) {
+        if (previousLoc.y != disp.y) {
             dirty = true;
-            previousLoc.x = disp.x;
             previousLoc.y = disp.y;
             _componentsToReorder.push(obj);
         }
