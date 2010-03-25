@@ -37,11 +37,6 @@ public class TreeMap
 	
 	public function addVertex (vert :Hashable, parentHash :int) :void
 	{
-//		trace("\naddVertex");
-//		trace("vert=" + vert);
-//		trace("parentHash=" + parentHash);
-//		trace("_root=" + _root);
-//		trace("containsId(parentHash)=" + containsId(parentHash) );
 		Preconditions.checkNotNull(vert, "Vertex is null");
 		Preconditions.checkArgument(containsId(parentHash) || _root == null, 
 			"Parent is null, and root is already defined");
