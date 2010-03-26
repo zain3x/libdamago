@@ -1,11 +1,9 @@
-package com.threerings.ui.bounds
-{
-import com.threerings.util.MathUtil;
-import com.threerings.flashbang.objects.SimpleSceneObject;
-import com.threerings.flashbang.tasks.LocationTask;
-
+package com.threerings.ui.bounds {
 import flash.display.DisplayObject;
 import flash.geom.Point;
+import com.threerings.flashbang.objects.SimpleSceneObject;
+import com.threerings.flashbang.tasks.LocationTask;
+import com.threerings.util.MathUtil;
 
 public class SceneObjectBounded extends SimpleSceneObject
 {
@@ -23,6 +21,7 @@ public class SceneObjectBounded extends SimpleSceneObject
     }
 
     protected var _bounds :Bounds;
+
     protected static const MOVE_TASK :String = "moveTask";
 }
 }

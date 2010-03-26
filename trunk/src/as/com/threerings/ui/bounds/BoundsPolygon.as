@@ -1,5 +1,4 @@
-package com.threerings.ui.bounds
-{
+package com.threerings.ui.bounds {
 import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Sprite;
@@ -11,6 +10,7 @@ import com.threerings.util.Log;
 import com.threerings.util.MathUtil;
 import net.amago.math.geometry.LineSegment;
 import net.amago.math.geometry.Polygon;
+
 public class BoundsPolygon extends Bounds
 {
     public function BoundsPolygon (polygon :Polygon)
@@ -18,23 +18,24 @@ public class BoundsPolygon extends Bounds
         _polygon = polygon;
     }
 
-    override public function get center () :Vector2
-    {
-        return _polygon.center;
-    }
     override public function get height () :Number
     {
         return _polygon.boundingBox.height;
     }
 
-    public function get polygon () :net.amago.math.geometry.Polygon
-    {
-        return _polygon;
-    }
-
     override public function get width () :Number
     {
         return _polygon.boundingBox.width;
+    }
+
+    override public function get center () :Vector2
+    {
+        return _polygon.center;
+    }
+
+    public function get polygon () :net.amago.math.geometry.Polygon
+    {
+        return _polygon;
     }
 
     public function containsBounds (b :Bounds) :Boolean
@@ -45,7 +46,6 @@ public class BoundsPolygon extends Bounds
             var line :LineSegment = BoundsLine(b).lineSegment;
             return contains(line.a.x, line.a.y) && contains(line.b.x, line.b.y);
         } else if (b is BoundsPolygon) {
-//            return _polygon.contains(BoundsPolygon(b).polygon);
             return contains(BoundsPolygon(b).polygon.center.x, BoundsPolygon(b).polygon.center.y);
         }
         throw new Error("containsBounds not implemented between " + ClassUtil.tinyClassName(this) +
@@ -61,11 +61,11 @@ public class BoundsPolygon extends Bounds
     {
         return _polygon.boundingBox;
     }
-	
-	override public function clone () :Object
-	{
-		return new BoundsPolygon(_polygon.clone());
-	}
+
+    override public function clone () :Object
+    {
+        return new BoundsPolygon(_polygon.clone());
+    }
 
     override public function contains (x :Number, y :Number) :Boolean
     {
@@ -73,22 +73,10 @@ public class BoundsPolygon extends Bounds
         return _polygon.isPointInside(p) || _polygon.isPointOnEdge(p);
     }
 
-//    override public function translate (dx :Number, dy :Number) :Bounds
-//    {
-//        var p :Polygon = _polygon.translate(dx, dy);
-//        return new BoundsPolygon(p);
-//    }
-//
-//    override public function scale (scaleX :Number, scaleY :Number) :Bounds
-//    {
-//        var p :Polygon = _polygon.scale(scaleX, scaleY);
-//        return new BoundsPolygon(p);
-//    }
-
     override public function convertToGlobal (localDisp :DisplayObject) :Bounds
     {
-        var globalPoints :Array = _polygon.vertices.map(
-            function (v :Vector2, ...ignored) :Vector2 {
+        var globalPoints :Array = _polygon.vertices.map(function (v :Vector2,
+            ... ignored) :Vector2 {
                 return Vector2.fromPoint(localDisp.localToGlobal(v.toPoint()));
             });
         return new BoundsPolygon(new Polygon(globalPoints));
@@ -129,17 +117,12 @@ public class BoundsPolygon extends Bounds
 
     override public function getBoundedPoint (targetX :Number, targetY :Number) :Point
     {
-//        if (_polygon.isPointInside(new Vector2(targetX, targetY))) {
-//            return new Point(targetX, targetY);
-//        }
-
-        var closestPoint :Vector2 = _polygon.closestPointOnPerimeter(
-            new Vector2(targetX, targetY));
+        var closestPoint :Vector2 = _polygon.closestPointOnPerimeter(new Vector2(targetX, targetY));
         return closestPoint.toPoint();
     }
 
-    override public function getBoundedPointFromMove (originX :Number, originY :Number, targetX :Number,
-        targetY :Number) :Point
+    override public function getBoundedPointFromMove (originX :Number, originY :Number,
+        targetX :Number, targetY :Number) :Point
     {
         var polygonBounds :Rectangle = _polygon.boundingBox;
         //Correct for intersections due to already being on the perimeter.
@@ -151,8 +134,8 @@ public class BoundsPolygon extends Bounds
         var points :Array = _polygon.getIntersectionPoints(new Vector2(originX, originY),
             new Vector2(targetX, targetY));
         if (points.length == 0) {
-            var closestPoint :Vector2 = _polygon.closestPointOnPerimeter(
-                new Vector2(targetX, targetY));
+            var closestPoint :Vector2 = _polygon.closestPointOnPerimeter(new Vector2(targetX,
+                targetY));
             return closestPoint.toPoint();
         }
 
@@ -160,6 +143,7 @@ public class BoundsPolygon extends Bounds
     }
 
     protected var _polygon :Polygon;
+
     protected static const log :Log = Log.getLog(BoundsPolygon);
 }
 }
