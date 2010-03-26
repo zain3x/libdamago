@@ -1,19 +1,16 @@
-package com.threerings.ui.bounds
-{
-import com.threerings.geom.Vector2;
-import com.threerings.util.ClassUtil;
-import com.threerings.util.StringUtil;
-
+package com.threerings.ui.bounds {
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-
+import com.threerings.geom.Vector2;
+import com.threerings.util.ClassUtil;
+import com.threerings.util.StringUtil;
 import net.amago.math.geometry.LineSegment;
 
 public class BoundsLine extends Bounds
 {
-	
+
     public function BoundsLine (x1 :Number, y1 :Number, x2 :Number, y2 :Number)
     {
         _p1 = new Vector2(x1, y1);
@@ -21,14 +18,19 @@ public class BoundsLine extends Bounds
         _lineSegment = new LineSegment(_p1, _p2);
     }
 
+    public function get lineSegment () :LineSegment
+    {
+        return _lineSegment;
+    }
+
     override public function get center () :Vector2
     {
         return Vector2.interpolate(_p1, _p2, 0.5);
     }
 
-    public function get lineSegment () :LineSegment
+    public function toString () :String
     {
-        return _lineSegment;
+        return StringUtil.simpleToString(this, [ "lineSegment" ]);
     }
 
     override public function boundingRect () :Rectangle
@@ -39,25 +41,16 @@ public class BoundsLine extends Bounds
         var maxY :Number = Math.max(_p1.y, _p2.y);
         return new Rectangle(minX, minY, maxX - minX, maxY - minY);
     }
-	override public function clone () :Object
-	{
-		return new BoundsLine(_p1.x, _p1.y, _p2.x, _p2.y);
-	}
+
+    override public function clone () :Object
+    {
+        return new BoundsLine(_p1.x, _p1.y, _p2.x, _p2.y);
+    }
 
     override public function contains (x :Number, y :Number) :Boolean
     {
         return LineSegment.distToLineSegment(_p1, _p2, new Vector2(x, y)) == 0;
     }
-
-//    override public function translate (dx :Number, dy :Number) :Bounds
-//    {
-//        return new BoundsLine(_p1.x + dx, _p1.y + dy, _p2.x + dx, _p2.y + dy);
-//    }
-//
-//    override public function scale (scaleX :Number, scaleY :Number) :Bounds
-//    {
-//        return new BoundsLine(_p1.x * scaleX, _p1.y * scaleY, _p2.x * scaleX, _p2.y * scaleY);
-//    }
 
     override public function convertToGlobal (localDisp :DisplayObject) :Bounds
     {
@@ -78,8 +71,6 @@ public class BoundsLine extends Bounds
         if (b is BoundsPoint) {
             return distanceToPoint(BoundsPoint(b).point);
         } else if (b is BoundsPolygon) {
-//            trace("dist to BoundsPolygon=", BoundsPolygon(b).polygon.distanceToLine(new LineSegment(_p1, _p2)));
-//            return BoundsPolygon(b).polygon.distanceToLine(new LineSegment(_p1, _p2));
             return _lineSegment.dist(BoundsPolygon(b).polygon.center);
         } else if (b is BoundsLine) {
             return BoundsLine(b)._lineSegment.distanceToLine(_lineSegment);
@@ -99,18 +90,13 @@ public class BoundsLine extends Bounds
         return LineSegment.closestPoint(_p1, _p2, new Vector2(x, y)).toPoint();
     }
 
-    override public function getBoundedPointFromMove (originX :Number, originY :Number, targetX :Number,
-        targetY :Number) :Point
+    override public function getBoundedPointFromMove (originX :Number, originY :Number,
+        targetX :Number, targetY :Number) :Point
     {
         return getBoundedPoint(targetX, targetY);
     }
-	
-	public function toString () :String
-	{
-		return StringUtil.simpleToString(this, ["lineSegment"]);
-	}
-    protected var _lineSegment :LineSegment;
 
+    protected var _lineSegment :LineSegment;
     protected var _p1 :Vector2;
     protected var _p2 :Vector2;
 }

@@ -1,12 +1,9 @@
-package com.threerings.ui.bounds
-{
-import com.threerings.geom.Vector2;
-import com.threerings.util.MathUtil;
-
+package com.threerings.ui.bounds {
 import flash.display.Graphics;
 import flash.geom.Point;
-
+import com.threerings.geom.Vector2;
 import com.threerings.geometry.Polygon;
+import com.threerings.util.MathUtil;
 
 /**
  * The trapezoid must be wider at the base than at the top.
@@ -21,9 +18,9 @@ public class BoundsTrapezoid extends BoundsPolygon
         _topRight = new Vector2(x + topWidth, y);
         _bottomRight = new Vector2(x + topWidth + bottomExtension, y + height);
         _bottomLeft = new Vector2(x - bottomExtension, y + height);
-        super(new Polygon([_topLeft, _topRight, _bottomRight, _bottomLeft]));
+        super(new Polygon([ _topLeft, _topRight, _bottomRight, _bottomLeft ]));
     }
-	
+
     override public function getBoundedPoint (targetX :Number, targetY :Number) :Point
     {
         var finalX :Number = targetX;
@@ -42,9 +39,10 @@ public class BoundsTrapezoid extends BoundsPolygon
         return super.getBoundedPoint(targetX, targetY);
     }
 
+    protected var _bottomLeft :Vector2;
+    protected var _bottomRight :Vector2;
+
     protected var _topLeft :Vector2;
     protected var _topRight :Vector2;
-    protected var _bottomRight :Vector2;
-    protected var _bottomLeft :Vector2;
 }
 }

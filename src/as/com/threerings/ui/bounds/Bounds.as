@@ -1,17 +1,15 @@
-package com.threerings.ui.bounds
-{
-import com.threerings.geom.Vector2;
-import com.threerings.util.ClassUtil;
-import com.threerings.util.Cloneable;
-
+package com.threerings.ui.bounds {
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-public class Bounds
-	implements Cloneable
+import com.threerings.geom.Vector2;
+import com.threerings.util.ClassUtil;
+import com.threerings.util.Cloneable;
+
+public class Bounds implements Cloneable
 {
-	
+
     public static function centerBounds (disp :DisplayObject, localBounds :Bounds, x :Number,
         y :Number) :void
     {
@@ -22,21 +20,10 @@ public class Bounds
 
     public static function convertToGlobal (localBounds :Bounds, localDisp :DisplayObject) :Bounds
     {
-		if (localBounds == null || localDisp == null) {
-			throw new Error("localBounds=" + localBounds + ", localDisp=" + localDisp);
-		}
+        if (localBounds == null || localDisp == null) {
+            throw new Error("localBounds=" + localBounds + ", localDisp=" + localDisp);
+        }
         return localBounds.convertToGlobal(localDisp);
-//        var globalTranslate :Point = localDisp.localToGlobal(new Point(0, 0));
-//        var globalBounds :Bounds = localBounds.translate(globalTranslate.x, globalTranslate.y);
-//
-//        var globalScale :Point = localDisp.localToGlobal(new Point(1, 1));
-//        globalScale.x = globalScale.x - globalTranslate.x;
-//        globalScale.y = globalScale.y - globalTranslate.y;
-//
-//        trace("globalScale=" + globalScale);
-////        globalBounds = globalBounds.scale(globalScale.x, globalScale.y);
-//        return globalBounds;
-
     }
 
     public static function positionBounds (disp :DisplayObject, localBounds :Bounds, x :Number,
@@ -47,10 +34,6 @@ public class Bounds
         disp.y = y - boundingRect.top;
     }
 
-    public function get center () :Vector2
-    {
-        throw new Error("Abstract method");
-    }
     public function get height () :Number
     {
         throw new Error("Abstract method");
@@ -61,30 +44,25 @@ public class Bounds
         throw new Error("Abstract method");
     }
 
+    public function get center () :Vector2
+    {
+        throw new Error("Abstract method");
+    }
+
     public function boundingRect () :Rectangle
     {
         throw new Error("Abstract method missing from " + ClassUtil.tinyClassName(this));
     }
 
-	public function clone () :Object
-	{
-		throw new Error("Abstract method");
-	}
+    public function clone () :Object
+    {
+        throw new Error("Abstract method");
+    }
 
     public function contains (x :Number, y :Number) :Boolean
     {
         throw new Error("Abstract method");
     }
-
-//    public function translate (x :Number, y :Number) :Bounds
-//    {
-//        throw new Error("Abstract method");
-//    }
-//
-//    public function scale (scaleX :Number, scaleY :Number) :Bounds
-//    {
-//        throw new Error("Abstract method");
-//    }
 
     public function convertToGlobal (localDisp :DisplayObject) :Bounds
     {
@@ -105,13 +83,6 @@ public class Bounds
     {
         throw new Error("Abstract method");
     }
-
-//    public function enforceBounds (d :DisplayObject) :void
-//    {
-//        var boundedPoint :Point = getBoundedPoint(d.x, d.y);
-//        d.x = boundedPoint.x;
-//        d.y = boundedPoint.y;
-//    }
 
     public function getBoundedPoint (x :Number, y :Number) :Point
     {

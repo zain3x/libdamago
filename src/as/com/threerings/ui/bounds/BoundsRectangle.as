@@ -1,9 +1,6 @@
-package com.threerings.ui.bounds
-{
-import com.threerings.geom.Vector2;
-
+package com.threerings.ui.bounds {
 import flash.geom.Rectangle;
-
+import com.threerings.geom.Vector2;
 import net.amago.math.geometry.Polygon;
 
 public class BoundsRectangle extends BoundsPolygon
@@ -16,7 +13,7 @@ public class BoundsRectangle extends BoundsPolygon
     public function BoundsRectangle (x :Number, y :Number, w :Number, h :Number)
     {
         _rect = new Rectangle(x, y, w, h);
-        super(new Polygon([new Vector2(_rect.left, _rect.top), new Vector2(_rect.right, _rect.top),
+        super(new Polygon([ new Vector2(_rect.left, _rect.top), new Vector2(_rect.right, _rect.top),
             new Vector2(_rect.right, _rect.bottom), new Vector2(_rect.left, _rect.bottom)]));
     }
 
