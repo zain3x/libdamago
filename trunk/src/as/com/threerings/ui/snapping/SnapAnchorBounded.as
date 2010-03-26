@@ -1,9 +1,7 @@
-package com.threerings.ui.snapping
-{
+package com.threerings.ui.snapping {
+import flash.geom.Point;
 import com.threerings.geom.Vector2;
 import com.threerings.ui.bounds.Bounds;
-
-import flash.geom.Point;
 
 /**
  * This class also notifies the
@@ -24,7 +22,6 @@ public class SnapAnchorBounded extends SnapAnchor
 
     override public function getSnappableDistance (d :ISnappingObject) :Number
     {
-//        var globalCenter :Point = SnapUtil.getGlobalCenter(d.boundsDisplayObject);
         return _boundsGlobal.distance(d.globalBounds);
     }
 
@@ -34,10 +31,8 @@ public class SnapAnchorBounded extends SnapAnchor
     override protected function getGlobalSnapToPoint (d :ISnappingObject) :Point
     {
         //TODO handle more than points
-
-		var globalBounds :Bounds = d.globalBounds;
-        var globalCenter :Vector2 = globalBounds.center;  
-//			SnapUtil.getGlobalCenter(d.displayObject);
+        var globalBounds :Bounds = d.globalBounds;
+        var globalCenter :Vector2 = globalBounds.center;
         //Round so as to remove weird 'wobbles'
         globalCenter.x = Math.round(globalCenter.x);
         globalCenter.y = Math.round(globalCenter.y);
@@ -46,9 +41,6 @@ public class SnapAnchorBounded extends SnapAnchor
         return boundedPoint;
     }
 
-
-
     internal var _boundsGlobal :Bounds;
-
 }
 }

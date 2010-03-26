@@ -2,9 +2,8 @@
 // $Id$
 
 package com.threerings.ui.snapping {
-import com.threerings.ui.bounds.BoundsPoint;
-
 import flash.geom.Point;
+import com.threerings.ui.bounds.BoundsPoint;
 
 public class SnapAnchorPoint extends SnapAnchorBounded
 {
