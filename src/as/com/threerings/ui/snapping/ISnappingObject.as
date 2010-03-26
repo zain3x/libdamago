@@ -23,14 +23,5 @@ public interface ISnappingObject
 
     function snapCenterToGlobal (p :Point) :void;
     
-    /**
-     * Called after a snap anchor snaps this object
-     */
-//    function snapped (anchor :ISnapAnchor) :void;
-    
-    /**
-     * Called on frames where there was no snap anchor in range.
-     */
-//    function notSnapped () :void;
 }
 }
