@@ -37,12 +37,7 @@
 			<locationURI>EXPORT_ROOT/ooo-libs/nenya/src/as</locationURI>
 		</link>
 		<link>
-			<name>[source path] pushbutton-tasks-src</name>
-			<type>2</type>
-			<location>/Users/dion/Documents/storage/projects/pushbutton-tasks/src</location>
-		</link>
-		<link>
-			<name>[source path] uravatar-src</name>
+			<name>[source path] src</name>
 			<type>2</type>
 			<locationURI>EXPORT_ROOT/whirled/projects/avatars/uravatar/src</locationURI>
 		</link>
