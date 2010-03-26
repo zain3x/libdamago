@@ -2,14 +2,17 @@
 // $Id$
 
 package com.threerings.ui.snapping {
+import com.threerings.ui.bounds.BoundsRectangle;
+import com.threerings.util.ArrayUtil;
+import com.threerings.util.ClassUtil;
+
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.geom.Point;
-import com.threerings.ui.bounds.BoundsRectangle;
-import com.threerings.util.ArrayUtil;
-import com.threerings.util.ClassUtil;
+
+import net.amago.util.EventDispatcherNonCloning;
 
 /**
  * Adds "snapping" to display objects when close enough to snap anchors.
@@ -29,7 +32,7 @@ import com.threerings.util.ClassUtil;
  *
  */
 [Event(name="snapEvent", type="com.threerings.ui.snapping.SnapEvent")]
-public class SnapManager extends EventDispatcher
+public class SnapManager extends EventDispatcherNonCloning //Recycle snap events
 {
 
     public static var DEBUG_DRAW :Boolean = false;
@@ -62,6 +65,7 @@ public class SnapManager extends EventDispatcher
         if (_target != null) {
             endSnapping(_target);
         }
+        snapper.beginSnapping(this);
         _target = snapper;
         _parent.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
         handleEnterFrame();
@@ -80,6 +84,9 @@ public class SnapManager extends EventDispatcher
         _parent.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
         _target = null;
         _debugLayer.graphics.clear();
+        //Reset the re-usable snapEvent
+        _snapEvent.anchor = null;
+        _snapEvent.snapped = null;
     }
 
     public function shutdown () :void
@@ -115,10 +122,15 @@ public class SnapManager extends EventDispatcher
 
     protected function handleEnterFrame (... ignored) :void
     {
+        //Reset the re-usable snapEvent
+        _snapEvent.anchor = null;
+        _snapEvent.snapped = _target;
+        
         if (_target == null) {
             return;
         }
 
+        
         var stage :DisplayObject = _parent.stage;
         //First move it to the mouse coords
         var mouseLoc :Point = new Point(stage.mouseX, stage.mouseY);
@@ -139,7 +151,8 @@ public class SnapManager extends EventDispatcher
                 if (anc.isWithinSnappingDistance(_target)) {
                     anc.snapObject(_target);
                     //Dispatch event whether we snap or not to indicate snapping/no snapping
-                    dispatchEvent(new SnapEvent(anc, _target));
+                    _snapEvent.anchor = anc;
+                    dispatchEvent(_snapEvent);
                     snapped = true;
                 }
             }
@@ -149,7 +162,8 @@ public class SnapManager extends EventDispatcher
                 if (anc.isWithinSnappingDistance(_target)) {
                     anc.snapObject(_target);
                     //Dispatch event whether we snap or not to indicate snapping/no snapping
-                    dispatchEvent(new SnapEvent(anc, _target));
+                    _snapEvent.anchor = anc;
+                    dispatchEvent(_snapEvent);
                     snapped = true;
                 }
             }
@@ -157,7 +171,8 @@ public class SnapManager extends EventDispatcher
 
         //If nothing is snapped, inform listeners of this
         if (!snapped) {
-            dispatchEvent(new SnapEvent(null, _target));
+            _snapEvent.anchor = null;
+            dispatchEvent(_snapEvent);
         }
 
         if (DEBUG_DRAW) {
@@ -180,5 +195,6 @@ public class SnapManager extends EventDispatcher
     protected var _parent :Sprite;
     protected var _snapAnchors :Array = [];
     protected var _target :ISnappingObject;
+    protected var _snapEvent :SnapEvent = new SnapEvent(null, null);
 }
 }
