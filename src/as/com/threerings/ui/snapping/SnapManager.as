@@ -2,15 +2,14 @@
 // $Id$
 
 package com.threerings.ui.snapping {
-import com.threerings.ui.bounds.BoundsRectangle;
-import com.threerings.util.ArrayUtil;
-import com.threerings.util.ClassUtil;
-
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.geom.Point;
+import com.threerings.ui.bounds.BoundsRectangle;
+import com.threerings.util.ArrayUtil;
+import com.threerings.util.ClassUtil;
 
 /**
  * Adds "snapping" to display objects when close enough to snap anchors.
@@ -34,6 +33,11 @@ public class SnapManager extends EventDispatcher
 {
 
     public static var DEBUG_DRAW :Boolean = false;
+
+    /**
+     * Snap all anchors, or just the closest;
+     */
+    public var snapAllAnchors :Boolean = false;
 
     public function SnapManager (parent :Sprite, debugDraw :Boolean = false)
     {
@@ -61,7 +65,7 @@ public class SnapManager extends EventDispatcher
         _target = snapper;
         _parent.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
         handleEnterFrame();
-		handleEnterFrame();
+        handleEnterFrame();
     }
 
     public function clear () :void
@@ -115,24 +119,18 @@ public class SnapManager extends EventDispatcher
             return;
         }
 
-//		trace("\n\nbegin handleEnterFrame")
-//		trace("global bounds=" + _target.globalBounds);
         var stage :DisplayObject = _parent.stage;
         //First move it to the mouse coords
-//		trace("stage=" + stage);
-		var mouseLoc :Point = new Point(stage.mouseX, stage.mouseY);
-		_target.snapCenterToGlobal(mouseLoc);
-//		trace("after snapping to mouse\nglobal bounds=" + _target.globalBounds);
-//		SnapUtil.snapCenterOfBoundsToGlobalPoint(_target, mouseLoc);
+        var mouseLoc :Point = new Point(stage.mouseX, stage.mouseY);
+        _target.snapCenterToGlobal(mouseLoc);
 
         var snapped :Boolean = false;
         var anc :ISnapAnchor;
         //Sort snap anchors by distance to target, so that the closest anchor snaps last
         ArrayUtil.stableSort(_snapAnchors, function (anc1 :ISnapAnchor, anc2 :ISnapAnchor) :int {
-                return anc1.getSnappableDistance(_target) < anc2.getSnappableDistance(_target) ? -1 :
-                    1;
+                return anc1.getSnappableDistance(_target) < anc2.getSnappableDistance(_target) ?
+                    -1 : 1;
             });
-//        trace("\n\n\n" + _snapAnchors.join(" \n"));
 
         if (snapAllAnchors) {
             //Snap to all anchors close enough
@@ -157,38 +155,26 @@ public class SnapManager extends EventDispatcher
             }
         }
 
-
         //If nothing is snapped, inform listeners of this
         if (!snapped) {
-//			SnapUtil.snapCenterOfBoundsToGlobalPoint(_target, mouseLoc);
             dispatchEvent(new SnapEvent(null, _target));
         }
 
         if (DEBUG_DRAW) {
             _debugLayer.graphics.clear();
             _parent.addChildAt(_debugLayer, _parent.numChildren);
-//            var translate :Point = _debugLayer.globalToLocal(new Point(0, 0));
             for each (anc in _snapAnchors) {
                 if (anc == null) {
                     continue;
                 }
                 anc.bounds.debugDraw(_debugLayer);
-//                BoundsRectangle.fromRectangle(anc.bounds.translate(translate.x,
-//                    translate.y).boundingRect()).debugDraw(_debugLayer);
                 BoundsRectangle.fromRectangle(anc.bounds.boundingRect()).debugDraw(_debugLayer);
 
             }
-            //            BoundsRectangle.fromRectangle(_target.globalBounds.translate(translate.x,
-            //                translate.y).boundingRect()).debugDraw(_debugLayer);
-//            _target.globalBounds.translate(translate.x, translate.y).debugDraw(_debugLayer);
             _target.globalBounds.debugDraw(_debugLayer);
         }
     }
 
-    /**
-     * Snap all anchors, or just the closest;
-     */
-    public var snapAllAnchors :Boolean = false;
     protected var _debugLayer :Sprite = new Sprite();
 
     protected var _parent :Sprite;

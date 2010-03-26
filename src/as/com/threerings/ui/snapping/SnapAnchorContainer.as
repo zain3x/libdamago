@@ -1,9 +1,7 @@
 package com.threerings.ui.snapping {
+import flash.geom.Rectangle;
 import com.threerings.ui.bounds.Bounds;
 import com.threerings.ui.bounds.BoundsPolygon;
-
-import flash.geom.Rectangle;
-
 
 /**
  * "Snaps" even when the object is contained, and not moved.
@@ -43,18 +41,6 @@ public class SnapAnchorContainer extends SnapAnchorBounded
         if (snappableGlobalBounds.right > containerBounds.right) {
             snappable.displayObject.x -= snappableGlobalBounds.right - containerBounds.right;
         }
-
-
-
-
-
-//        if (BoundsPolygon(_boundsGlobal).containsBounds(snappable.globalBounds)) {
-//            return;
-//        }
-//
-//
-//        super.snapObject(snappable);
     }
-
 }
 }

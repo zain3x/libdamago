@@ -2,7 +2,6 @@
 // $Id$
 
 package com.threerings.ui.snapping {
-
 import com.threerings.util.Enum;
 
 /**
@@ -10,23 +9,13 @@ import com.threerings.util.Enum;
  */
 public final class SnapDirection extends Enum
 {
-    // DEFINE MEMBERS HERE
-    public static const X :SnapDirection = new SnapDirection("X");
-    public static const Y :SnapDirection = new SnapDirection("Y");
-    public static const X_AND_Y :SnapDirection = new SnapDirection("X_AND_Y");
-    public static const TOP :SnapDirection = new SnapDirection("TOP");
     public static const BOTTOM :SnapDirection = new SnapDirection("BOTTOM");
     public static const LEFT :SnapDirection = new SnapDirection("LEFT");
     public static const RIGHT :SnapDirection = new SnapDirection("RIGHT");
-    finishedEnumerating(SnapDirection);
-
-    /**
-     * Get the values of the SnapType enum
-     */
-    public static function values () :Array
-    {
-        return Enum.values(SnapDirection);
-    }
+    public static const TOP :SnapDirection = new SnapDirection("TOP");
+    public static const X :SnapDirection = new SnapDirection("X");
+    public static const X_AND_Y :SnapDirection = new SnapDirection("X_AND_Y");
+    public static const Y :SnapDirection = new SnapDirection("Y");
 
     /**
      * Get the value of the SnapType enum that corresponds to the specified string.
@@ -37,10 +26,19 @@ public final class SnapDirection extends Enum
         return Enum.valueOf(SnapDirection, name) as SnapDirection;
     }
 
+    /**
+     * Get the values of the SnapType enum
+     */
+    public static function values () :Array
+    {
+        return Enum.values(SnapDirection);
+    }
+
     /** @private */
     public function SnapDirection (name :String)
     {
         super(name);
     }
+    finishedEnumerating(SnapDirection);
 }
 }
