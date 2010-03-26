@@ -1,7 +1,9 @@
 package com.threerings.ui.snapping {
-import flash.display.DisplayObject;
-import flash.geom.Point;
 import com.threerings.ui.bounds.Bounds;
+
+import flash.display.DisplayObject;
+import flash.events.IEventDispatcher;
+import flash.geom.Point;
 
 public interface ISnappingObject
 {
@@ -16,10 +18,19 @@ public interface ISnappingObject
     function get y () :Number;
     function set y (val :Number) :void;
 
-    function beginSnapping () :void;
+    function beginSnapping (snapManager :IEventDispatcher) :void;
     function endSnapping (anc :ISnapAnchor = null) :void;
 
     function snapCenterToGlobal (p :Point) :void;
-    function snapped (anchor :ISnapAnchor) :void;
+    
+    /**
+     * Called after a snap anchor snaps this object
+     */
+//    function snapped (anchor :ISnapAnchor) :void;
+    
+    /**
+     * Called on frames where there was no snap anchor in range.
+     */
+//    function notSnapped () :void;
 }
 }

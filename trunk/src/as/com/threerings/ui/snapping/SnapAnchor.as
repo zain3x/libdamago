@@ -63,7 +63,6 @@ public /*abstract*/class SnapAnchor implements ISnapAnchor
     {
         var snapPoint :Point = getGlobalSnapToPoint(snappable);
         SnapUtil.snapCenterOfBoundsToGlobalPoint(snappable, snapPoint);
-        snappable.snapped(this);
     }
 
     public function toString () :String

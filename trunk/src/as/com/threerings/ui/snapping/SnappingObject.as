@@ -2,10 +2,12 @@
 // $Id$
 
 package com.threerings.ui.snapping {
-import flash.display.DisplayObject;
-import flash.geom.Point;
 import com.threerings.ui.bounds.Bounds;
 import com.threerings.ui.bounds.BoundsRectangle;
+
+import flash.display.DisplayObject;
+import flash.events.IEventDispatcher;
+import flash.geom.Point;
 
 /**
  *
@@ -77,7 +79,7 @@ public class SnappingObject implements ISnappingObject
         _disp.y = val;
     }
 
-    public function beginSnapping () :void
+    public function beginSnapping (snapManager :IEventDispatcher) :void
     {
     }
 
@@ -88,10 +90,6 @@ public class SnappingObject implements ISnappingObject
     public function snapCenterToGlobal (p :Point) :void
     {
         SnapUtil.snapCenterOfBoundsToGlobalPoint(this, p);
-    }
-
-    public function snapped (anchor :ISnapAnchor) :void
-    {
     }
 
     protected var _bounds :Bounds;
