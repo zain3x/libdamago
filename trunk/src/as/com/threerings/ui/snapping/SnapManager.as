@@ -2,9 +2,11 @@
 // $Id$
 
 package com.threerings.ui.snapping {
+import com.threerings.geom.Vector2;
 import com.threerings.ui.bounds.BoundsRectangle;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
+import com.threerings.util.DisplayUtils;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
@@ -66,10 +68,30 @@ public class SnapManager extends EventDispatcherNonCloning //Recycle snap events
             endSnapping(_target);
         }
         snapper.beginSnapping(this);
+        attachSnapAnchors();
         _target = snapper;
         _parent.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
         handleEnterFrame();
         handleEnterFrame();
+    }
+    
+    protected function attachSnapAnchors () :void
+    {
+        for each (var anc :ISnapAnchor in _snapAnchors) {
+            if (anc.displayObject != null) {
+                _parent.addChild(anc.displayObject);
+                var center :Vector2 = anc.bounds.center;
+                anc.displayObject.x = center.x;
+                anc.displayObject.y = center.y;
+            }
+        }    
+    }
+    
+    protected function detachSnapAnchors () :void
+    {
+        for each (var anc :ISnapAnchor in _snapAnchors) {
+            DisplayUtils.detach(anc.displayObject);
+        }
     }
 
     public function clear () :void
@@ -87,12 +109,14 @@ public class SnapManager extends EventDispatcherNonCloning //Recycle snap events
         //Reset the re-usable snapEvent
         _snapEvent.anchor = null;
         _snapEvent.snapped = null;
+        detachSnapAnchors();
     }
 
     public function shutdown () :void
     {
         clear();
         _parent = null;
+        detachSnapAnchors();
     }
 
     override public function toString () :String

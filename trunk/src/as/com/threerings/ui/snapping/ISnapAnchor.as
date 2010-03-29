@@ -1,5 +1,8 @@
 package com.threerings.ui.snapping {
 import com.threerings.ui.bounds.Bounds;
+
+import flash.display.DisplayObject;
+
 public interface ISnapAnchor
 {
     function get bounds () :Bounds;
@@ -10,6 +13,13 @@ public interface ISnapAnchor
 
     function get userData () :*;
     function set userData (val :*) :void;
+    
+    /**
+     * For showing the snap anchors graphically.
+     * If there is a displayObject it will be added/removed to the editor layer on 
+     * snapping begin/end. 
+     */
+    function get displayObject () :DisplayObject;
 
     function getSnappableDistance (d :ISnappingObject) :Number;
     function isWithinSnappingDistance (snappable :ISnappingObject) :Boolean;
