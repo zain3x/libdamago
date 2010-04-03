@@ -52,14 +52,15 @@ public class DebugUtil
         }
         return sb;
     }
-	
-	public static function drawBoundingRect (layer :Sprite, rootContainer :DisplayObjectContainer,
-											 color :int = 0x000000, alpha :Number = 1) :void
-	{
-		var bounds :Rectangle = rootContainer.getBounds(rootContainer);
-		var g :Graphics = layer.graphics;
-		g.drawRect(bounds.left, bounds.top, bounds.width, bounds.height);
-	}
+
+    public static function drawBoundingRect (disp :DisplayObject, drawLayer :Sprite,
+                                             color :uint = 0x000000, alpha :Number = 1) :void
+    {
+        var bounds :Rectangle = disp.getBounds(drawLayer);
+        var g :Graphics = drawLayer.graphics;
+        g.lineStyle(1, color, alpha);
+        g.drawRect(bounds.left, bounds.top, bounds.width, bounds.height);
+    }
 
     public static function drawDot (s :Sprite, color :int = 0x00ffff, r :Number = 10, x :int = 0,
         y :int = 0) :void
@@ -87,23 +88,23 @@ public class DebugUtil
         g.lineStyle(1, color, alpha);
         g.drawRect(0, 0, width, height);
     }
-	
-	public static function drawRectangle (layer :Sprite, rect :Rectangle, color :int = 0x000000,
-									 alpha :Number = 1) :void
-	{
-		var g :Graphics = layer.graphics;
-		g.lineStyle(1, color, alpha);
-		g.drawRect(rect.left, rect.top, rect.width, rect.height);
-	}
-	
-	public static function fillRectangle (layer :Sprite, rect :Rectangle, color :int = 0x000000,
-										  alpha :Number = 1) :void
-	{
-		var g :Graphics = layer.graphics;
-		g.beginFill(color, alpha);
-		g.drawRect(rect.left, rect.top, rect.width, rect.height);
-		g.endFill();
-	}
+
+    public static function drawRectangle (layer :Sprite, rect :Rectangle, color :int = 0x000000,
+                                     alpha :Number = 1) :void
+    {
+        var g :Graphics = layer.graphics;
+        g.lineStyle(1, color, alpha);
+        g.drawRect(rect.left, rect.top, rect.width, rect.height);
+    }
+
+    public static function fillRectangle (layer :Sprite, rect :Rectangle, color :int = 0x000000,
+                                          alpha :Number = 1) :void
+    {
+        var g :Graphics = layer.graphics;
+        g.beginFill(color, alpha);
+        g.drawRect(rect.left, rect.top, rect.width, rect.height);
+        g.endFill();
+    }
 
     public static function fillBoundingRect (layer :Sprite, rootContainer :DisplayObjectContainer,
         color :int = 0xffffff, alpha :Number = 0) :void
@@ -132,16 +133,16 @@ public class DebugUtil
         g.drawRect(0, 0, width, height);
         g.endFill();
     }
-	
-	public static function getStackTrace () :String
-	{
-		try {
-			throw new Error();
-		} catch (e :Error) {
-			return e.getStackTrace();
-		}
-		return "";
-	}
+
+    public static function getStackTrace () :String
+    {
+        try {
+            throw new Error();
+        } catch (e :Error) {
+            return e.getStackTrace();
+        }
+        return "";
+    }
 
     public static function mapToProp (arr :Array, propName :String) :Array
     {
@@ -210,19 +211,19 @@ public class DebugUtil
             lineage.unshift(extendedDisplayObjectName(current));
             current = current.parent;
         }
-		
-		for (var ii :int = 0; ii < lineage.length; ++ii) {
-			lineage[ii] = space + lineage[ii];
-			space = space + "  ";
-		}
-		
+
+        for (var ii :int = 0; ii < lineage.length; ++ii) {
+            lineage[ii] = space + lineage[ii];
+            space = space + "  ";
+        }
+
         trace("Lineage:\n" + lineage.join("\n"));
     }
-	
-	protected static function extendedDisplayObjectName (d :DisplayObject) :String
-	{
-		return d + ".name=" + d.name + "  loc=" + d.x + " " + d.y;
-	}
+
+    protected static function extendedDisplayObjectName (d :DisplayObject) :String
+    {
+        return d + ".name=" + d.name + "  loc=" + d.x + " " + d.y;
+    }
 //    public static function byteClone (obj :Streamable) :Streamable
 //    {
 //        var bytes :ByteArray = new ByteArray();
