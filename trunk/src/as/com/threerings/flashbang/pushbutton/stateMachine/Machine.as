@@ -126,7 +126,7 @@ public class Machine implements IMachine
             oldState.exit(this);
         }
 
-        // New state finds out it is coming in.    
+        // New state finds out it is coming in.
         newState.enter(this);
 
         // Fire a transition event, if we have a dispatcher.
