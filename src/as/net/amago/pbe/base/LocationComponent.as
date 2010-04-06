@@ -1,14 +1,22 @@
 package net.amago.pbe.base {
 import com.pblabs.engine.entity.EntityComponent;
-import flash.events.Event;
-import flash.geom.Point;
+import com.pblabs.engine.entity.IEntity;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
+
+import flash.events.Event;
+import flash.geom.Point;
+
 public class LocationComponent extends EntityComponent
 {
     public static const CHANGED :String = "locationChanged";
     public static const COMPONENT_NAME :String = ClassUtil.tinyClassName(LocationComponent);
+
+    public static function getFrom (e :IEntity) :LocationComponent
+    {
+        return e.lookupComponentByName(COMPONENT_NAME) as LocationComponent;
+    }
 
     public function get point () :Point
     {
