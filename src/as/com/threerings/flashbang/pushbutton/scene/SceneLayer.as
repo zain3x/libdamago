@@ -1,11 +1,11 @@
 package com.threerings.flashbang.pushbutton.scene {
+import flash.display.DisplayObject;
+import flash.display.Sprite;
 import com.threerings.util.DisplayUtils;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 
-import flash.display.DisplayObject;
-import flash.display.Sprite;
 /**
  * Can be used independently or in conjunction with a Scene + SceneView.
  *
@@ -14,28 +14,24 @@ import flash.display.Sprite;
 public class SceneLayer extends Sprite
 {
     public var dirty :Boolean;
+
     public function SceneLayer ()
     {
-         super();
+        super();
     }
 
     public function get scene () :Scene2DComponent
     {
         return _parentScene;
     }
-//    public function addObject (obj :*, disp :DisplayObject = null) :void
-//    {
-//        if (null != _parentScene) {
-//            throw new Error("If this layer is attached to a Scene, use Scene.addSceneComponent");
-//        } else {
-//            addObjectInternal(obj, disp);
-//        }
-//    }
 
-//    public function containsObject (obj :*) :Boolean
-//    {
-//        return _sceneComponents.containsKey(obj);
-//    }
+    public function clear () :void
+    {
+        while (numChildren > 0) {
+            removeChildAt(0);
+        }
+        _sceneComponents.clear();
+    }
 
     public function detach () :void
     {
@@ -47,53 +43,20 @@ public class SceneLayer extends Sprite
         }
     }
 
-//    public function removeObject (obj :*) :void
-//    {
-//        if (null != _parentScene) {
-//            throw new Error("If this layer is attached to a Scene, use Scene.removeSceneComponent");
-//        } else {
-//            removeObjectInternal(obj);
-//        }
-//    }
-
     //Override to do something fancy e.g. parallax, or iso sorting
-    public function render (...ignored) :void
+    public function render (... ignored) :void
     {
 
-    }
-
-    public function clear () :void
-    {
-        while (numChildren > 0) {
-            removeChildAt(0);
-        }
-        _sceneComponents.clear();
-    }
-
-
-    internal function addObjectInternal (obj :SceneEntityComponent) :void
-    {
-        if (_sceneComponents.containsKey(obj)) {
-            throw new Error("Already contains obj " + obj);
-        }
-
-//        if (null == disp) {
-//            if (!(obj is DisplayObject)) {
-//                throw new Error("If the first arg is not a DisplayObject, you must " +
-//                        "supply a DisplayObject as the second argument");
-//            } else {
-//                disp = obj as DisplayObject;
-//            }
-//        }
-
-        _sceneComponents.put(obj, obj.displayObject);
-        addChild(obj.displayObject);
-        dirty = true;
-        objectAdded(obj, obj.displayObject);
     }
 
     //Subclasses override
-    protected function objectRemoved (obj :SceneEntityComponent, disp :DisplayObject) :void
+    protected function attached () :void
+    {
+
+    }
+
+    //Subclasses override
+    protected function detached () :void
     {
 
     }
@@ -105,20 +68,26 @@ public class SceneLayer extends Sprite
     }
 
     //Subclasses override
-    protected function attached () :void
+    protected function objectRemoved (obj :SceneEntityComponent, disp :DisplayObject) :void
     {
 
+    }
+
+    internal function addObjectInternal (obj :SceneEntityComponent) :void
+    {
+        if (_sceneComponents.containsKey(obj)) {
+            throw new Error("Already contains obj " + obj);
+        }
+
+        _sceneComponents.put(obj, obj.displayObject);
+        addChild(obj.displayObject);
+        dirty = true;
+        objectAdded(obj, obj.displayObject);
     }
 
     internal function attachedInternal () :void
     {
         attached();
-    }
-
-    //Subclasses override
-    protected function detached () :void
-    {
-
     }
 
     internal function detachedInternal () :void
@@ -132,14 +101,12 @@ public class SceneLayer extends Sprite
     internal function removeObjectInternal (obj :SceneEntityComponent) :void
     {
         if (!_sceneComponents.containsKey(obj)) {
-//            throw new Error("Doesn't contain " + obj);
             log.error("Doesn't contain " + obj);
             return;
         }
         var disp :DisplayObject = _sceneComponents.get(obj) as DisplayObject;
         _sceneComponents.remove(obj);
         DisplayUtils.detach(disp);
-//        removeChild(disp);
         dirty = true;
         objectRemoved(obj, disp);
     }
