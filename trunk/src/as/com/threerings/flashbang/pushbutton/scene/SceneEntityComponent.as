@@ -23,11 +23,11 @@ public class SceneEntityComponent extends EntityComponentListener
      * If set, alpha is gotten from this property every frame.
      */
     public var alphaProperty :PropertyReference;
-	
-	public var autoAttach :Boolean = true;
-	
-	public var displayObjectRef :PropertyReference;
-	
+
+    public var autoAttach :Boolean = true;
+
+    public var displayObjectRef :PropertyReference;
+
 
     /**
      * If set, the layer index is gotten from this property every frame.
@@ -43,13 +43,13 @@ public class SceneEntityComponent extends EntityComponentListener
      * If set, rotation is gotten from this property every frame.
      */
     public var rotationProperty :PropertyReference;
-	public var scaleXRef :PropertyReference;
-	public var scaleYRef :PropertyReference;
+    public var scaleXRef :PropertyReference;
+    public var scaleYRef :PropertyReference;
 
     public var sceneLayerName :String;
     public var sceneRef :PropertyReference;
-	
-	public var updateOnEvents :Array = [];
+
+    public var updateOnEvents :Array = [];
 
     public var xProperty :PropertyReference;
     public var yProperty :PropertyReference;
@@ -64,7 +64,7 @@ public class SceneEntityComponent extends EntityComponentListener
      * If set, our z-index is gotten from this property every frame.
      */
     public var zIndexProperty :PropertyReference;
-	
+
     public function SceneEntityComponent (displayObject :DisplayObject = null)
     {
         super();
@@ -183,40 +183,40 @@ public class SceneEntityComponent extends EntityComponentListener
         //        _position.y = posY;
         //        _transformDirty = true;
     }
-	
-	public function get scaleX():Number
-	{
-		return _scaleX;
-	}
-	
-	/**
-	 * You can scale things on the X and Y axes.
-	 */
-	public function set scaleX (value:Number):void
-	{
-		if (value == _scaleX)
-			return;
-		
-		_scaleX = value;
-		_transformDirty = true;
-	}
-	
-	public function get scaleY():Number
-	{
-		return _scaleY;
-	}
-	
-	/**
-	 * You can scale things on the X and Y axes.
-	 */
-	public function set scaleY (value:Number):void
-	{
-		if (value == _scaleY)
-			return;
-		
-		_scaleY = value;
-		_transformDirty = true;
-	}
+
+    public function get scaleX():Number
+    {
+        return _scaleX;
+    }
+
+    /**
+     * You can scale things on the X and Y axes.
+     */
+    public function set scaleX (value:Number):void
+    {
+        if (value == _scaleX)
+            return;
+
+        _scaleX = value;
+        _transformDirty = true;
+    }
+
+    public function get scaleY():Number
+    {
+        return _scaleY;
+    }
+
+    /**
+     * You can scale things on the X and Y axes.
+     */
+    public function set scaleY (value:Number):void
+    {
+        if (value == _scaleY)
+            return;
+
+        _scaleY = value;
+        _transformDirty = true;
+    }
 
     //
     //    public function get registrationPoint () :Point
@@ -467,32 +467,33 @@ public class SceneEntityComponent extends EntityComponentListener
         _zIndex = value;
         _zIndexDirty = true;
     }
-	
-	public function attach () :void
-	{
-		if (_displayObject == null && displayObjectRef != null) {
-			_displayObject = owner.getProperty(displayObjectRef) as DisplayObject;
-		}
-		
-		var scene2D :Scene2DComponent = owner.getProperty(sceneRef) as Scene2DComponent;
-		if (_scene == scene2D) {
-			log.warning("attach", "_scene", _scene, "scene2D", scene2D);
-			return;
-		} 
-		//Add ourselves to the scene
-		if (scene2D != null) {
-			scene2D.addSceneComponent(this);
-		} else {
-			log.warning("attach", "scene2D", scene2D);
-		}
-	}
-	
-	public function detach () :void
-	{
-		if (_scene != null) {
-			_scene.removeSceneComponent(this);
-		}
-	}
+
+    public function attach () :void
+    {
+        if (_displayObject == null && displayObjectRef != null) {
+            _displayObject = owner.getProperty(displayObjectRef) as DisplayObject;
+        }
+
+        updateFromEvent();
+        var scene2D :Scene2DComponent = owner.getProperty(sceneRef) as Scene2DComponent;
+        if (_scene == scene2D) {
+            log.warning("attach, already attached", "_scene", _scene, "scene2D", scene2D);
+            return;
+        }
+        //Add ourselves to the scene
+        if (scene2D != null) {
+            scene2D.addSceneComponent(this);
+        } else {
+            log.warning("attach", "scene2D", scene2D);
+        }
+    }
+
+    public function detach () :void
+    {
+        if (_scene != null) {
+            _scene.removeSceneComponent(this);
+        }
+    }
 
     public function onFrame (dt :Number) :void
     {
@@ -501,8 +502,8 @@ public class SceneEntityComponent extends EntityComponentListener
         if (displayObject == null || displayObject.parent == null) {
             return;
         }
-		
-		
+
+
 //		displayObject.scaleX = owner.getProperty(scaleXRefy, 1) as Number;
 //		displayObject.scaleY = owner.getProperty(scaleYRef, 1) as Number;
 //		displayObject.alpha = owner.getProperty(alphaProperty, 1) as Number;
@@ -510,10 +511,10 @@ public class SceneEntityComponent extends EntityComponentListener
 //		displayObject.x = owner.getProperty(xProperty, 0) as Number;
 //		displayObject.y = owner.getProperty(yProperty, 0) as Number;
 //        trace("updating", x, y);
-		
-		if (_isDirty) {
-        	updateProperties();
-		}
+
+        if (_isDirty) {
+            updateProperties();
+        }
 
         // Now that we've read all our properties, apply them to our transform.
         if (_transformDirty) {
@@ -574,15 +575,15 @@ public class SceneEntityComponent extends EntityComponentListener
         if (!displayObject) {
             return;
         }
-		
+
 
         if (updateProps) {
             updateProperties();
         }
 
-		if (_scene == null) {
-			return;
-		}
+        if (_scene == null) {
+            return;
+        }
         //        _transformMatrix.identity();
         //        _transformMatrix.scale(_scale.x, _scale.y);
         //        _transformMatrix.translate(-_registrationPoint.x * _scale.x,
@@ -591,13 +592,13 @@ public class SceneEntityComponent extends EntityComponentListener
         //        _transformMatrix.translate(_position.x, _position.y);
 
         //        displayObject.transform.matrix = _transformMatrix;
-		displayObject.scaleX = _scaleX;
-		displayObject.scaleY = _scaleY;
+        displayObject.scaleX = _scaleX;
+        displayObject.scaleY = _scaleY;
         displayObject.alpha = _alpha;
         displayObject.visible = (alpha > 0);
         displayObject.x = x;
         displayObject.y = y;
-		
+
 //		if (SceneItemComponent(owner.lookupComponentByType(SceneItemComponent)).desc.type == SceneComponentType.STOREY) {
 //			trace(x, y);
 //		}
@@ -608,38 +609,38 @@ public class SceneEntityComponent extends EntityComponentListener
     override protected function onAdd () :void
     {
         super.onAdd();
-		for each (var eventName :String in updateOnEvents) {
-			registerListener(owner.eventDispatcher, eventName, F.callback(updateFromEvent, eventName));
-		}
+        for each (var eventName :String in updateOnEvents) {
+            registerListener(owner.eventDispatcher, eventName, F.callback(updateFromEvent, eventName));
+        }
     }
 
     override protected function onRemove () :void
     {
         super.onRemove();
         // Remove ourselves from the scene when we are removed
-		detach();
+        detach();
     }
-	
-	override protected function onReset() : void
-	{
-		super.onReset();
-		
-		detach();
-		
-		if (autoAttach) {
-			attach();
-		}
-	}
-	
-	protected function updateFromEvent (... _) :void
-	{
-		_isDirty = true;
-	}
+
+    override protected function onReset() : void
+    {
+        super.onReset();
+
+        detach();
+
+        if (autoAttach) {
+            attach();
+        }
+    }
+
+    protected function updateFromEvent (... _) :void
+    {
+        _isDirty = true;
+    }
 
     protected function updateProperties () :void
     {
-		_transformDirty = true;
-		_isDirty = false;
+        _transformDirty = true;
+        _isDirty = false;
         // Sync our zIndex.
 //        if (zIndexProperty) {
 //            zIndex = owner.getProperty(zIndexProperty, zIndex);
@@ -689,7 +690,7 @@ public class SceneEntityComponent extends EntityComponentListener
         if (null != alphaProperty) {
             alpha = owner.getProperty(alphaProperty) as Number;
         }
-		
+
         //        // Registration Point.
         //        var reg :Point = owner.getProperty(registrationPointProperty) as Point;
         //        if (reg) {
@@ -715,7 +716,7 @@ public class SceneEntityComponent extends EntityComponentListener
 //            _layerIndexDirty = false;
 //        }
     }
-	
+
     protected var _alpha :Number = 1;
 
     protected var _displayObject :DisplayObject;
@@ -732,7 +733,7 @@ public class SceneEntityComponent extends EntityComponentListener
 
     //    protected var _rotationOffset :Number = 0;
     protected var _scaleX :Number = 1
-	protected var _scaleY :Number = 1;
+    protected var _scaleY :Number = 1;
 
     protected var _transformDirty :Boolean = true;
 
@@ -743,7 +744,7 @@ public class SceneEntityComponent extends EntityComponentListener
     protected var _zIndexDirty :Boolean = true;
 
     internal var _scene :Scene2DComponent;
-	
-	protected static const log :Log = Log.getLog(SceneEntityComponent);
+
+    protected static const log :Log = Log.getLog(SceneEntityComponent);
 }
 }
