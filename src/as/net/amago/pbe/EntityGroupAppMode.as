@@ -1,5 +1,5 @@
 package net.amago.pbe {
-import com.threerings.flashbang.pushbutton.EntityAppmode;
+import com.threerings.flashbang.EntityAppmode;
 
 /**
  * Instatiates a group of entities upon init

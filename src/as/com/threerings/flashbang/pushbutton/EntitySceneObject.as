@@ -26,9 +26,10 @@ import com.threerings.flashbang.components.RotationComponent;
 import com.threerings.flashbang.components.ScaleComponent;
 import com.threerings.flashbang.components.SceneComponent;
 import com.threerings.flashbang.components.VisibleComponent;
-import com.threerings.flashbang.pushbutton.GameObjectEntity;
+import com.threerings.flashbang.GameObjectEntity;
 
 import flash.display.DisplayObject;
+import com.threerings.flashbang.GameObjectEntity;
 
 public class EntitySceneObject extends GameObjectEntity
     implements AlphaComponent, BoundsComponent, ScaleComponent, SceneComponent, VisibleComponent,

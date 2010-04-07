@@ -14,7 +14,7 @@ import com.pblabs.engine.serialization.Serializer;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.utils.Dictionary;
-import com.threerings.flashbang.pushbutton.GameObjectEntity;
+import com.threerings.flashbang.GameObjectEntity;
 import com.threerings.flashbang.pushbutton.debug.Profiler;
 import com.threerings.flashbang.resource.XmlResource;
 import com.threerings.util.Log;

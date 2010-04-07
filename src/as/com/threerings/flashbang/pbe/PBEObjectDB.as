@@ -12,6 +12,7 @@ import com.threerings.util.EventHandlerManager;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
+import com.threerings.flashbang.GameObjectEntity;
 
 public class PBEObjectDB extends EventDispatcher implements Updatable
 {

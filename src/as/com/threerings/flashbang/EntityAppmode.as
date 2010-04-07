@@ -1,13 +1,13 @@
-package com.threerings.flashbang.pushbutton {
+package com.threerings.flashbang {
 import com.pblabs.engine.entity.IEntity;
 import com.pblabs.engine.entity.IEntityComponent;
 import com.pblabs.engine.entity.PropertyReference;
-import com.threerings.flashbang.AppMode;
-import com.threerings.flashbang.GameObject;
-import com.threerings.flashbang.GameObjectRef;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
+import com.threerings.flashbang.pushbutton.IGroupObject;
+import com.threerings.flashbang.pushbutton.PropertyInfo;
+
 public class EntityAppmode extends AppMode
 {
     public static const OBJECT_ADDED :String = "objectAdded";
@@ -80,7 +80,6 @@ public class EntityAppmode extends AppMode
     override public function addObject (obj :GameObject) :GameObjectRef
     {
         var ref :GameObjectRef = super.addObject(obj);
-        _allObjects.push(ref);
         if (obj is GameObjectEntity) {
             for each (var comp :IEntityComponent in GameObjectEntity(obj)._components) {
                 if (comp is IGroupObject) {
@@ -97,12 +96,6 @@ public class EntityAppmode extends AppMode
 
         }
         return ref;
-    }
-
-    override public function destroyObject (ref :GameObjectRef) :void
-    {
-        super.destroyObject(ref);
-        ArrayUtil.removeFirst(_allObjects, ref);
     }
 
     override public function update (dt :Number) :void
