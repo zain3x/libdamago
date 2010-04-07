@@ -2,12 +2,11 @@ package com.threerings.flashbang {
 import com.pblabs.engine.entity.IEntity;
 import com.pblabs.engine.entity.IEntityComponent;
 import com.pblabs.engine.entity.PropertyReference;
+import com.threerings.flashbang.pushbutton.IGroupObject;
+import com.threerings.flashbang.pushbutton.PropertyInfo;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
-import com.threerings.flashbang.pushbutton.IGroupObject;
-import com.threerings.flashbang.pushbutton.PropertyInfo;
-
 public class EntityAppmode extends AppMode
 {
     public static const OBJECT_ADDED :String = "objectAdded";
@@ -79,12 +78,61 @@ public class EntityAppmode extends AppMode
 
     override public function addObject (obj :GameObject) :GameObjectRef
     {
-        var ref :GameObjectRef = super.addObject(obj);
+        if (null == obj || null != obj._ref) {
+            throw new ArgumentError("obj must be non-null, and must never have belonged to " +
+                "another ObjectDB");
+        }
+
+        // create a new GameObjectRef
+        var ref :GameObjectRef = new GameObjectRef();
+        ref._obj = obj;
+
+        // add the ref to the list
+        var oldListHead :GameObjectRef = _listHead;
+        _listHead = ref;
+
+        if (null != oldListHead) {
+            ref._next = oldListHead;
+            oldListHead._prev = ref;
+        }
+
+        // initialize object
+        obj._parentDB = this;
+        obj._ref = ref;
+
+        // does the object have a name?
+        var objectName :String = obj.objectName;
+        if (null != objectName) {
+            var oldObj :* = _namedObjects.put(objectName, obj);
+            if (undefined !== oldObj) {
+                throw new Error("two objects with the same name ('" + objectName + "') " +
+                    "added to the ObjectDB");
+            }
+        }
+
+        // iterate over the object's groups
+        var groupNum :int = 0;
+        var groupName :String;
+        var groupArray :Array;
+        do {
+            groupName = obj.getObjectGroup(groupNum++);
+            if (null != groupName) {
+                groupArray = (_groupedObjects.get(groupName) as Array);
+                if (null == groupArray) {
+                    groupArray = [];
+                    _groupedObjects.put(groupName, groupArray);
+                }
+
+                groupArray.push(ref);
+            }
+        } while (null != groupName);
+
+        //And the component groups
         if (obj is GameObjectEntity) {
             for each (var comp :IEntityComponent in GameObjectEntity(obj)._components) {
                 if (comp is IGroupObject) {
-                    for each (var groupName :String in IGroupObject(comp).groupNames) {
-                        var groupArray :Array = (_groupedObjects.get(groupName) as Array);
+                    for each (groupName in IGroupObject(comp).groupNames) {
+                        groupArray = (_groupedObjects.get(groupName) as Array);
                         if (null == groupArray) {
                             groupArray = [];
                             _groupedObjects.put(groupName, groupArray);
@@ -93,8 +141,12 @@ public class EntityAppmode extends AppMode
                     }
                 }
             }
-
         }
+
+        obj.addedToDBInternal();
+
+        ++_objectCount;
+
         return ref;
     }
 
