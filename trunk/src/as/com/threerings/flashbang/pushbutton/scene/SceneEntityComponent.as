@@ -477,7 +477,7 @@ public class SceneEntityComponent extends EntityComponentListener
         updateFromEvent();
         var scene2D :Scene2DComponent = owner.getProperty(sceneRef) as Scene2DComponent;
         if (_scene == scene2D) {
-            log.warning("attach, already attached", "_scene", _scene, "scene2D", scene2D);
+            log.info("attach, already attached", "_scene", _scene, "scene2D", scene2D);
             return;
         }
         //Add ourselves to the scene
