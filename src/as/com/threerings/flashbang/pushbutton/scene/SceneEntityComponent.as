@@ -2,6 +2,7 @@ package com.threerings.flashbang.pushbutton.scene {
 import aduros.util.F;
 
 import com.pblabs.engine.core.IAnimatedObject;
+import com.pblabs.engine.entity.IEntity;
 import com.pblabs.engine.entity.PropertyReference;
 import com.threerings.flashbang.components.SceneComponent;
 import com.threerings.util.ClassUtil;
@@ -18,6 +19,11 @@ public class SceneEntityComponent extends EntityComponentListener
     implements SceneComponent, IAnimatedObject
 {
     public static const COMPONENT_NAME :String = ClassUtil.tinyClassName(SceneEntityComponent);
+
+    public static function getFrom (e :IEntity) :SceneEntityComponent
+    {
+        return e.lookupComponentByName(COMPONENT_NAME) as SceneEntityComponent;
+    }
 
     /**
      * If set, alpha is gotten from this property every frame.
