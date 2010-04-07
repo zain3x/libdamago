@@ -83,14 +83,15 @@ public class EntityAppmode extends AppMode
         _allObjects.push(ref);
         if (obj is GameObjectEntity) {
             for each (var comp :IEntityComponent in GameObjectEntity(obj)._components) {
-                if (comp is IComponentGroup) {
-                    var groupName :String = ClassUtil.tinyClassName(comp);
-                    var groupArray :Array = (_groupedObjects.get(groupName) as Array);
-                    if (null == groupArray) {
-                        groupArray = [];
-                        _groupedObjects.put(groupName, groupArray);
+                if (comp is IGroupObject) {
+                    for each (var groupName :String in IGroupObject(comp).groupNames) {
+                        var groupArray :Array = (_groupedObjects.get(groupName) as Array);
+                        if (null == groupArray) {
+                            groupArray = [];
+                            _groupedObjects.put(groupName, groupArray);
+                        }
+                        groupArray.push(ref);
                     }
-                    groupArray.push(ref);
                 }
             }
 
@@ -121,18 +122,19 @@ public class EntityAppmode extends AppMode
         if (obj is GameObjectEntity) {
             var ref :GameObjectRef = obj._ref;
             for each (var comp :IEntityComponent in GameObjectEntity(obj)._components) {
-                if (comp is IComponentGroup) {
-                    var groupName :String = ClassUtil.tinyClassName(comp);
-                    var groupArray :Array = (_groupedObjects.get(groupName) as Array);
-                    if (null == groupArray) {
-                        throw new Error("destroyed GameObject is returning different object groups " +
-                            "than it did on creation");
-                    }
+                if (comp is IGroupObject) {
+                    for each (var groupName :String in IGroupObject(comp).groupNames) {
+                        var groupArray :Array = (_groupedObjects.get(groupName) as Array);
+                        if (null == groupArray) {
+                            throw new Error("destroyed GameObject is returning different object groups " +
+                                "than it did on creation");
+                        }
 
-                    var wasInArray :Boolean = ArrayUtil.removeFirst(groupArray, ref);
-                    if (!wasInArray) {
-                        throw new Error("destroyed GameObject is returning different object groups " +
-                            "than it did on creation");
+                        var wasInArray :Boolean = ArrayUtil.removeFirst(groupArray, ref);
+                        if (!wasInArray) {
+                            throw new Error("destroyed GameObject is returning different object groups " +
+                                "than it did on creation");
+                        }
                     }
                 }
             }
