@@ -1,8 +1,8 @@
 package com.threerings.flashbang.pushbutton.scene.tests {
 import com.pblabs.engine.entity.PropertyReference;
 import com.threerings.flashbang.components.LocationComponent;
-import com.threerings.flashbang.pushbutton.EntityAppmode;
-import com.threerings.flashbang.pushbutton.GameObjectEntity;
+import com.threerings.flashbang.EntityAppmode;
+import com.threerings.flashbang.GameObjectEntity;
 import com.threerings.flashbang.pushbutton.scene.Scene2DComponent;
 import com.threerings.flashbang.pushbutton.scene.SceneEntityComponent;
 import com.threerings.flashbang.pushbutton.scene.SceneLayerYOrdering;

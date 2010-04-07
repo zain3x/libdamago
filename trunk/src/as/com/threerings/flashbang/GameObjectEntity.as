@@ -1,13 +1,10 @@
-package com.threerings.flashbang.pushbutton {
+package com.threerings.flashbang {
     import com.pblabs.engine.core.IAnimatedObject;
     import com.pblabs.engine.core.ITickedObject;
     import com.pblabs.engine.core.PBGroup;
     import com.pblabs.engine.entity.IEntity;
     import com.pblabs.engine.entity.IEntityComponent;
     import com.pblabs.engine.entity.PropertyReference;
-    import com.threerings.flashbang.GameObject;
-    import com.threerings.flashbang.ObjectDB;
-    import com.threerings.flashbang.Updatable;
     import com.threerings.pbe.tasks.TaskComponent;
     import com.threerings.util.ArrayUtil;
     import com.threerings.util.ClassUtil;
@@ -22,6 +19,7 @@ package com.threerings.flashbang.pushbutton {
     import flash.utils.getTimer;
 
     import net.amago.util.EventDispatcherNonCloning;
+    import com.threerings.flashbang.pushbutton.PropertyInfo;
 
     /**
      * A modification of GameObject.  Utilizes EntityComponents.
