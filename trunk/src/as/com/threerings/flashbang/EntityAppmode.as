@@ -43,6 +43,11 @@ public class EntityAppmode extends AppMode
         return obj;
     }
 
+    public function allocateEntity () :GameObjectEntity
+    {
+        return new GameObjectEntity();
+    }
+
     public function getProperty (property :PropertyReference, defaultVal :* = null) :*
     {
         // Look up the property.
