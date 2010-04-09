@@ -66,7 +66,7 @@ public class LocationComponent extends EntityComponent
 
     public function setLocation (xLoc :Number, yLoc :Number) :void
     {
-        if (_x != xLoc && _y != yLoc) {
+        if (_x != xLoc || _y != yLoc) {
             _x = xLoc;
             _y = yLoc;
             if (owner != null) {
