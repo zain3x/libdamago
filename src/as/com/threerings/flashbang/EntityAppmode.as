@@ -2,11 +2,15 @@ package com.threerings.flashbang {
 import com.pblabs.engine.entity.IEntity;
 import com.pblabs.engine.entity.IEntityComponent;
 import com.pblabs.engine.entity.PropertyReference;
+import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
+import flash.display.Sprite;
 import com.threerings.flashbang.pushbutton.IGroupObject;
 import com.threerings.flashbang.pushbutton.PropertyInfo;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
+import net.amago.pbe.base.SceneComponent;
 public class EntityAppmode extends AppMode
 {
     public static const OBJECT_ADDED :String = "objectAdded";
@@ -30,6 +34,34 @@ public class EntityAppmode extends AppMode
     public function get namedObjects () :Array
     {
         return _namedObjects.values();
+    }
+
+    public function addEntitySceneObject (obj :GameObjectEntity,
+        displayParent :DisplayObjectContainer = null, displayIdx :int = -1) :GameObjectRef
+    {
+        if (obj.lookupComponentByName(SceneComponent.COMPONENT_NAME) == null) {
+            throw new Error("obj must have SceneComponent IEntityComponent");
+        }
+
+        // Attach the object to a display parent.
+        // (This is purely a convenience - the client is free to do the attaching themselves)
+        var disp :DisplayObject = SceneComponent.getDisplayObjectFrom(obj);
+        if (null == disp) {
+            throw new Error("obj must return a non-null displayObject to be attached " +
+                "to a display parent");
+        }
+
+        if (displayParent == null) {
+            displayParent = _modeSprite;
+        }
+
+        if (displayIdx < 0 || displayIdx >= displayParent.numChildren) {
+            displayParent.addChild(disp);
+        } else {
+            displayParent.addChildAt(disp, displayIdx);
+        }
+
+        return addObject(obj);
     }
 
     public function addSingletonComponent (comp :IEntityComponent, compName :String) :IEntity
@@ -153,6 +185,27 @@ public class EntityAppmode extends AppMode
         ++_objectCount;
 
         return ref;
+    }
+
+    override public function destroyObject (ref :GameObjectRef) :void
+    {
+        if (null != ref && null != ref.object && ref.object is IEntity) {
+            // if the object is attached to a DisplayObject, and if that
+            // DisplayObject is in a display list, remove it from the display list
+            // so that it will no longer be drawn to the screen
+            var sc :SceneComponent = SceneComponent.getFrom(ref.object as IEntity);
+            if (null != sc) {
+                var displayObj :DisplayObject = sc.displayObject;
+                if (null != displayObj) {
+                    var parent :DisplayObjectContainer = displayObj.parent;
+                    if (null != parent) {
+                        parent.removeChild(displayObj);
+                    }
+                }
+            }
+        }
+
+        super.destroyObject(ref);
     }
 
     override public function update (dt :Number) :void
