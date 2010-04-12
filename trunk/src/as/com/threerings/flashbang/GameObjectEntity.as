@@ -5,6 +5,9 @@ package com.threerings.flashbang {
     import com.pblabs.engine.entity.IEntity;
     import com.pblabs.engine.entity.IEntityComponent;
     import com.pblabs.engine.entity.PropertyReference;
+    import flash.events.IEventDispatcher;
+    import flash.utils.getTimer;
+    import com.threerings.flashbang.pushbutton.PropertyInfo;
     import com.threerings.pbe.tasks.TaskComponent;
     import com.threerings.util.ArrayUtil;
     import com.threerings.util.ClassUtil;
@@ -14,13 +17,7 @@ package com.threerings.flashbang {
     import com.threerings.util.Maps;
     import com.threerings.util.Predicates;
     import com.threerings.util.StringUtil;
-
-    import flash.events.IEventDispatcher;
-    import flash.utils.getTimer;
-
     import net.amago.util.EventDispatcherNonCloning;
-    import com.threerings.flashbang.pushbutton.PropertyInfo;
-
     /**
      * A modification of GameObject.  Utilizes EntityComponents.
      * Rather that creating GameObjects with extra functionality via extending this class,
@@ -36,7 +33,6 @@ package com.threerings.flashbang {
         public function GameObjectEntity (name :String = null)
         {
             _name = name;
-            addComponent(new TaskComponent(), TaskComponent.COMPONENT_NAME);
         }
 
         public function get alias () :String
@@ -44,23 +40,14 @@ package com.threerings.flashbang {
             return null;
         }
 
-//		internal function get components () :Array
-//		{
-//			return _components.concat();
-//		}
-
         public function get dbComponent () :EntityAppmode
         {
             return db as EntityAppmode;
         }
 
-
-        public function get debugcomponents () :Array
+        public function get components () :Array
         {
-            return _components != null ? _components.map(
-                function (c :IEntityComponent, ... _) :String {
-                    return "\n" + c.name + "=" + c
-                }) : [];
+            return _components;//Don't modify
         }
 
         public function get deferring():Boolean
@@ -268,19 +255,6 @@ package com.threerings.flashbang {
             _tempPropertyInfo.clear();
         }
 
-//		//GameObjectEntity groups include the component classnames.
-//		override public function getObjectGroup (groupNum :int) :String
-//		{
-//			if (groupNum == 0) {
-//				return GROUP_ENTITY;
-//			}
-//			var numComponents :int = _components != null ? _components.length : 0;
-//			if (numComponents > 0 && groupNum - 1 < numComponents) {
-//				return ClassUtil.getClassName(_components[groupNum - 1]);
-//			}
-//			return super.getObjectGroup(groupNum - (numComponents + 1));
-//		}
-//
         override public function toString() : String
         {
             if (stringFunc == null) {
@@ -302,15 +276,6 @@ package com.threerings.flashbang {
         {
             super.addedToDB();
             deferring = false;
-        }
-
-        override protected function destroyed () :void
-        {
-            for each (var c :IEntityComponent in _components) {
-                c.unregister();
-            }
-            _components = null;
-            _componentMap.clear();
         }
 
         override protected function update (dt :Number) :void
@@ -352,6 +317,19 @@ package com.threerings.flashbang {
             }
         }
 
+        internal function destroyComponents () :void
+        {
+            _components = null;
+            _componentMap.clear();
+        }
+
+        internal function unregisterComponents () :void
+        {
+            for each (var c :IEntityComponent in _components) {
+                c.unregister();
+            }
+        }
+
         internal function removeComponentInternal (component :IEntityComponent,
             reset :Boolean = true) :void
         {
@@ -381,13 +359,14 @@ package com.threerings.flashbang {
         }
 
         protected var _componentMap :Map = Maps.newMapOf(String);
-        internal var _components :Array = [];
         protected var _deferredComponents:Array = new Array();
         protected var _deferring:Boolean = true;
         protected var _dispatcher :IEventDispatcher = new EventDispatcherNonCloning();
 
         protected var _name :String = null;
         protected var _tempPropertyInfo :PropertyInfo = new PropertyInfo();
+
+        internal var _components :Array = [];
 
         protected static const log :Log = Log.getLog(GameObjectEntity);
 

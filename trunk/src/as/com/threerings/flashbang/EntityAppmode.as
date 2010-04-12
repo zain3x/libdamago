@@ -2,14 +2,16 @@ package com.threerings.flashbang {
 import com.pblabs.engine.entity.IEntity;
 import com.pblabs.engine.entity.IEntityComponent;
 import com.pblabs.engine.entity.PropertyReference;
-import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;
-import flash.display.Sprite;
 import com.threerings.flashbang.pushbutton.IGroupObject;
 import com.threerings.flashbang.pushbutton.PropertyInfo;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
+
+import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
+import flash.display.Sprite;
+
 import net.amago.pbe.base.SceneComponent;
 public class EntityAppmode extends AppMode
 {
@@ -189,11 +191,13 @@ public class EntityAppmode extends AppMode
 
     override public function destroyObject (ref :GameObjectRef) :void
     {
-        if (null != ref && null != ref.object && ref.object is IEntity) {
+        if (null != ref && null != ref.object && ref.object is GameObjectEntity) {
+
+            var entity :GameObjectEntity = ref.object as GameObjectEntity;
             // if the object is attached to a DisplayObject, and if that
             // DisplayObject is in a display list, remove it from the display list
             // so that it will no longer be drawn to the screen
-            var sc :SceneComponent = SceneComponent.getFrom(ref.object as IEntity);
+            var sc :SceneComponent = SceneComponent.getFrom(entity);
             if (null != sc) {
                 var displayObj :DisplayObject = sc.displayObject;
                 if (null != displayObj) {
@@ -203,6 +207,11 @@ public class EntityAppmode extends AppMode
                     }
                 }
             }
+
+            //Unregister the components here.  They are not removed from the Ientity,
+            //so that the object can be removed from component derived groups.
+            entity.unregisterComponents();
+
         }
 
         super.destroyObject(ref);
@@ -241,8 +250,8 @@ public class EntityAppmode extends AppMode
                     }
                 }
             }
+            GameObjectEntity(obj).destroyComponents();
         }
-
         super.finalizeObjectRemoval(obj);
     }
 
