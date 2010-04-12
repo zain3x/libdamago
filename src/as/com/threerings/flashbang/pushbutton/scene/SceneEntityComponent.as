@@ -618,6 +618,27 @@ public class SceneEntityComponent extends EntityComponentListener
         for each (var eventName :String in updateOnEvents) {
             registerListener(owner.eventDispatcher, eventName, F.callback(updateFromEvent, eventName));
         }
+
+
+        _alpha = 1;
+        _hitTestDirty = true;
+
+        _isDirty = false;
+        _lastLayerIndex = -1;
+
+        _layerIndex = 0;
+        _layerIndexDirty = true;
+        _scaleX = 1
+        _scaleY = 1;
+        _transformDirty = true;
+
+        _x = 0;
+        _y = 0;
+
+        _zIndex = 0;
+        _zIndexDirty = true;
+
+        _scene = null;
     }
 
     override protected function onRemove () :void
