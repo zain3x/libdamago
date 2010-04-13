@@ -1,5 +1,5 @@
 package com.threerings.ui {
-import aduros.util.F;
+import com.threerings.util.F;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;

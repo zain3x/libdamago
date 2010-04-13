@@ -1,5 +1,5 @@
 package net.amago.pathfinding.navmesh.pbe {
-import aduros.util.F;
+import com.threerings.util.F;
 
 import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.entity.EntityComponent;

@@ -1,7 +1,7 @@
 package com.threerings.flashbang.debug
 {
 
-import aduros.util.F;
+import com.threerings.util.F;
 
 import com.threerings.flashbang.AppMode;
 import com.threerings.flashbang.FlashbangApp;
