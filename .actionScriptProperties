@@ -11,7 +11,7 @@
       <compilerSourcePathEntry kind="1" linkType="1" path="lib/libaduros"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="lib/facebook/source/actionscript"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="lib/flashbang"/>
-      <compilerSourcePathEntry kind="1" linkType="1" path="lib/pushbuttonengine"/>
+      <compilerSourcePathEntry kind="1" linkType="1" path="lib/pushbuttonengine/src"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="lib/pushbutton-tasks"/>
     </compilerSourcePath>
     <libraryPath defaultLinkType="1">
