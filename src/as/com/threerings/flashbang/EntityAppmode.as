@@ -4,6 +4,7 @@ import com.pblabs.engine.entity.IEntityComponent;
 import com.pblabs.engine.entity.PropertyReference;
 import com.threerings.flashbang.pushbutton.IGroupObject;
 import com.threerings.flashbang.pushbutton.PropertyInfo;
+import com.threerings.pbe.tasks.TaskComponent;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
@@ -13,6 +14,7 @@ import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 
 import net.amago.pbe.base.SceneComponent;
+
 public class EntityAppmode extends AppMode
 {
     public static const OBJECT_ADDED :String = "objectAdded";
@@ -71,6 +73,7 @@ public class EntityAppmode extends AppMode
         log.info("addSingletonComponent", "comp", comp);
         //Profiler.enter(compName);
         var obj :GameObjectEntity = new GameObjectEntity(compName);
+        obj.addComponent(new TaskComponent(), TaskComponent.COMPONENT_NAME);
         obj.addComponent(comp, compName);
         addObject(obj);
         //Profiler.exit(compName);
