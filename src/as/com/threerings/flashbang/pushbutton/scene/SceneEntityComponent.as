@@ -623,7 +623,7 @@ public class SceneEntityComponent extends EntityComponentListener
         _alpha = 1;
         _hitTestDirty = true;
 
-        _isDirty = false;
+        _isDirty = true;
         _lastLayerIndex = -1;
 
         _layerIndex = 0;
@@ -646,6 +646,7 @@ public class SceneEntityComponent extends EntityComponentListener
         super.onRemove();
         // Remove ourselves from the scene when we are removed
         detach();
+        _displayObject = null;
     }
 
     override protected function onReset() : void
