@@ -2,7 +2,7 @@
 // $Id$
 
 package com.threerings.facebook {
-import aduros.util.F;
+import com.threerings.util.F;
 
 import com.facebook.Facebook;
 import com.facebook.commands.notifications.SendNotification;

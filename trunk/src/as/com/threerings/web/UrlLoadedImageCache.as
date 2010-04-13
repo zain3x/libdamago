@@ -1,5 +1,5 @@
 package com.threerings.web {
-import aduros.util.F;
+import com.threerings.util.F;
 
 import com.threerings.util.Map;
 import com.threerings.util.Maps;

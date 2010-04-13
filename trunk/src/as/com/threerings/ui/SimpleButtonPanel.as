@@ -1,6 +1,6 @@
 package com.threerings.ui
 {
-import aduros.util.F;
+import com.threerings.util.F;
 
 import com.threerings.util.EventHandlerManager;
 import com.threerings.util.SpriteUtil;

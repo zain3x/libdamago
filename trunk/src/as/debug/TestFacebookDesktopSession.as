@@ -1,6 +1,6 @@
 package debug
 {
-import aduros.util.F;
+import com.threerings.util.F;
 
 import com.facebook.data.users.FacebookUser;
 import com.threerings.display.DisplayUtil;

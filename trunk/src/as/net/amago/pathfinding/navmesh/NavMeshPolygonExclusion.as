@@ -1,6 +1,6 @@
 package net.amago.pathfinding.navmesh
 {
-import aduros.util.F;
+import com.threerings.util.F;
 
 import com.threerings.geom.Vector2;
 import com.threerings.util.Hashable;

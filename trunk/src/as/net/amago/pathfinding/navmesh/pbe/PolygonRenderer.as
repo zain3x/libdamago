@@ -5,7 +5,7 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 import com.threerings.util.DebugUtil;
 import com.threerings.util.EventHandlerManager;
-import aduros.util.F;
+import com.threerings.util.F;
 import net.amago.math.geometry.Polygon;
 public class PolygonRenderer extends DisplayObjectRenderer
 {

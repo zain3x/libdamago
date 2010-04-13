@@ -1,5 +1,5 @@
 package com.threerings.flashbang.pushbutton.scene {
-import aduros.util.F;
+import com.threerings.util.F;
 
 import com.pblabs.engine.core.IAnimatedObject;
 import com.pblabs.engine.entity.IEntity;

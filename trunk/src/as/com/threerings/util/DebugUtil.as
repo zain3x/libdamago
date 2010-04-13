@@ -2,7 +2,7 @@
 // $Id$
 
 package com.threerings.util {
-import aduros.util.F;
+import com.threerings.util.F;
 
 import com.threerings.ui.SimpleTextButton;
 

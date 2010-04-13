@@ -9,7 +9,7 @@ import com.threerings.util.Util;
 
 import flash.display.Graphics;
 import flash.geom.Rectangle;
-import aduros.util.F;
+import com.threerings.util.F;
 
 public class Polygon
 {
