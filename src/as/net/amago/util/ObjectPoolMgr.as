@@ -29,6 +29,15 @@ public class ObjectPoolMgr
         pool.addObject(o);
     }
 
+    public function shutdown () :void
+    {
+        _pools.forEach(function (clazz :Class, pool :ObjectPool) :void {
+           pool.shutdown();
+        });
+        _pools.clear();
+        _classes = null;
+    }
+
     /**
      * Get the next available object from the pool or put it back for the
      * next use. If the pool is empty and resizable, an error is thrown.
