@@ -6,7 +6,6 @@ package com.threerings.flashbang {
     import com.pblabs.engine.entity.IEntityComponent;
     import com.pblabs.engine.entity.PropertyReference;
     import flash.events.IEventDispatcher;
-    import flash.utils.getTimer;
     import com.threerings.flashbang.pushbutton.PropertyInfo;
     import com.threerings.pbe.tasks.TaskComponent;
     import com.threerings.util.ArrayUtil;
@@ -57,18 +56,14 @@ package com.threerings.flashbang {
 
         public function set deferring(value:Boolean):void
         {
-            var before :int;
-            var after :int;
-            if(_deferring == true && value == false)
+            if(isLiveObject && _deferring == true && value == false)
             {
                 // Resolve everything, and everything that that resolution triggers.
                 var needReset:Boolean = _deferredComponents.length > 0;
                 while(_deferredComponents.length)
                 {
                     var pc:PendingComponent = _deferredComponents.shift() as PendingComponent;
-                    before = getTimer();
                     pc.item.register(this, pc.name);
-                    after = getTimer();
                 }
 
                 // Mark deferring as done.
@@ -145,7 +140,7 @@ package com.threerings.flashbang {
                 p.item = component;
                 p.name = componentName;
                 _deferredComponents.push(p);
-                deferring = true;
+                //deferring = true;
             }
 
             return true;
@@ -233,7 +228,7 @@ package com.threerings.flashbang {
 
         public function removeComponent (component :IEntityComponent) :void
         {
-            removeComponentInternal(component, isLiveObject);
+            removeComponentInternal(component);
         }
 
         public function serialize (xml :XML) :void
@@ -308,12 +303,8 @@ package com.threerings.flashbang {
 
         protected function doResetComponents () :void
         {
-            var before :int;
-            var after :int;
             for each (var component :IEntityComponent in _components) {
-                before = getTimer();
                 component.reset();
-                after = getTimer();
             }
         }
 
