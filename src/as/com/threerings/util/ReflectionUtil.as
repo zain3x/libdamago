@@ -4,7 +4,6 @@
 package com.threerings.util {
 import flash.utils.describeType;
 import com.threerings.util.ClassUtil;
-
 public class ReflectionUtil
 {
 
@@ -71,7 +70,7 @@ public class ReflectionUtil
         return variableList;
     }
 
-    protected function getClassDescription (clazz :Class) :XML
+    protected static function getClassDescription (clazz :Class) :XML
     {
         var clazzXML :XML = _classCache.get(clazz) as XML;
         if (clazzXML == null) {
