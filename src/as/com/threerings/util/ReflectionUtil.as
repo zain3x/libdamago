@@ -2,13 +2,22 @@
 // $Id$
 
 package com.threerings.util {
-
-import com.threerings.util.ClassUtil;
-
 import flash.utils.describeType;
+import com.threerings.util.ClassUtil;
 
 public class ReflectionUtil
 {
+
+    public static function getAccessorNames (clazz :Class) :Array
+    {
+        var variableList :Array = [];
+        var xml :XML = getClassDescription(clazz);
+        for each (var child :XML in xml.factory.accessor) {
+            variableList.push(child.@name.toString());
+        }
+        return variableList;
+    }
+
     public static function getFieldType (clazz :Class, fieldName :String) :*
     {
         var xml :XML = getClassDescription(clazz);
@@ -25,14 +34,21 @@ public class ReflectionUtil
         return null;
     }
 
-    public static function getVariableNames (clazz :Class) :Array
+    public static function getStaticFieldType (clazz :Class, fieldName :String) :*
     {
-        var variableList :Array = [];
         var xml :XML = getClassDescription(clazz);
-        for each (var child :XML in xml.factory.variable) {
-            variableList.push(child.@name.toString());
+        for each (var varXml :XML in xml.variable) {
+            if (varXml.@name.toString() == fieldName) {
+                return ClassUtil.getClassByName(varXml.@type.toString());
+            }
         }
-        return variableList;
+        for each (varXml in xml.accessor) {
+            if (varXml.@name.toString() == fieldName) {
+                return ClassUtil.getClassByName(varXml.@type.toString());
+            }
+        }
+
+        return null;
     }
 
     public static function getStaticVariableNames (clazz :Class) :Array
@@ -45,11 +61,11 @@ public class ReflectionUtil
         return variableList;
     }
 
-    public static function getAccessorNames (clazz :Class) :Array
+    public static function getVariableNames (clazz :Class) :Array
     {
         var variableList :Array = [];
         var xml :XML = getClassDescription(clazz);
-        for each (var child :XML in xml.factory.accessor) {
+        for each (var child :XML in xml.factory.variable) {
             variableList.push(child.@name.toString());
         }
         return variableList;
