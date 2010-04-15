@@ -23,15 +23,12 @@ import flash.events.Event;
  * <p>Currently this is just a stub, and exists for clarity and potential expandability in
  * the future.</p>
  */
-public class SceneView extends Sprite 
+public class SceneView extends Sprite
     implements IUITarget
 {
     public static const NAME :String = "SceneView";
 
-	public var debugDrawBounds :Boolean = false;
-
-    public function SceneView (width :Number = 0, height :Number = 0, 
-		backgroundColor :uint = 0xffffff)
+    public function SceneView (width :Number = 0, height :Number = 0)
     {
         name = NAME;
 
@@ -40,23 +37,6 @@ public class SceneView extends Sprite
         } else {
             this.width = width;
             this.height = height;
-        }
-		
-		DebugUtil.fillRect(this, _width, _height, backgroundColor, 1);
-    }
-
-    public function get debug () :Boolean
-    {
-        return _debug;
-    }
-
-    public function set debug (val :Boolean) : void
-    {
-        _debug = val;
-        var g :Graphics = this.graphics;
-        g.clear();
-        if (_debug) {
-            DebugUtil.drawRect(this, _width, _height, 0);
         }
     }
 
@@ -68,7 +48,6 @@ public class SceneView extends Sprite
     override public function set height (value :Number) :void
     {
         _height = value;
-		drawBounds();
     }
 
     override public function get width () :Number
@@ -79,7 +58,6 @@ public class SceneView extends Sprite
     override public function set width (value :Number) :void
     {
         _width = value;
-		drawBounds();
     }
 
     public function addDisplayObject (dobj :DisplayObject) :void
@@ -104,17 +82,6 @@ public class SceneView extends Sprite
         setChildIndex(dObj, index);
     }
 
-    protected function drawBounds () :void
-    {
-		if (debugDrawBounds) {
-	        var g :Graphics = graphics;
-	        g.clear();
-	        g.lineStyle(1, 1);
-	        
-	        DebugUtil.drawRect(this, _width, _height, 0xff0000);
-		} 
-    }
-
     protected function handleAddedToStage (...ignored) :void
     {
         removeEventListener(Event.ADDED_TO_STAGE, handleAddedToStage);
@@ -124,7 +91,7 @@ public class SceneView extends Sprite
     }
 
     protected var _debug :Boolean;
-	
+
     protected var _height :Number = 0;
     protected var _width :Number = 0;
 }
