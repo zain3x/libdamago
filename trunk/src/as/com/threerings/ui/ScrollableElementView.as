@@ -1,10 +1,9 @@
 package com.threerings.ui {
-import com.threerings.util.F;
-
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.DisplayUtils;
 import com.threerings.util.EventHandlerManager;
+import com.threerings.util.F;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.MathUtil;
@@ -14,22 +13,28 @@ import com.threerings.util.ValueEvent;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.InteractiveObject;
+import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.MouseEvent;
 
 public class ScrollableElementView extends EventDispatcher
 {
 
-    public static const ELEMENTS_REDRAWN :String = ClassUtil.tinyClassName(ScrollableElementView) + 
-		"ElementsRedrawn";
+    public static const ELEMENTS_REDRAWN :String = ClassUtil.tinyClassName(ScrollableElementView) +
+        "ElementsRedrawn";
+    /**
+     * Dispatched on the displayObject element when that element is visible.
+     */
+    public static const ELEMENT_VISIBLE :String = "ElementVisible";
+
     public function ScrollableElementView (elementContainers :Array,
-                                         leftUpButton :InteractiveObject = null,
-                                         bottomDownButton :InteractiveObject = null,
-                                         leftUpScroll1Page :InteractiveObject = null,
-                                         rightBottomScroll1Page :InteractiveObject = null,
-                                         firstIdxButton :InteractiveObject = null,
-                                         lastIdxButton :InteractiveObject = null,
-                                         hideButtonsIfNoScrolling :Boolean = true)
+                                           leftUpButton :InteractiveObject = null,
+                                           bottomDownButton :InteractiveObject = null,
+                                           leftUpScroll1Page :InteractiveObject = null,
+                                           rightBottomScroll1Page :InteractiveObject = null,
+                                           firstIdxButton :InteractiveObject = null,
+                                           lastIdxButton :InteractiveObject = null,
+                                           hideButtonsIfNoScrolling :Boolean = true)
     {
         _elementContainers = elementContainers;
 
@@ -75,9 +80,9 @@ public class ScrollableElementView extends EventDispatcher
 
     public function set index (val :int) :void
     {
-		_topLeftIdx = val;
+        _topLeftIdx = val;
         redrawElements();
-		dispatchEvent(new ValueEvent(ELEMENTS_REDRAWN, _topLeftIdx));
+        dispatchEvent(new ValueEvent(ELEMENTS_REDRAWN, _topLeftIdx));
     }
 
     public function indexOf (obj :*) :int
@@ -108,7 +113,7 @@ public class ScrollableElementView extends EventDispatcher
         _elementDisplayFunctions.clear();
         _topLeftIdx = 0;
         redrawElements();
-		dispatchEvent(new ValueEvent(ELEMENTS_REDRAWN, _topLeftIdx));
+        dispatchEvent(new ValueEvent(ELEMENTS_REDRAWN, _topLeftIdx));
     }
 
     public function containerSize () :int
@@ -139,10 +144,10 @@ public class ScrollableElementView extends EventDispatcher
 
     public function redrawElements () :void
     {
-		_topLeftIdx = MathUtil.clamp(_topLeftIdx, 0, Math.max(0, _elements.length - 
-			_elementContainers.length));
+        _topLeftIdx = MathUtil.clamp(_topLeftIdx, 0, Math.max(0, _elements.length -
+            _elementContainers.length));
 
-		_elementContainers.forEach(F.adapt(DisplayUtils.removeAllChildren));
+        _elementContainers.forEach(F.adapt(DisplayUtils.removeAllChildren));
 
         var containerIdx :int = 0;
         _bottomRightIdx = _topLeftIdx;
@@ -153,8 +158,9 @@ public class ScrollableElementView extends EventDispatcher
             if (_elements[elementIdx] != null) {
                 var element :Object = _elements[elementIdx];
                 var f :Function = _elementDisplayFunctions.get(element) as Function;
-                DisplayObjectContainer(_elementContainers[containerIdx]).addChild(
-                    f(element) as DisplayObject);
+                var disp :DisplayObject = f(element) as DisplayObject;
+                DisplayObjectContainer(_elementContainers[containerIdx]).addChild(disp);
+                disp.dispatchEvent(new Event(ELEMENT_VISIBLE));
             }
             _bottomRightIdx = elementIdx;
         }
@@ -166,7 +172,7 @@ public class ScrollableElementView extends EventDispatcher
         ArrayUtil.removeAll(_elements, d);
         _elementDisplayFunctions.remove(d);
         redrawElements();
-		dispatchEvent(new ValueEvent(ELEMENTS_REDRAWN, _topLeftIdx));
+        dispatchEvent(new ValueEvent(ELEMENTS_REDRAWN, _topLeftIdx));
     }
 
     public function removeGaps () :void
