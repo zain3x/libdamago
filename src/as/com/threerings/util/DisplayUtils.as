@@ -71,15 +71,12 @@ public class DisplayUtils
      * Converts any DisplayObject into a Bitmap.  This can increase the graphical
      * performance of complex MovieClips.
      */
-    public static function convertToBitmap (d :DisplayObject, forceCopy :Boolean = false,
-        scale :Number = 1) :Bitmap
+    public static function convertToBitmap (d :DisplayObject, scale :Number = 1) :Bitmap
     {
         if (d == null) {
             return null;
         }
-        if (d is Bitmap && !forceCopy) {
-            return d as Bitmap;
-        }
+
         var bounds :Rectangle = d.getBounds(d);
         if (bounds.width == 0 && bounds.height == 0) {
             log.error("convertToBitmap", "d", d, "d.name", d.name, "bounds", bounds);
@@ -426,7 +423,7 @@ public class DisplayUtils
         if (d == null) {
             return null;
         }
-        var bm :Bitmap = convertToBitmap(d, true, resolutionFactor);
+        var bm :Bitmap = convertToBitmap(d, resolutionFactor);
         if (bm == null) {
             log.error("substituteBitmap", "d", d, "resolutionFactor", resolutionFactor, "bm", bm);
             return null;
