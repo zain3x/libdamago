@@ -45,15 +45,25 @@ public class SceneComponent extends EntityComponent
         owner.eventDispatcher.dispatchEvent(_event);
     }
 
-//    public function set displayObject (disp :DisplayObject) :void
-//    {
-//        //Only allow setting the display when not attached to an IEntity.
-//        if (owner == null) {
-//            _displayObject = disp;
-//        } else {
-//            log.error("Cannot set displayObject after IEntity owner is initialized");
-//        }
-//    }
+    public function get x () :Number
+    {
+        return _displayObject.x;
+    }
+
+    public function get y () :Number
+    {
+        return _displayObject.y;
+    }
+
+    public function set y (val :Number) :void
+    {
+        _displayObject.y = val;
+    }
+
+    public function set x (val :Number) :void
+    {
+        _displayObject.x = val;
+    }
 
     override protected function onRemove():void
     {

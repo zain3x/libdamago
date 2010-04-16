@@ -2,9 +2,8 @@
 // $Id$
 
 package com.threerings.util {
-import com.threerings.util.F;
-
 import com.threerings.text.TextFieldUtil;
+import com.threerings.util.F;
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;
@@ -72,8 +71,8 @@ public class DisplayUtils
      * Converts any DisplayObject into a Bitmap.  This can increase the graphical
      * performance of complex MovieClips.
      */
-    public static function convertToBitmap (d :DisplayObject, forceCopy :Boolean = false, 
-		scale :Number = 1) :Bitmap
+    public static function convertToBitmap (d :DisplayObject, forceCopy :Boolean = false,
+        scale :Number = 1) :Bitmap
     {
         if (d == null) {
             return null;
@@ -88,12 +87,12 @@ public class DisplayUtils
         }
 
         if (int(bounds.width) == 0 || int(bounds.height) == 0) {
-			log.error("convertToBitmap", "int(bounds.width)", int(bounds.width), 
-				"int(bounds.height)", int(bounds.height));
+            log.error("convertToBitmap", "int(bounds.width)", int(bounds.width),
+                "int(bounds.height)", int(bounds.height));
             return null;
         }
-        var bd :BitmapData = new BitmapData(int(bounds.width * scale), int(bounds.height * scale), 
-			true, 0xffffff);
+        var bd :BitmapData = new BitmapData(int(bounds.width * scale), int(bounds.height * scale),
+            true, 0xffffff);
 
         bd.draw(d, new Matrix(scale, 0, 0, scale, -bounds.left * scale, -bounds.top * scale));
 
@@ -271,8 +270,8 @@ public class DisplayUtils
      * From a list of DisplayObjects on the stage, create a combined bitmap, with a
      * layer order of the supplied array.
      */
-    public static function mergeDisplayObjects (dos :Array, scale :Number = 1, 
-		preserveBounds :Boolean = false) :Bitmap
+    public static function mergeDisplayObjects (dos :Array, scale :Number = 1,
+        preserveBounds :Boolean = false) :Bitmap
     {
         if (dos == null || dos.length == 0) {
             return null;
@@ -301,7 +300,7 @@ public class DisplayUtils
             disp = dos[ii] as DisplayObject;
             origin = origins[ii] as Point;
             var localBounds :Rectangle = disp.getBounds(disp);
-            //			bd.draw(disp, new Matrix(1, 0, 0, 1, -localBounds.left + (origin.x - topLeft.x), 
+            //			bd.draw(disp, new Matrix(1, 0, 0, 1, -localBounds.left + (origin.x - topLeft.x),
             //				-localBounds.top + (origin.y - topLeft.y)));
             bd.draw(disp, new Matrix(scale, 0, 0, scale,
                 scale * (-localBounds.left + (origin.x - topLeft.x)),
@@ -378,7 +377,7 @@ public class DisplayUtils
             log.error("screenShot", "d", disp, "d.stage", disp == null ? null : disp.stage);
             return null;
         }
-        
+
         var scale :Number = getGlobalScale(disp, 1);
         var bd :BitmapData = new BitmapData(disp.stage.stageWidth, disp.stage.stageHeight, true,
             0xffffff);
@@ -393,8 +392,8 @@ public class DisplayUtils
         var bm :Bitmap = new Bitmap(bd);
         return bm;
     }
-    
-    public static function getGlobalScale (d :DisplayObject, currentScale :Number = 1) :Number 
+
+    public static function getGlobalScale (d :DisplayObject, currentScale :Number = 1) :Number
     {
         if (d == null || d.stage == null || d == d.stage) {
             return currentScale;
@@ -431,7 +430,7 @@ public class DisplayUtils
         }
         var bm :Bitmap = convertToBitmap(d, true, scale);
         if (bm == null) {
-			log.error("substituteBitmap", "d", d, "scale", scale, "bm", bm);
+            log.error("substituteBitmap", "d", d, "scale", scale, "bm", bm);
             return null;
         }
 
@@ -440,9 +439,7 @@ public class DisplayUtils
         //Center it according to the offsets.
         bm.x = bounds.left * scale;
         bm.y = bounds.top * scale;
-        
-//        bm.x = bounds.left;
-//        bm.y = bounds.top;
+
         return bm;
     }
 
@@ -467,6 +464,54 @@ public class DisplayUtils
         var bd :BitmapData = new BitmapData(width, height, true, 0);
         bd.draw(disp, new Matrix(scaleX, 0, 0, scaleY, -bounds.x * scaleX, -bounds.y * scaleY));
         return bd;
+    }
+
+
+    /**
+     * Variation of com.threerings.display.DisplayUtil.applyToHierarchy.
+     *
+     * Instead of stopping completely if the callback returns true, only
+     * stop delving into the display hierarchy, but keep applying to siblings.
+     *
+     * Call the specified function for the display object and all descendants.
+     *
+     * This is nearly exactly like mx.utils.DisplayUtil.walkDisplayObjects,
+     * except this method copes with security errors when examining a child.
+     *
+     * @param callbackFunction Signature:
+     * function (disp :DisplayObject) :void
+     *    or
+     * function (disp :DisplayObject) :Boolean
+     *
+     * If you return a Boolean, you may return <code>true</code> to indicate that you've
+     * found what you were looking for, and halt iteration.
+     *
+     * @return true if iteration was halted by callbackFunction returning true
+     */
+    public static function applyToHierarchy (
+        disp :DisplayObject, callbackFunction :Function) :Boolean
+    {
+        // halt iteration if callbackFunction returns true
+        if (Boolean(callbackFunction(disp))) {
+            return true;
+        }
+
+        if (disp is DisplayObjectContainer) {
+            var container :DisplayObjectContainer = disp as DisplayObjectContainer;
+            var nn :int = container.numChildren;
+            for (var ii :int = 0; ii < nn; ii++) {
+                try {
+                    disp = container.getChildAt(ii);
+                } catch (err :SecurityError) {
+                    continue;
+                }
+                // and then we apply outside of the try/catch block so that
+                // we don't hide errors thrown by the callbackFunction.
+                applyToHierarchy(disp, callbackFunction);
+            }
+        }
+
+        return false;
     }
 
     protected static const log :Log = Log.getLog(DisplayUtils);
