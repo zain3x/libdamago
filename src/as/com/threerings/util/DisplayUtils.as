@@ -418,9 +418,10 @@ public class DisplayUtils
 
     /**
      * Creates a bitmap from the given DisplayObject, and positions the bitmap so that it is
-     * visually in the same position as the argument.
+     * visually in the same position as the argument.  Optionally supply a resolution scale
+     * factor, so if parent container is scaled, the Bitmap won't be pixellated.
      */
-    public static function substituteBitmap (d :DisplayObject, scale :Number = 1) :Bitmap
+    public static function substituteBitmap (d :DisplayObject, resolutionFactor :Number = 1) :Bitmap
     {
         if (d == null) {
             return null;
@@ -428,17 +429,19 @@ public class DisplayUtils
         if (d is Bitmap) {
             return d as Bitmap;
         }
-        var bm :Bitmap = convertToBitmap(d, true, scale);
+        var bm :Bitmap = convertToBitmap(d, true, resolutionFactor);
         if (bm == null) {
-            log.error("substituteBitmap", "d", d, "scale", scale, "bm", bm);
+            log.error("substituteBitmap", "d", d, "resolutionFactor", resolutionFactor, "bm", bm);
             return null;
         }
+
+        bm.scaleX = bm.scaleY = 1 / resolutionFactor;
 
         var bounds :Rectangle = d.getBounds(d);
 
         //Center it according to the offsets.
-        bm.x = bounds.left * scale;
-        bm.y = bounds.top * scale;
+        bm.x = bounds.left;
+        bm.y = bounds.top;
 
         return bm;
     }
