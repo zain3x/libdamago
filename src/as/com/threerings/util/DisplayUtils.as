@@ -426,9 +426,6 @@ public class DisplayUtils
         if (d == null) {
             return null;
         }
-        if (d is Bitmap) {
-            return d as Bitmap;
-        }
         var bm :Bitmap = convertToBitmap(d, true, resolutionFactor);
         if (bm == null) {
             log.error("substituteBitmap", "d", d, "resolutionFactor", resolutionFactor, "bm", bm);
