@@ -13,7 +13,7 @@ import flash.utils.Dictionary;
  * reused, greatly improving performance.
  *
  * Not used: priority and weak references (all references are hard).
- * 
+ *
  * Use with EventHandlerManager to ensure anonymous functions are GC'ed.
  *
  *
@@ -39,6 +39,10 @@ public class EventDispatcherNonCloning implements IEventDispatcher
             log.warning("addEventListener: priority ignored.");
         }
 
+        if (_eventListeners == null) {
+            _eventListeners = new Dictionary();
+        }
+
         var listeners :Array = _eventListeners[type] as Array;
         if (listeners == null) {
             listeners = new Array();
@@ -56,6 +60,10 @@ public class EventDispatcherNonCloning implements IEventDispatcher
             throw new ArgumentError("dispatchEvent, event==null");
         }
 
+        if (_eventListeners == null) {
+            return false;
+        }
+
         var listeners :Array = _eventListeners[event.type] as Array;
         if (listeners == null) {
             return true;
@@ -71,12 +79,16 @@ public class EventDispatcherNonCloning implements IEventDispatcher
 
     public function hasEventListener (type :String) :Boolean
     {
-        return _eventListeners[type] != null;
+        return _eventListeners  != null && _eventListeners[type] != null &&
+            (_eventListeners[type] as Array).length > 0;
     }
 
     public function removeEventListener (type :String, listener :Function, useCapture :Boolean =
         false) :void
     {
+        if (_eventListeners == null) {
+            return;
+        }
         var listeners :Array = _eventListeners[type] as Array;
         if (listeners == null) {
             return;
@@ -86,8 +98,11 @@ public class EventDispatcherNonCloning implements IEventDispatcher
 
     public function toString () :String
     {
-        return ClassUtil.tinyClassName(this) + "eventListeners=" + Util.keys(_eventListeners) +
-			":" + Util.values(_eventListeners);
+        if (_eventListeners == null) {
+            return ClassUtil.tinyClassName(this) + ", no event listeners";
+        }
+        return ClassUtil.tinyClassName(this) + " eventListeners=" + Util.keys(_eventListeners) +
+            ":" + Util.values(_eventListeners);
     }
 
     public function willTrigger (type :String) :Boolean
@@ -95,7 +110,7 @@ public class EventDispatcherNonCloning implements IEventDispatcher
         return hasEventListener(type);
     }
 
-    protected var _eventListeners :Dictionary = new Dictionary();
+    protected var _eventListeners :Dictionary;
 
     protected static const log :Log = Log.getLog(EventDispatcherNonCloning);
 }
