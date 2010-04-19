@@ -19,6 +19,7 @@ public class VectorUtil
     public static const RAD_TO_DEG:Number = (180 / Math.PI); //57.29577951;
     public static const DEG_TO_RAD:Number = (Math.PI / 180); //0.017453293;
     public static const ZERO :Vector2 = new Vector2(); //0.017453293;
+    public static const PI2 :Number = Math.PI * 2;
 
     public static function distance (v1 :Vector2, v2 :Vector2) :Number
     {
@@ -43,7 +44,7 @@ public class VectorUtil
     public static function angleFrom (x1 :Number, y1 :Number, x2 :Number, y2 :Number) :Number
     {
         var angle :Number = Math.atan2(y2 - y1, x2 - x1);
-        return (angle >= 0 ? angle : angle + (2 * Math.PI));
+        return (angle >= 0 ? angle : angle + PI2);
     }
 
      //Returns the angle between two points
@@ -76,11 +77,11 @@ public class VectorUtil
     public static function getSmallestRotationDirection(objectRotationRadians:Number,
         radianBetween:Number, errorRadians:Number = 0):int
     {
-        objectRotationRadians = simplifyRadian(objectRotationRadians);
-        radianBetween = simplifyRadian(radianBetween);
+        objectRotationRadians = MathUtil.normalizeRadians(objectRotationRadians);
+        radianBetween = MathUtil.normalizeRadians(radianBetween);
 
         radianBetween += -objectRotationRadians;
-        radianBetween = simplifyRadian(radianBetween);
+        radianBetween = MathUtil.normalizeRadians(radianBetween);
         objectRotationRadians = 0;
         if(radianBetween < -errorRadians)
         {
@@ -93,38 +94,51 @@ public class VectorUtil
         return 0;
     }
 
+    /**
+     * Normalizes an angle in radians to occupy the [-pi, pi) range.
+     * @param radian
+     * @return
+     */
     public static function simplifyRadian (radian :Number) :Number
     {
-        if(radian > Math.PI || radian < -Math.PI)
-        {
-            var newRadian:Number;
-            newRadian = radian - int(radian / (Math.PI *2)) * (Math.PI * 2);
-            if(radian > 0)
-            {
-                if(newRadian < Math.PI)
-                {
-                    return newRadian;
-                }
-                else
-                {
-                    newRadian =- (Math.PI * 2 - newRadian);
-                    return newRadian;
-                }
-            }
-            else
-            {
-                if(newRadian > -Math.PI)
-                {
-                    return newRadian;
-                }
-                else
-                {
-                    newRadian = ((Math.PI * 2) + newRadian);
-                    return newRadian;
-                }
-            }
+        radian = MathUtil.normalizeRadians(radian);
+
+        if (radian > Math.PI) {
+            return radian - PI2;
+        } else {
+            return radian
         }
-        return radian;
+
+//        if(radian > Math.PI || radian < -Math.PI)
+//        {
+//            var newRadian:Number;
+//            newRadian = radian - int(radian / PI2) * PI2;
+//            if(radian > 0)
+//            {
+//                if(newRadian < Math.PI)
+//                {
+//                    return newRadian;
+//                }
+//                else
+//                {
+//                    newRadian =- (PI2 - newRadian);
+//                    return newRadian;
+//                }
+//            }
+//            else
+//            {
+//                if(newRadian > -Math.PI)
+//                {
+//                    return newRadian;
+//                }
+//                else
+//                {
+//                    newRadian = ((PI2) + newRadian);
+//                    return newRadian;
+//                }
+//            }
+//        }
+//        return radian;
     }
 
     public static function distanceSq (a :Vector2, b :Vector2) :Number
@@ -139,10 +153,10 @@ public class VectorUtil
     {
         var diff :Number = angle1 - angle2;
         if( diff > Math.PI) {
-            diff = -2 * Math.PI + diff;
+            diff = -PI2 + diff;
         }
         if( diff < -Math.PI) {
-            diff = 2 * Math.PI + diff;
+            diff = PI2 + diff;
         }
         return -diff;
     }
