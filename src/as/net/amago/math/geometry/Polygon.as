@@ -3,13 +3,13 @@ package net.amago.math.geometry
 
 import com.threerings.geom.Vector2;
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.F;
 import com.threerings.util.Log;
 import com.threerings.util.MathUtil;
 import com.threerings.util.Util;
 
 import flash.display.Graphics;
 import flash.geom.Rectangle;
-import com.threerings.util.F;
 
 public class Polygon
 {
@@ -94,6 +94,7 @@ public class Polygon
 
 
     /**
+     * Warning: the points arg may be modified!
      * http://notejot.com/2008/11/convex-hull-in-2d-andrews-algorithm/
      */
     public static function convexHullFromPoints (points :Array) :Array
