@@ -40,33 +40,33 @@ public class EntityAppmode extends AppMode
         return _namedObjects.values();
     }
 
-    public function addEntitySceneObject (obj :GameObjectEntity,
-        displayParent :DisplayObjectContainer = null, displayIdx :int = -1) :GameObjectRef
-    {
-        if (obj.lookupComponentByName(SceneComponent.COMPONENT_NAME) == null) {
-            throw new Error("obj must have SceneComponent IEntityComponent");
-        }
-
-        // Attach the object to a display parent.
-        // (This is purely a convenience - the client is free to do the attaching themselves)
-        var disp :DisplayObject = SceneComponent.getDisplayObjectFrom(obj);
-        if (null == disp) {
-            throw new Error("obj must return a non-null displayObject to be attached " +
-                "to a display parent");
-        }
-
-        if (displayParent == null) {
-            displayParent = _modeSprite;
-        }
-
-        if (displayIdx < 0 || displayIdx >= displayParent.numChildren) {
-            displayParent.addChild(disp);
-        } else {
-            displayParent.addChildAt(disp, displayIdx);
-        }
-
-        return addObject(obj);
-    }
+//    public function addEntitySceneObject (obj :GameObjectEntity,
+//        displayParent :DisplayObjectContainer = null, displayIdx :int = -1) :GameObjectRef
+//    {
+//        if (obj.lookupComponentByName(SceneComponent.COMPONENT_NAME) == null) {
+//            throw new Error("obj must have SceneComponent IEntityComponent");
+//        }
+//
+//        // Attach the object to a display parent.
+//        // (This is purely a convenience - the client is free to do the attaching themselves)
+//        var disp :DisplayObject = SceneComponent.getDisplayObjectFrom(obj);
+//        if (null == disp) {
+//            throw new Error("obj must return a non-null displayObject to be attached " +
+//                "to a display parent");
+//        }
+//
+//        if (displayParent == null) {
+//            displayParent = _modeSprite;
+//        }
+//
+//        if (displayIdx < 0 || displayIdx >= displayParent.numChildren) {
+//            displayParent.addChild(disp);
+//        } else {
+//            displayParent.addChildAt(disp, displayIdx);
+//        }
+//
+//        return addObject(obj);
+//    }
 
     public function addSingletonComponent (comp :IEntityComponent, compName :String) :IEntity
     {
