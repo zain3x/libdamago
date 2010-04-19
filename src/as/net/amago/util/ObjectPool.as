@@ -1,11 +1,10 @@
 package net.amago.util {
-import com.threerings.downtown.scene.GlobalLocationComponent;
 import com.threerings.util.ClassUtil;
+import com.threerings.util.Log;
 import com.threerings.util.Preconditions;
 
 public class ObjectPool
 {
-
     /**
      * Creates a new object pool.
      *
@@ -49,8 +48,12 @@ public class ObjectPool
         var obj :* = _objects.shift();
         if (obj == null) {
             obj = new clazz();
+            log.debug("no objects in pool, creating", _clazz);
+            return obj;
+        } else {
+            log.debug("from pool", _clazz);
+            return obj;
         }
-        return obj;
     }
 
     /**
@@ -63,6 +66,8 @@ public class ObjectPool
 
     protected var _clazz :Class;
     protected var _objects :Array = [];
+
+    protected static const log :Log = Log.getLog(ObjectPool);
 }
 }
 
