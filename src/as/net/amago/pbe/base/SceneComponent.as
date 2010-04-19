@@ -1,13 +1,12 @@
 package net.amago.pbe.base {
 import com.pblabs.engine.entity.EntityComponent;
 import com.pblabs.engine.entity.IEntity;
-import com.threerings.util.ClassUtil;
-import com.threerings.util.Log;
-
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 import flash.events.Event;
+import com.threerings.util.ClassUtil;
+import com.threerings.util.Log;
 //This is more of a hassle than it's worth, will remove in the future.
 public class SceneComponent extends EntityComponent
 {
@@ -22,7 +21,11 @@ public class SceneComponent extends EntityComponent
 
     public static function getFrom (e :IEntity) :SceneComponent
     {
-        return e.lookupComponentByName(COMPONENT_NAME) as SceneComponent;
+        var sc :SceneComponent = e.lookupComponentByName(COMPONENT_NAME) as SceneComponent;
+        if (sc == null) {
+            sc = e.lookupComponentByType(SceneComponent) as SceneComponent;
+        }
+        return sc;
     }
 
     public static function getSpriteFrom (e :IEntity) :Sprite
@@ -40,14 +43,14 @@ public class SceneComponent extends EntityComponent
         return _displayObject;
     }
 
-    public function changed () :void
-    {
-        owner.eventDispatcher.dispatchEvent(_event);
-    }
-
     public function get x () :Number
     {
         return _displayObject.x;
+    }
+
+    public function set x (val :Number) :void
+    {
+        _displayObject.x = val;
     }
 
     public function get y () :Number
@@ -60,9 +63,9 @@ public class SceneComponent extends EntityComponent
         _displayObject.y = val;
     }
 
-    public function set x (val :Number) :void
+    public function changed () :void
     {
-        _displayObject.x = val;
+        owner.eventDispatcher.dispatchEvent(_event);
     }
 
     override protected function onRemove():void
