@@ -2,10 +2,6 @@
 // $Id$
 
 package com.threerings.util {
-import com.threerings.util.F;
-
-import com.threerings.ui.SimpleTextButton;
-
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
@@ -14,6 +10,11 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Rectangle;
 import flash.utils.Dictionary;
+
+import com.threerings.ui.SimpleTextButton;
+
+import com.threerings.util.F;
+
 public class DebugUtil
 {
 
@@ -40,6 +41,16 @@ public class DebugUtil
         return b;
     }
 
+    public static function createDebugLayer (debugcall :Function, args :Array) :Sprite
+    {
+        trace("createDebugLayer args=" + args.join(", "));
+        var layer :Sprite = new Sprite();
+        args.unshift(layer);
+        trace("after adding sprite args=" + args.join(", "));
+        debugcall.apply(null, args);
+        return layer;
+    }
+
     public static function dictToString (h :Dictionary) :String
     {
         var sb :String = "";
@@ -53,8 +64,8 @@ public class DebugUtil
         return sb;
     }
 
-    public static function drawBoundingRect (disp :DisplayObject, drawLayer :Sprite,
-                                             color :uint = 0x000000, alpha :Number = 1) :void
+    public static function drawBoundingRect (disp :DisplayObject, drawLayer :Sprite, color :uint =
+        0x000000, alpha :Number = 1) :void
     {
         var bounds :Rectangle = disp.getBounds(drawLayer);
         var g :Graphics = drawLayer.graphics;
@@ -90,20 +101,11 @@ public class DebugUtil
     }
 
     public static function drawRectangle (layer :Sprite, rect :Rectangle, color :int = 0x000000,
-                                     alpha :Number = 1) :void
+        alpha :Number = 1) :void
     {
         var g :Graphics = layer.graphics;
         g.lineStyle(1, color, alpha);
         g.drawRect(rect.left, rect.top, rect.width, rect.height);
-    }
-
-    public static function fillRectangle (layer :Sprite, rect :Rectangle, color :int = 0x000000,
-                                          alpha :Number = 1) :void
-    {
-        var g :Graphics = layer.graphics;
-        g.beginFill(color, alpha);
-        g.drawRect(rect.left, rect.top, rect.width, rect.height);
-        g.endFill();
     }
 
     public static function fillBoundingRect (layer :Sprite, rootContainer :DisplayObjectContainer,
@@ -116,6 +118,7 @@ public class DebugUtil
         g.drawRect(bounds.left, bounds.top, bounds.width, bounds.height);
         g.endFill();
     }
+
     public static function fillDot (s :Sprite, color :int = 0x00ffff, r :Number = 10, x :int = 0,
         y :int = 0) :void
     {
@@ -131,6 +134,15 @@ public class DebugUtil
         g.lineStyle(0, 0, 0);
         g.beginFill(color, alpha);
         g.drawRect(0, 0, width, height);
+        g.endFill();
+    }
+
+    public static function fillRectangle (layer :Sprite, rect :Rectangle, color :int = 0x000000,
+        alpha :Number = 1) :void
+    {
+        var g :Graphics = layer.graphics;
+        g.beginFill(color, alpha);
+        g.drawRect(rect.left, rect.top, rect.width, rect.height);
         g.endFill();
     }
 
@@ -171,8 +183,7 @@ public class DebugUtil
             });
     }
 
-    public static function traceDisplayChildren (d :DisplayObject, space :String =
-        " ") :void
+    public static function traceDisplayChildren (d :DisplayObject, space :String = " ") :void
     {
         if (d == null) {
             return;
@@ -205,7 +216,7 @@ public class DebugUtil
             return;
         }
 
-        var lineage :Array = [ extendedDisplayObjectName(d) ];
+        var lineage :Array = [ extendedDisplayObjectName(d)];
         var current :DisplayObject = d.parent;
         while (current != null) {
             lineage.unshift(extendedDisplayObjectName(current));
@@ -224,20 +235,20 @@ public class DebugUtil
     {
         return d + ".name=" + d.name + "  loc=" + d.x + " " + d.y;
     }
-//    public static function byteClone (obj :Streamable) :Streamable
-//    {
-//        var bytes :ByteArray = new ByteArray();
-//        var output :ObjectOutputStream = new ObjectOutputStream(bytes);
-//        var input :ObjectInputStream = new ObjectInputStream(bytes);
-//
-//        var clazz :Class = ClassUtil.getClass(obj);
-//        obj.writeObject(output);
-//        bytes.position = 0;
-//
-//        var streamed :Streamable = new clazz();
-//
-//        streamed.readObject(input);
-//        return streamed;
-//    }
+    //    public static function byteClone (obj :Streamable) :Streamable
+    //    {
+    //        var bytes :ByteArray = new ByteArray();
+    //        var output :ObjectOutputStream = new ObjectOutputStream(bytes);
+    //        var input :ObjectInputStream = new ObjectInputStream(bytes);
+    //
+    //        var clazz :Class = ClassUtil.getClass(obj);
+    //        obj.writeObject(output);
+    //        bytes.position = 0;
+    //
+    //        var streamed :Streamable = new clazz();
+    //
+    //        streamed.readObject(input);
+    //        return streamed;
+    //    }
 }
 }

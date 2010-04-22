@@ -2,9 +2,6 @@
 // $Id$
 
 package com.threerings.util {
-import com.threerings.text.TextFieldUtil;
-import com.threerings.util.F;
-
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
@@ -21,12 +18,63 @@ import flash.system.LoaderContext;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
+import com.threerings.text.TextFieldUtil;
+
+import com.threerings.util.F;
+
 public class DisplayUtils
 {
     public static const BOTTOM_TO_TOP :int = 3;
     public static const LEFT_TO_RIGHT :int = 0;
     public static const RIGHT_TO_LEFT :int = 1;
     public static const TOP_TO_BOTTOM :int = 2;
+
+    /**
+     * Variation of com.threerings.display.DisplayUtil.applyToHierarchy.
+     *
+     * Instead of stopping completely if the callback returns true, only
+     * stop delving into the display hierarchy, but keep applying to siblings.
+     *
+     * Call the specified function for the display object and all descendants.
+     *
+     * This is nearly exactly like mx.utils.DisplayUtil.walkDisplayObjects,
+     * except this method copes with security errors when examining a child.
+     *
+     * @param callbackFunction Signature:
+     * function (disp :DisplayObject) :void
+     *    or
+     * function (disp :DisplayObject) :Boolean
+     *
+     * If you return a Boolean, you may return <code>true</code> to indicate that you've
+     * found what you were looking for, and halt iteration.
+     *
+     * @return true if iteration was halted by callbackFunction returning true
+     */
+    public static function applyToHierarchy (disp :DisplayObject,
+        callbackFunction :Function) :Boolean
+    {
+        // halt iteration if callbackFunction returns true
+        if (Boolean(callbackFunction(disp))) {
+            return true;
+        }
+
+        if (disp is DisplayObjectContainer) {
+            var container :DisplayObjectContainer = disp as DisplayObjectContainer;
+            var nn :int = container.numChildren;
+            for (var ii :int = 0; ii < nn; ii++) {
+                try {
+                    disp = container.getChildAt(ii);
+                } catch (err :SecurityError) {
+                    continue;
+                }
+                // and then we apply outside of the try/catch block so that
+                // we don't hide errors thrown by the callbackFunction.
+                applyToHierarchy(disp, callbackFunction);
+            }
+        }
+
+        return false;
+    }
 
     public static function boundsUnion (displayObjects :Array, relativeTo :DisplayObject =
         null) :Rectangle
@@ -224,6 +272,15 @@ public class DisplayUtils
         return children;
     }
 
+    public static function getGlobalScale (d :DisplayObject, currentScale :Number = 1) :Number
+    {
+        if (d == null || d.stage == null || d == d.stage) {
+            return currentScale;
+        } else {
+            return getGlobalScale(d.parent, d.scaleX * currentScale);
+        }
+    }
+
     public static function loadBitmapFromUrl (url :String, loadedBitmapDataCallback :Function =
         null) :Bitmap
     {
@@ -273,7 +330,7 @@ public class DisplayUtils
         if (dos == null || dos.length == 0) {
             return null;
         }
-//		trace("mergeDisplayObjects, scale=" + scale);
+        //		trace("mergeDisplayObjects, scale=" + scale);
         var bounds :Rectangle;
         var stageBounds :Rectangle;
         var disp :DisplayObject;
@@ -390,15 +447,6 @@ public class DisplayUtils
         return bm;
     }
 
-    public static function getGlobalScale (d :DisplayObject, currentScale :Number = 1) :Number
-    {
-        if (d == null || d.stage == null || d == d.stage) {
-            return currentScale;
-        } else {
-            return getGlobalScale(d.parent, d.scaleX * currentScale);
-        }
-    }
-
     public static function shrinkAndCenterOn (disp :DisplayObject, maxSize :int = 20) :DisplayObject
     {
         if (maxSize > 0) {
@@ -461,54 +509,6 @@ public class DisplayUtils
         var bd :BitmapData = new BitmapData(width, height, true, 0);
         bd.draw(disp, new Matrix(scaleX, 0, 0, scaleY, -bounds.x * scaleX, -bounds.y * scaleY));
         return bd;
-    }
-
-
-    /**
-     * Variation of com.threerings.display.DisplayUtil.applyToHierarchy.
-     *
-     * Instead of stopping completely if the callback returns true, only
-     * stop delving into the display hierarchy, but keep applying to siblings.
-     *
-     * Call the specified function for the display object and all descendants.
-     *
-     * This is nearly exactly like mx.utils.DisplayUtil.walkDisplayObjects,
-     * except this method copes with security errors when examining a child.
-     *
-     * @param callbackFunction Signature:
-     * function (disp :DisplayObject) :void
-     *    or
-     * function (disp :DisplayObject) :Boolean
-     *
-     * If you return a Boolean, you may return <code>true</code> to indicate that you've
-     * found what you were looking for, and halt iteration.
-     *
-     * @return true if iteration was halted by callbackFunction returning true
-     */
-    public static function applyToHierarchy (
-        disp :DisplayObject, callbackFunction :Function) :Boolean
-    {
-        // halt iteration if callbackFunction returns true
-        if (Boolean(callbackFunction(disp))) {
-            return true;
-        }
-
-        if (disp is DisplayObjectContainer) {
-            var container :DisplayObjectContainer = disp as DisplayObjectContainer;
-            var nn :int = container.numChildren;
-            for (var ii :int = 0; ii < nn; ii++) {
-                try {
-                    disp = container.getChildAt(ii);
-                } catch (err :SecurityError) {
-                    continue;
-                }
-                // and then we apply outside of the try/catch block so that
-                // we don't hide errors thrown by the callbackFunction.
-                applyToHierarchy(disp, callbackFunction);
-            }
-        }
-
-        return false;
     }
 
     protected static const log :Log = Log.getLog(DisplayUtils);
