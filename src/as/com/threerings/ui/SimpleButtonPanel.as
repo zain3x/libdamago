@@ -1,16 +1,14 @@
-package com.threerings.ui
-{
-import com.threerings.util.F;
-
-import com.threerings.util.EventHandlerManager;
-import com.threerings.util.SpriteUtil;
-import com.threerings.util.DebugUtil;
-
+package com.threerings.ui {
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
+
+import com.threerings.util.DebugUtil;
+import com.threerings.util.EventHandlerManager;
+import com.threerings.util.F;
+import com.threerings.util.SpriteUtil;
 
 public class SimpleButtonPanel
 {
@@ -23,6 +21,11 @@ public class SimpleButtonPanel
         }
         _arrayView.x = locX;
         _arrayView.y = locY;
+    }
+
+    public function get display () :DisplayObject
+    {
+        return _arrayView;
     }
 
     public function createAndAddButton (name :String, onClick :Function) :SimpleTextButton
@@ -38,7 +41,7 @@ public class SimpleButtonPanel
         var b :Sprite = SpriteUtil.createSprite(true, true);
         DebugUtil.fillRect(b, 50, 30, 0xffffff, 0);
         var g :Graphics = b.graphics;
-        g.lineStyle(0,0,0);
+        g.lineStyle(0, 0, 0);
         g.beginFill(0xffffff, 1);
         g.drawRect(5, 5, 40, 20);
         g.endFill();
@@ -55,12 +58,8 @@ public class SimpleButtonPanel
         _arrayView.shutdown();
     }
 
-    public function get display () :DisplayObject
-    {
-        return _arrayView;
-    }
+    protected var _arrayView :ArrayView;
 
     protected var _events :EventHandlerManager = new EventHandlerManager();
-    protected var _arrayView :ArrayView;
 }
 }
