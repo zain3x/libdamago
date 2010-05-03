@@ -163,7 +163,8 @@ public class DebugUtil
             }));
     }
 
-    public static function mapToString (h :Map) :String
+    public static function mapToString (h :Map, keyFunc :Function = null, valFunc :Function =
+        null) :String
     {
         var sb :String = "";
 
@@ -171,7 +172,9 @@ public class DebugUtil
             return sb;
         }
         for each (var key :* in h.keys()) {
-            sb += "\n" + key + "=" + h.get(key);
+            var ks :String = keyFunc == null ? String(key) : keyFunc(key);
+            var vs :String = valFunc == null ? String(h.get(key)) : valFunc(h.get(key));
+            sb += "\n" + ks + "=" + vs;
         }
         return sb;
     }
