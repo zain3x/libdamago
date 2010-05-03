@@ -110,6 +110,11 @@ public class EventDispatcherNonCloning implements IEventDispatcher
         return hasEventListener(type);
     }
 
+    public function removeAllListeners () :void
+    {
+        _eventListeners = null;
+    }
+
     protected var _eventListeners :Dictionary;
 
     protected static const log :Log = Log.getLog(EventDispatcherNonCloning);
