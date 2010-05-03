@@ -28,8 +28,7 @@ public class ObjectPoolMgr
     }
 
     /**
-     * Get the next available object from the pool or put it back for the
-     * next use. If the pool is empty and resizable, an error is thrown.
+     * Get the next available object from the pool, or create a new object if pool is emtpy.
      */
     public function getNewObject (clazz :Class) :*
     {
