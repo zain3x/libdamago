@@ -5,7 +5,6 @@ package com.threerings.flashbang {
     import com.pblabs.engine.entity.IEntity;
     import com.pblabs.engine.entity.IEntityComponent;
     import com.pblabs.engine.entity.PropertyReference;
-    import flash.events.IEventDispatcher;
     import com.threerings.flashbang.pushbutton.PropertyInfo;
     import com.threerings.pbe.tasks.TaskComponent;
     import com.threerings.util.ArrayUtil;
@@ -16,6 +15,9 @@ package com.threerings.flashbang {
     import com.threerings.util.Maps;
     import com.threerings.util.Predicates;
     import com.threerings.util.StringUtil;
+
+    import flash.events.IEventDispatcher;
+
     import net.amago.util.EventDispatcherNonCloning;
     /**
      * A modification of GameObject.  Utilizes EntityComponents.
@@ -84,7 +86,7 @@ package com.threerings.flashbang {
 
         public function set eventDispatcher (val :IEventDispatcher) :void
         {
-            _dispatcher = val;
+            throw new Error("Don't do this");
         }
 
         public function get globalDispatcher () :IEventDispatcher
@@ -316,6 +318,8 @@ package com.threerings.flashbang {
 
         internal function unregisterComponents () :void
         {
+            //Also remove listeners here
+            _dispatcher.removeAllListeners();
             for each (var c :IEntityComponent in _components) {
                 c.unregister();
             }
@@ -352,7 +356,7 @@ package com.threerings.flashbang {
         protected var _componentMap :Map = Maps.newMapOf(String);
         protected var _deferredComponents:Array = new Array();
         protected var _deferring:Boolean = true;
-        protected var _dispatcher :IEventDispatcher = new EventDispatcherNonCloning();
+        protected var _dispatcher :EventDispatcherNonCloning = new EventDispatcherNonCloning();
 
         protected var _name :String = null;
         protected var _tempPropertyInfo :PropertyInfo = new PropertyInfo();
