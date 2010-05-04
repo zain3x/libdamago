@@ -1,15 +1,14 @@
 package com.threerings.ui {
-import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;
-import flash.display.Graphics;
-import flash.display.Sprite;
-import flash.events.MouseEvent;
-
 import com.threerings.util.DebugUtil;
 import com.threerings.util.EventHandlerManager;
 import com.threerings.util.F;
 import com.threerings.util.SpriteUtil;
 
+import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
+import flash.display.Graphics;
+import flash.display.Sprite;
+import flash.events.MouseEvent;
 public class SimpleButtonPanel
 {
     public function SimpleButtonPanel (type :OrientationType, parent :DisplayObjectContainer = null,
@@ -24,6 +23,11 @@ public class SimpleButtonPanel
     }
 
     public function get display () :DisplayObject
+    {
+        return _arrayView;
+    }
+
+    public function get arrayView () :ArrayView
     {
         return _arrayView;
     }
