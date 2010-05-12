@@ -1,4 +1,5 @@
 package com.threerings.flashbang {
+    import flash.utils.Dictionary;
     import com.pblabs.engine.core.IAnimatedObject;
     import com.pblabs.engine.core.ITickedObject;
     import com.pblabs.engine.core.PBGroup;
@@ -11,8 +12,6 @@ package com.threerings.flashbang {
     import com.threerings.util.ClassUtil;
     import com.threerings.util.DebugUtil;
     import com.threerings.util.Log;
-    import com.threerings.util.Map;
-    import com.threerings.util.Maps;
     import com.threerings.util.Predicates;
     import com.threerings.util.StringUtil;
 
@@ -127,12 +126,18 @@ package com.threerings.flashbang {
                     lookupComponentByName(componentName));
             }
 
-            if (_componentMap.containsKey(componentName)) {
+            if (_componentDict.hasOwnProperty(componentName)) {
                 return false;
             }
 
-            _componentMap.put(componentName, component);
+            _componentDict[componentName] = component;
             _components.push(component);
+            if (component is IAnimatedObject) {
+                _animatedComponents.push(component);
+            }
+            if (component is ITickedObject) {
+                _tickedComponents.push(component);
+            }
 
             if (isLiveObject && !deferring) {
                 component.register(this, componentName);
@@ -154,6 +159,7 @@ package com.threerings.flashbang {
 
         public function destroy () :void
         {
+            _destroyed = true;
             if (isLiveObject) {
                 destroySelf();
             }
@@ -204,7 +210,7 @@ package com.threerings.flashbang {
 
         public function lookupComponentByName (componentName :String) :IEntityComponent
         {
-            return _componentMap.get(componentName) as IEntityComponent;
+            return _componentDict[componentName] as IEntityComponent;
         }
 
         public function lookupComponentByType (componentType :Class) :IEntityComponent
@@ -277,23 +283,24 @@ package com.threerings.flashbang {
 
         override protected function update (dt :Number) :void
         {
-            for each (var c :IEntityComponent in _components) {
-                if (!isLiveObject) {//A component may trigger a destroy call.
+            for each (var t :ITickedObject in _tickedComponents) {
+                if (_destroyed) {//A component may trigger a destroy call.
                     break;
                 }
-                if (c is ITickedObject) {
-                    ITickedObject(c).onTick(dt);
+                t.onTick(dt);
+            }
+            for each (var a :IAnimatedObject in _animatedComponents) {
+                if (_destroyed) {//A component may trigger a destroy call.
+                    break;
                 }
-                if (c is IAnimatedObject) {
-                    IAnimatedObject(c).onFrame(dt);
-                }
+                a.onFrame(dt);
             }
         }
 
         protected function doRegisterComponents () :void
         {
-            for each (var componentName :String in _componentMap.keys()) {
-                var component :IEntityComponent = _componentMap.get(componentName) as IEntityComponent;
+            for each (var componentName :String in _componentDict) {
+                var component :IEntityComponent = _componentDict[componentName] as IEntityComponent;
                 // Skip ones we have already registered.
                 if (component.isRegistered) {
                     continue;
@@ -313,7 +320,9 @@ package com.threerings.flashbang {
         internal function destroyComponents () :void
         {
             _components = null;
-            _componentMap.clear();
+            _tickedComponents = null;
+            _animatedComponents = null;
+            _componentDict = new Dictionary();
         }
 
         internal function unregisterComponents () :void
@@ -328,7 +337,7 @@ package com.threerings.flashbang {
         internal function removeComponentInternal (component :IEntityComponent,
             reset :Boolean = true) :void
         {
-            if (!_componentMap.containsKey(component.name)) {
+            if (!_componentDict.hasOwnProperty(component.name)) {
                 return;
             }
 
@@ -345,15 +354,19 @@ package com.threerings.flashbang {
                 component.unregister();
             }
 
-            _componentMap.remove(component.name);
+            delete _componentDict[component.name];
             ArrayUtil.removeFirst(_components, component);
+            ArrayUtil.removeFirst(_tickedComponents, component);
+            ArrayUtil.removeFirst(_animatedComponents, component);
             if (reset) {
                 doResetComponents();
             }
 
         }
 
-        protected var _componentMap :Map = Maps.newMapOf(String);
+        protected var _destroyed :Boolean;
+        // components by name.  Use a Dictionary rather than a Map as Dictionary is 20x faster.
+        protected var _componentDict :Dictionary = new Dictionary();
         protected var _deferredComponents:Array = new Array();
         protected var _deferring:Boolean = true;
         protected var _dispatcher :EventDispatcherNonCloning = new EventDispatcherNonCloning();
@@ -361,7 +374,12 @@ package com.threerings.flashbang {
         protected var _name :String = null;
         protected var _tempPropertyInfo :PropertyInfo = new PropertyInfo();
 
+        // Store ticked and animated components on their own in addition to storing them in the
+        // _components list to keep from needing to do instance checks on all the components on
+        // every tick.
         internal var _components :Array = [];
+        internal var _tickedComponents :Array = [];
+        internal var _animatedComponents :Array = [];
 
         protected static const log :Log = Log.getLog(GameObjectEntity);
 
@@ -587,6 +605,7 @@ package com.threerings.flashbang {
 }
 
 import com.pblabs.engine.entity.IEntityComponent;
+
 final class PendingComponent
 {
     public var item:IEntityComponent;
