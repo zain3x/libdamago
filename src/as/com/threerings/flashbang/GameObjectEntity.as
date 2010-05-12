@@ -126,7 +126,7 @@ package com.threerings.flashbang {
                     lookupComponentByName(componentName));
             }
 
-            if (_componentDict.hasOwnProperty(componentName)) {
+            if (componentName in _componentDict) {
                 return false;
             }
 
@@ -337,7 +337,7 @@ package com.threerings.flashbang {
         internal function removeComponentInternal (component :IEntityComponent,
             reset :Boolean = true) :void
         {
-            if (!_componentDict.hasOwnProperty(component.name)) {
+            if (!(component.name in _componentDict)) {
                 return;
             }
 
