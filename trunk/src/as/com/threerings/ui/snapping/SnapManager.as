@@ -146,9 +146,6 @@ public class SnapManager extends EventDispatcherNonCloning //Recycle snap events
             }
         }
 
-        if (_snapEvent.anchor === closest) {
-            return;
-        }
         if (closest != null && closest.isWithinSnappingDistance(_target)) {
             closest.snapObject(_target);
         }
