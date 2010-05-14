@@ -1,10 +1,12 @@
 package com.threerings.flashbang.pushbutton.scene {
-import flash.display.DisplayObject;
-import flash.display.Sprite;
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.DisplayUtils;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
+
+import flash.display.DisplayObject;
+import flash.display.Sprite;
 
 /**
  * Can be used independently or in conjunction with a Scene + SceneView.
@@ -52,37 +54,36 @@ public class SceneLayer extends Sprite
     //Subclasses override
     protected function attached () :void
     {
-
     }
 
     //Subclasses override
     protected function detached () :void
     {
-
     }
 
     //Subclasses override
-    protected function objectAdded (obj :SceneEntityComponent, disp :DisplayObject) :void
+    protected function objectAdded (obj :SceneEntityComponent) :void
     {
-
+        addChild(obj.displayObject);
     }
 
     //Subclasses override
-    protected function objectRemoved (obj :SceneEntityComponent, disp :DisplayObject) :void
+    protected function objectRemoved (obj :SceneEntityComponent) :void
     {
-
+        if (obj.displayObject != null && contains(obj.displayObject)) {
+            removeChild(obj.displayObject);
+        }
     }
 
     internal function addObjectInternal (obj :SceneEntityComponent) :void
     {
-        if (_sceneComponents.containsKey(obj)) {
+        if (ArrayUtil.contains(_sceneComponents, obj)) {
             throw new Error("Already contains obj " + obj);
         }
 
-        _sceneComponents.put(obj, obj.displayObject);
-        addChild(obj.displayObject);
+        _sceneComponents.push(obj);
         dirty = true;
-        objectAdded(obj, obj.displayObject);
+        objectAdded(obj);
     }
 
     internal function attachedInternal () :void
@@ -95,20 +96,23 @@ public class SceneLayer extends Sprite
         while (numChildren > 0) {
             removeChildAt(0);
         }
+
+        for each (var obj :SceneEntityComponent in _sceneComponents.concat()) {
+            removeObjectInternal(obj);
+        }
+
         detached();
     }
 
     internal function removeObjectInternal (obj :SceneEntityComponent) :void
     {
-        if (!_sceneComponents.containsKey(obj)) {
+        if (!ArrayUtil.contains(_sceneComponents, obj)) {
             log.error("Doesn't contain " + obj);
             return;
         }
-        var disp :DisplayObject = _sceneComponents.get(obj) as DisplayObject;
-        _sceneComponents.remove(obj);
-        DisplayUtils.detach(disp);
+        ArrayUtil.removeFirst(_sceneComponents, obj);
         dirty = true;
-        objectRemoved(obj, disp);
+        objectRemoved(obj);
     }
 
     internal function renderInternal () :void
@@ -116,9 +120,7 @@ public class SceneLayer extends Sprite
         render();
     }
 
-    /** We'll accept any kind of object mapped to a DisplayObject*/
-    protected var _sceneComponents :Map = Maps.newMapOf(Object);
-
+    protected var _sceneComponents :Array = [];
     internal var _parentScene :Scene2DComponent;
 
     protected static const log :Log = Log.getLog(SceneLayer);
