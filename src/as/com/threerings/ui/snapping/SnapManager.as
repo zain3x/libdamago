@@ -39,11 +39,6 @@ public class SnapManager extends EventDispatcherNonCloning //Recycle snap events
 
     public static var DEBUG_DRAW :Boolean = false;
 
-    /**
-     * Snap all anchors, or just the closest;
-     */
-    public var snapAllAnchors :Boolean = false;
-
     public function SnapManager (parent :Sprite, debugDraw :Boolean = false)
     {
         _parent = parent;
@@ -70,11 +65,11 @@ public class SnapManager extends EventDispatcherNonCloning //Recycle snap events
         snapper.beginSnapping(this);
         attachSnapAnchors();
         _target = snapper;
+        _snapEvent.snapped = _target;
         _parent.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
         handleEnterFrame();
-        handleEnterFrame();
     }
-    
+
     protected function attachSnapAnchors () :void
     {
         for each (var anc :ISnapAnchor in _snapAnchors) {
@@ -84,9 +79,9 @@ public class SnapManager extends EventDispatcherNonCloning //Recycle snap events
                 anc.displayObject.x = center.x;
                 anc.displayObject.y = center.y;
             }
-        }    
+        }
     }
-    
+
     protected function detachSnapAnchors () :void
     {
         for each (var anc :ISnapAnchor in _snapAnchors) {
@@ -99,12 +94,14 @@ public class SnapManager extends EventDispatcherNonCloning //Recycle snap events
         endSnapping();
         _snapAnchors = [];
         _target = null;
+        _lastFrame = null;
     }
 
     public function endSnapping (snapper :ISnappingObject = null) :void
     {
         _parent.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
         _target = null;
+        _lastFrame = null;
         _debugLayer.graphics.clear();
         //Reset the re-usable snapEvent
         _snapEvent.anchor = null;
@@ -125,84 +122,44 @@ public class SnapManager extends EventDispatcherNonCloning //Recycle snap events
             _snapAnchors;
     }
 
-    protected function getClosestAnchorToTarget () :ISnapAnchor
-    {
-        if (_target == null) {
-            return null;
-        }
-        var closestAnchor :ISnapAnchor = null;
-        var closestDistance :Number = Number.MAX_VALUE;
-        var distance :Number;
-
-        for each (var anchor :ISnapAnchor in _snapAnchors) {
-            distance = anchor.getSnappableDistance(_target);
-            if (distance < closestDistance) {
-                closestDistance = distance;
-                closestAnchor = anchor;
-            }
-        }
-        return closestAnchor;
-    }
-
     protected function handleEnterFrame (... ignored) :void
     {
-        //Reset the re-usable snapEvent
-        _snapEvent.anchor = null;
-        _snapEvent.snapped = _target;
-        
-        if (_target == null) {
+        var stage :DisplayObject = _parent.stage;
+        var mouseLoc :Point = new Point(stage.mouseX, stage.mouseY);
+        if (_target == null || (_lastFrame != null && mouseLoc.equals(_lastFrame))) {
             return;
         }
+        _lastFrame = mouseLoc;
 
-        
-        var stage :DisplayObject = _parent.stage;
-        //First move it to the mouse coords
-        var mouseLoc :Point = new Point(stage.mouseX, stage.mouseY);
+
         _target.snapCenterToGlobal(mouseLoc);
 
-        var snapped :Boolean = false;
-        var anc :ISnapAnchor;
         //Sort snap anchors by distance to target, so that the closest anchor snaps last
-        ArrayUtil.stableSort(_snapAnchors, function (anc1 :ISnapAnchor, anc2 :ISnapAnchor) :int {
-                return anc1.getSnappableDistance(_target) < anc2.getSnappableDistance(_target) ?
-                    -1 : 1;
-            });
+        var closest :ISnapAnchor;
+        var closestDistance :Number = Number.MAX_VALUE;
 
-        if (snapAllAnchors) {
-            //Snap to all anchors close enough
-            for each (anc in _snapAnchors) {
-
-                if (anc.isWithinSnappingDistance(_target)) {
-                    anc.snapObject(_target);
-                    //Dispatch event whether we snap or not to indicate snapping/no snapping
-                    _snapEvent.anchor = anc;
-                    dispatchEvent(_snapEvent);
-                    snapped = true;
-                }
-            }
-        } else {
-            if (_snapAnchors.length > 0) {
-                anc = ISnapAnchor(_snapAnchors[0]);
-                if (anc.isWithinSnappingDistance(_target)) {
-                    anc.snapObject(_target);
-                    //Dispatch event whether we snap or not to indicate snapping/no snapping
-                    _snapEvent.anchor = anc;
-                    dispatchEvent(_snapEvent);
-                    snapped = true;
-                }
+        for each (var anchor :ISnapAnchor in _snapAnchors) {
+            var distance :Number = anchor.getSnappableDistance(_target);
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closest = anchor;
             }
         }
 
-        //If nothing is snapped, inform listeners of this
-        if (!snapped) {
-            _snapEvent.anchor = null;
-            dispatchEvent(_snapEvent);
+        if (_snapEvent.anchor === closest) {
+            return;
         }
+        if (closest != null && closest.isWithinSnappingDistance(_target)) {
+            closest.snapObject(_target);
+        }
+        //If nothing is snapped, still inform listeners of this
+        _snapEvent.anchor = closest;
+        dispatchEvent(_snapEvent);
 
         if (DEBUG_DRAW) {
             _debugLayer.graphics.clear();
             _parent.addChildAt(_debugLayer, _parent.numChildren);
-            for each (anc in _snapAnchors) {
+            for each (var anc :ISnapAnchor in _snapAnchors) {
                 if (anc == null) {
                     continue;
                 }
@@ -219,6 +176,7 @@ public class SnapManager extends EventDispatcherNonCloning //Recycle snap events
     protected var _parent :Sprite;
     protected var _snapAnchors :Array = [];
     protected var _target :ISnappingObject;
+    protected var _lastFrame :Point;
     protected var _snapEvent :SnapEvent = new SnapEvent(null, null);
 }
 }
