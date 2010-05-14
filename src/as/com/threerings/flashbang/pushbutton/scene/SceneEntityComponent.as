@@ -1,11 +1,10 @@
 package com.threerings.flashbang.pushbutton.scene {
-import com.threerings.util.F;
-
 import com.pblabs.engine.core.IAnimatedObject;
 import com.pblabs.engine.entity.IEntity;
 import com.pblabs.engine.entity.PropertyReference;
 import com.threerings.flashbang.components.SceneComponent;
 import com.threerings.util.ClassUtil;
+import com.threerings.util.F;
 import com.threerings.util.Log;
 
 import flash.display.DisplayObject;
@@ -52,7 +51,7 @@ public class SceneEntityComponent extends EntityComponentListener
     public var scaleXRef :PropertyReference;
     public var scaleYRef :PropertyReference;
 
-    public var sceneLayerName :String;
+    protected var _sceneLayerName :String;
     public var sceneRef :PropertyReference;
 
     public var updateOnEvents :Array = [];
@@ -77,9 +76,10 @@ public class SceneEntityComponent extends EntityComponentListener
         _displayObject = displayObject;
     }
 
+
+
     public function get alpha () :Number
     {
-//		return displayObject.alpha
         return _alpha;
     }
 
@@ -318,6 +318,22 @@ public class SceneEntityComponent extends EntityComponentListener
         return _scene;
     }
 
+    public function set layer (val :String) :void
+    {
+        if (_sceneLayerName != val) {
+            _sceneLayerName = val;
+            if (isAttached) {
+                detach();
+                attach();
+            }
+        }
+    }
+
+    public function get layer () :String
+    {
+        return _sceneLayerName;
+    }
+
     //    /**
     //     * The scene which is responsible for drawing this renderer. Note that
     //     * you can use the renderer outside of a scene, to control some
@@ -494,11 +510,32 @@ public class SceneEntityComponent extends EntityComponentListener
         }
     }
 
+    protected function get actualLayer () :SceneLayer
+    {
+        var scene2D :Scene2DComponent = owner.getProperty(sceneRef) as Scene2DComponent;
+        if (_scene == null) {
+            return null;
+        }
+        return scene2D.getLayerContaining(this);
+    }
+
     public function detach () :void
     {
         if (_scene != null) {
             _scene.removeSceneComponent(this);
         }
+    }
+
+    public function get isAttached () :Boolean
+    {
+        if (owner == null) {
+            return false;
+        }
+        var scene2D :Scene2DComponent = owner.getProperty(sceneRef) as Scene2DComponent;
+        if (_scene == null) {
+            return false;
+        }
+        return scene2D.containsComponent(this);
     }
 
     public function onFrame (dt :Number) :void
@@ -653,9 +690,9 @@ public class SceneEntityComponent extends EntityComponentListener
     {
         super.onReset();
 
-        detach();
+        //detach();
 
-        if (autoAttach) {
+        if (autoAttach && !isAttached) {
             attach();
         }
     }

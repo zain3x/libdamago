@@ -21,7 +21,7 @@ public class SceneLayerYOrdering extends SceneLayer
     {
         super.render();
 
-        if (_sceneComponents.size() <= 1) {
+        if (_sceneComponents.length <= 1) {
             //Don't order if there's nothing to order.
             return;
         }
@@ -43,50 +43,50 @@ public class SceneLayerYOrdering extends SceneLayer
     }
 
     //Subclasses override
-	override protected function objectAdded (obj :SceneEntityComponent, disp :DisplayObject) :void
+    override protected function objectAdded (obj :SceneEntityComponent) :void
     {
-        super.objectAdded(obj, disp);
-        var disp :DisplayObject = _sceneComponents.get(obj) as DisplayObject;
+        super.objectAdded(obj);
+        var disp :DisplayObject = obj.displayObject;
         //We add one to the x to force sorting of this new child.
         var loc :Point = new Point(disp.x + 1, disp.y);
         _locationCache.put(obj, loc);
         _componentsToReorder.push(obj);
         dirty = true;
-
     }
 
     //Subclasses override
-    override protected function objectRemoved (obj :SceneEntityComponent, disp :DisplayObject) :void
+    override protected function objectRemoved (obj :SceneEntityComponent) :void
     {
-        super.objectRemoved(obj, disp);
+        super.objectRemoved(obj);
         _locationCache.remove(obj);
         ArrayUtil.removeFirst(_componentsToReorder, obj);
     }
 
-    protected function checkSceneComponentForLocationChange (obj :*, previousLoc :Point) :void
+    protected function checkSceneComponentForLocationChange (obj :SceneEntityComponent, previousLoc :Point) :void
     {
-        var disp :DisplayObject = _sceneComponents.get(obj) as DisplayObject;
-        if (previousLoc.y != disp.y) {
+        if (previousLoc.y != obj.y) {
             dirty = true;
-            previousLoc.y = disp.y;
-            _componentsToReorder.push(obj);
+            previousLoc.y = obj.y;
+            if (!ArrayUtil.contains(_componentsToReorder, obj)) {
+                _componentsToReorder.push(obj);
+            }
         }
     }
 
     protected function updateZOrdering () :void
     {
-        if (_sceneComponents.size() <= 1) {
+        if (_sceneComponents.length <= 1) {
             _componentsToReorder.splice(0);
             dirty = false;
             return;
         }
         //Only reorder the changed components.
-        var sortedComponents :Array = _sceneComponents.values();
+        var sortedComponents :Array = _sceneComponents;
         ArrayUtil.sortOn(sortedComponents, SORT_ARGS);
-        for each (var dirtyObj :*in _componentsToReorder) {
-            var disp :DisplayObject = _sceneComponents.get(dirtyObj) as DisplayObject;
-            var idx :int = ArrayUtil.indexOf(sortedComponents, disp);
-			idx = MathUtil.clamp(idx, 0, numChildren - 1);
+        for each (var dirtyObj :SceneEntityComponent in _componentsToReorder) {
+            var disp :DisplayObject = dirtyObj.displayObject;
+            var idx :int = ArrayUtil.indexOf(sortedComponents, dirtyObj);
+            idx = MathUtil.clamp(idx, 0, numChildren - 1);
             setChildIndex(disp, idx);
         }
 
