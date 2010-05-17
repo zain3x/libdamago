@@ -148,7 +148,10 @@ public class SnapManager extends EventDispatcherNonCloning //Recycle snap events
 
         if (closest != null && closest.isWithinSnappingDistance(_target)) {
             closest.snapObject(_target);
+        } else {
+            closest = null;
         }
+
         //If nothing is snapped, still inform listeners of this
         _snapEvent.anchor = closest;
         dispatchEvent(_snapEvent);
