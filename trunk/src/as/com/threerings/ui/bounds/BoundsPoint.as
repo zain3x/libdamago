@@ -11,6 +11,8 @@ import com.threerings.util.MathUtil;
 
 public class BoundsPoint extends Bounds
 {
+    public static const FIXED_ZERO_BOUNDS :BoundsPoint = new BoundsPoint(0, 0);
+
     public function BoundsPoint (x :Number, y :Number)
     {
         _point = new Vector2(x, y);
@@ -95,5 +97,7 @@ public class BoundsPoint extends Bounds
     protected var _point :Vector2;
 
     protected static const log :Log = Log.getLog(BoundsPoint);
+
+
 }
 }
