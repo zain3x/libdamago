@@ -94,6 +94,11 @@ public class BoundsPoint extends Bounds
         return _point.toPoint();
     }
 
+    public function toString () :String
+    {
+        return ClassUtil.tinyClassName(BoundsPoint) + "[" + _point + "]";
+    }
+
     protected var _point :Vector2;
 
     protected static const log :Log = Log.getLog(BoundsPoint);
