@@ -176,7 +176,7 @@ public class DebugUtil
             var vs :String = valFunc == null ? String(h.get(key)) : valFunc(h.get(key));
             sb += "\n" + ks + "=" + vs;
         }
-        return sb;
+        return sb.substring(1);
     }
 
     public static function traceCallback (s :String) :Function
