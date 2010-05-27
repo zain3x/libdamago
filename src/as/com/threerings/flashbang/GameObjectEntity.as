@@ -1,5 +1,4 @@
 package com.threerings.flashbang {
-    import flash.utils.Dictionary;
     import com.pblabs.engine.core.IAnimatedObject;
     import com.pblabs.engine.core.ITickedObject;
     import com.pblabs.engine.core.PBGroup;
@@ -16,6 +15,7 @@ package com.threerings.flashbang {
     import com.threerings.util.StringUtil;
 
     import flash.events.IEventDispatcher;
+    import flash.utils.Dictionary;
 
     import net.amago.util.EventDispatcherNonCloning;
     /**
@@ -236,7 +236,7 @@ package com.threerings.flashbang {
 
         public function removeComponent (component :IEntityComponent) :void
         {
-            removeComponentInternal(component);
+            removeComponentInternal(component, false);
         }
 
         public function serialize (xml :XML) :void
@@ -317,6 +317,11 @@ package com.threerings.flashbang {
             }
         }
 
+        internal function removeEvents () :void
+        {
+            _events.freeAllHandlers();
+        }
+
         internal function destroyComponents () :void
         {
             _components = null;
@@ -337,7 +342,7 @@ package com.threerings.flashbang {
         internal function removeComponentInternal (component :IEntityComponent,
             reset :Boolean = true) :void
         {
-            if (!(component.name in _componentDict)) {
+            if (!(component.name in _componentDict) && _deferredComponents.length == 0) {
                 return;
             }
 
@@ -347,8 +352,12 @@ package com.threerings.flashbang {
             }
 
             //Remove from the deferred components
-            ArrayUtil.removeFirstIf(_deferredComponents,
+            var deferred :PendingComponent = ArrayUtil.findIf(_deferredComponents,
                 Predicates.createPropertyEquals("item", component));
+            if (deferred != null) {
+                delete _componentDict[deferred.name];
+                ArrayUtil.removeFirst(_deferredComponents, deferred);
+            }
 
             if (component.isRegistered) {
                 component.unregister();
