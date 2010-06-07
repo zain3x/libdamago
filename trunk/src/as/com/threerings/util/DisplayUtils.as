@@ -18,6 +18,7 @@ import flash.system.LoaderContext;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
+import com.threerings.display.DisplayUtil;
 import com.threerings.text.TextFieldUtil;
 
 import com.threerings.util.F;
@@ -150,6 +151,11 @@ public class DisplayUtils
         if (d != null && d.parent != null) {
             d.parent.removeChild(d);
         }
+    }
+
+    public static function disposeAllBitmapData (d :DisplayObject) :void
+    {
+        DisplayUtil.applyToHierarchy(d, maybeDispose);
     }
 
     public static function distribute (seq :Array, startX :int, startY :int, endX :int,
@@ -509,6 +515,13 @@ public class DisplayUtils
         var bd :BitmapData = new BitmapData(width, height, true, 0);
         bd.draw(disp, new Matrix(scaleX, 0, 0, scaleY, -bounds.x * scaleX, -bounds.y * scaleY));
         return bd;
+    }
+
+    protected static function maybeDispose (d :DisplayObject) :void
+    {
+        if (d is Bitmap) {
+            Bitmap(d).bitmapData.dispose();
+        }
     }
 
     protected static const log :Log = Log.getLog(DisplayUtils);
