@@ -3,6 +3,7 @@
 
 package com.threerings.flashbang.objects {
 import flash.display.SimpleButton;
+
 public class SceneButton extends SimpleSceneObject
 {
     public function SceneButton (button :SimpleButton, name :String = null)

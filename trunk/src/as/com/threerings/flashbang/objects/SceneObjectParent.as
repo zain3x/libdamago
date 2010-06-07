@@ -3,15 +3,15 @@
 
 package com.threerings.flashbang.objects {
 
-import com.threerings.util.DisplayUtils;
-import com.threerings.util.ArrayUtil;
-
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
+
+import com.threerings.util.ArrayUtil;
+import com.threerings.util.DisplayUtils;
+
 import com.threerings.flashbang.GameObject;
 import com.threerings.flashbang.components.SceneComponent;
-
 
 /**
  * A SceneObject with children GameObjects.  The children use the db, but are destroyed

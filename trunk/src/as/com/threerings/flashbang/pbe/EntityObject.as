@@ -1,17 +1,22 @@
 package com.threerings.flashbang.pbe {
+import flash.events.IEventDispatcher;
+import flash.utils.getTimer;
+
 import com.pblabs.engine.core.PBGroup;
 import com.pblabs.engine.entity.IEntity;
 import com.pblabs.engine.entity.IEntityComponent;
 import com.pblabs.engine.entity.PropertyReference;
-import flash.events.IEventDispatcher;
-import flash.utils.getTimer;
-import com.threerings.flashbang.pushbutton.EntityRef;
+
+import net.amago.util.EventDispatcherNonCloning;
+
 import com.threerings.util.ClassUtil;
 import com.threerings.util.DebugUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
-import net.amago.util.EventDispatcherNonCloning;
+
+import com.threerings.flashbang.pushbutton.EntityRef;
+
 public class EntityObject implements IEntity
 {
     public static const GROUP_ENTITY :String = "EntityGroup";
@@ -341,10 +346,11 @@ public class EntityObject implements IEntity
 }
 }
 
+import flash.display.DisplayObjectContainer;
+
 import com.pblabs.engine.entity.IEntity;
 import com.pblabs.engine.entity.IEntityComponent;
-import flash.display.DisplayObjectContainer;
-import com.threerings.flashbang.GameObject;
+
 final class PendingComponent
 {
     public var item :IEntityComponent;

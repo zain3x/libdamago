@@ -1,20 +1,21 @@
 package com.threerings.flashbang {
-import com.pblabs.engine.entity.IEntity;
-import com.pblabs.engine.entity.IEntityComponent;
-import com.pblabs.engine.entity.PropertyReference;
-import com.threerings.flashbang.pushbutton.IGroupObject;
-import com.threerings.flashbang.pushbutton.PropertyInfo;
-import com.threerings.pbe.tasks.TaskComponent;
-import com.threerings.util.ArrayUtil;
-import com.threerings.util.ClassUtil;
-import com.threerings.util.Log;
-
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 
+import com.pblabs.engine.entity.IEntity;
+import com.pblabs.engine.entity.IEntityComponent;
+import com.pblabs.engine.entity.PropertyReference;
+
 import net.amago.pbe.base.SceneComponent;
 
+import com.threerings.pbe.tasks.TaskComponent;
+
+import com.threerings.util.ArrayUtil;
+import com.threerings.util.Log;
+
+import com.threerings.flashbang.pushbutton.IGroupObject;
+import com.threerings.flashbang.pushbutton.PropertyInfo;
 public class EntityAppmode extends AppMode
 {
     public static const OBJECT_ADDED :String = "objectAdded";
