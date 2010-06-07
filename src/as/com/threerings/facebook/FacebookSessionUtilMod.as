@@ -32,6 +32,11 @@
 package com.threerings.facebook
 {
 
+import flash.display.LoaderInfo;
+import flash.events.EventDispatcher;
+import flash.net.SharedObject;
+import flash.system.Capabilities;
+
 import com.facebook.Facebook;
 import com.facebook.events.FacebookEvent;
 import com.facebook.facebook_internal;
@@ -39,12 +44,8 @@ import com.facebook.session.DesktopSession;
 import com.facebook.session.IFacebookSession;
 import com.facebook.session.JSSession;
 import com.facebook.session.WebSession;
-import com.threerings.util.Log;
 
-import flash.display.LoaderInfo;
-import flash.events.EventDispatcher;
-import flash.net.SharedObject;
-import flash.system.Capabilities;
+import com.threerings.util.Log;
 
 /**
  * Modified from the original FacebookSessionUtil to handle explicit session keys

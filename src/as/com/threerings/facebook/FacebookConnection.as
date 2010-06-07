@@ -2,8 +2,6 @@
 // $Id$
 
 package com.threerings.facebook {
-import com.threerings.util.F;
-
 import com.facebook.Facebook;
 import com.facebook.commands.notifications.SendNotification;
 import com.facebook.commands.stream.PublishPost;
@@ -11,12 +9,13 @@ import com.facebook.data.users.FacebookUser;
 import com.facebook.events.FacebookEvent;
 import com.facebook.net.FacebookCall;
 import com.facebook.session.DesktopSession;
-import com.threerings.util.DelayUtil;
-import com.threerings.util.Log;
-import com.threerings.util.Util;
+
 import com.whirled.contrib.EventHandlerBase;
 
-
+import com.threerings.util.DelayUtil;
+import com.threerings.util.F;
+import com.threerings.util.Log;
+import com.threerings.util.Util;
 
 /**
  * Wrapper around the Facebook-AS3 library.
@@ -373,11 +372,12 @@ class ManagedTimerImpl
     }
 }
 
-import com.threerings.util.ArrayUtil;
-
 import flash.events.TimerEvent;
 import flash.utils.Timer;
+
 import com.facebook.data.users.FacebookUser;
+
+import com.threerings.util.ArrayUtil;
 
 /**
  * A class for managing a group of timers.

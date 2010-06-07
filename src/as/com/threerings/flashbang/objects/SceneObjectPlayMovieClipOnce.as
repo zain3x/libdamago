@@ -3,10 +3,10 @@
 
 package com.threerings.flashbang.objects {
 
-import com.threerings.util.ClassUtil;
-
 import flash.display.MovieClip;
 import flash.events.Event;
+
+import com.threerings.util.ClassUtil;
 
 public class SceneObjectPlayMovieClipOnce extends SimpleSceneObject
 {

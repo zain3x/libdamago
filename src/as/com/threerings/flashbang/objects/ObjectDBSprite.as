@@ -3,16 +3,16 @@
 
 package com.threerings.flashbang.objects {
 
-import com.threerings.flashbang.ObjectDB;
-import com.threerings.flashbang.components.SceneComponent;
-
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.utils.getTimer;
-import com.threerings.flashbang.GameObjectRef;
+
 import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.GameObjectRef;
+import com.threerings.flashbang.ObjectDB;
+import com.threerings.flashbang.components.SceneComponent;
 
 /**
  * Used for SceneObjects that themselves have sub-components.

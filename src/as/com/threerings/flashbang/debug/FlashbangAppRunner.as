@@ -1,17 +1,18 @@
 package com.threerings.flashbang.debug
 {
 
+import flash.display.SimpleButton;
+import flash.display.Sprite;
+import flash.events.MouseEvent;
+
+import com.threerings.ui.SimpleTextButton;
+
+import com.threerings.util.DelayUtil;
+import com.threerings.util.DisplayUtils;
 import com.threerings.util.F;
 
 import com.threerings.flashbang.AppMode;
 import com.threerings.flashbang.FlashbangApp;
-import com.threerings.ui.SimpleTextButton;
-import com.threerings.util.DelayUtil;
-import com.threerings.util.DisplayUtils;
-
-import flash.display.SimpleButton;
-import flash.display.Sprite;
-import flash.events.MouseEvent;
 
 [SWF(width="500", height="500", frameRate="30")]
 public class FlashbangAppRunner extends Sprite

@@ -3,12 +3,11 @@
 
 package com.threerings.flashbang {
 
-import com.whirled.net.MessageReceivedEvent;
-import com.whirled.net.MessageSubControl;
-
 import flash.events.EventDispatcher;
 import flash.utils.setInterval;
 
+import com.whirled.net.MessageReceivedEvent;
+import com.whirled.net.MessageSubControl;
 public class MessageDelayer
 {
     public function MessageDelayer (lag :int = 100, type :String = null)
@@ -16,33 +15,6 @@ public class MessageDelayer
         _lag_ms = lag;
         _serverSubControl = new MessageSubControlDelayed(0, sendFromServerMessage);
         setInterval(sendMessages, _lag_ms);
-    }
-
-    protected function sendFromClientMessage (playerId :int, name:String, value:Object=null) :void
-    {
-        _fromClientMessages.push(new MessageReceivedEvent(name, value, playerId));
-    }
-
-    protected function sendFromServerMessage (playerId :int, name:String, value:Object=null) :void
-    {
-        _fromServerMessages.push(new MessageReceivedEvent(name, value, int.MIN_VALUE));
-    }
-
-    public function createClientMessageSubControl (playerId :int) :MessageSubControl
-    {
-        return new MessageSubControlDelayed(playerId, sendFromClientMessage);
-    }
-
-    protected function sendMessages () :void
-    {
-        for each (var msg :MessageReceivedEvent in _fromClientMessages) {
-            serverDispatcher.dispatchEvent(msg);
-        }
-        for each (msg in _fromServerMessages) {
-            clientDispatcher.dispatchEvent(msg);
-        }
-        _fromClientMessages.splice(0);
-        _fromServerMessages.splice(0);
     }
 
     public function get serverSubControl () :MessageSubControl
@@ -58,6 +30,33 @@ public class MessageDelayer
     public function get serverDispatcher () :EventDispatcher
     {
         return _serverDispatcher;
+    }
+
+    public function createClientMessageSubControl (playerId :int) :MessageSubControl
+    {
+        return new MessageSubControlDelayed(playerId, sendFromClientMessage);
+    }
+
+    protected function sendFromClientMessage (playerId :int, name:String, value:Object=null) :void
+    {
+        _fromClientMessages.push(new MessageReceivedEvent(name, value, playerId));
+    }
+
+    protected function sendFromServerMessage (playerId :int, name:String, value:Object=null) :void
+    {
+        _fromServerMessages.push(new MessageReceivedEvent(name, value, int.MIN_VALUE));
+    }
+
+    protected function sendMessages () :void
+    {
+        for each (var msg :MessageReceivedEvent in _fromClientMessages) {
+            serverDispatcher.dispatchEvent(msg);
+        }
+        for each (msg in _fromServerMessages) {
+            clientDispatcher.dispatchEvent(msg);
+        }
+        _fromClientMessages.splice(0);
+        _fromServerMessages.splice(0);
     }
 
     protected var _fromClientMessages :Array = [];

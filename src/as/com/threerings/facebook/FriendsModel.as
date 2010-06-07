@@ -2,6 +2,8 @@
 // $Id$
 
 package com.threerings.facebook {
+import flash.events.EventDispatcher;
+
 import com.facebook.Facebook;
 import com.facebook.commands.friends.GetFriends;
 import com.facebook.commands.users.GetInfo;
@@ -11,10 +13,10 @@ import com.facebook.data.users.FacebookUserCollection;
 import com.facebook.data.users.GetInfoData;
 import com.facebook.data.users.GetInfoFieldValues;
 import com.facebook.events.FacebookEvent;
+
 import com.threerings.util.DelayUtil;
 import com.threerings.util.Log;
 
-import flash.events.EventDispatcher;
 /**
  * Modified from the StreamDemo in the Facebook examples.
  * Get and store friend Ids, get friend info (pics, gender, etc).

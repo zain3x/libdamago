@@ -3,13 +3,15 @@
 
 package com.threerings.flashbang.debug {
 
-import com.threerings.flashbang.objects.SceneObject;
-import com.threerings.ui.TextBits;
-import com.threerings.util.Framerate;
-
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.text.TextField;
+
+import com.threerings.ui.TextBits;
+
+import com.threerings.util.Framerate;
+
+import com.threerings.flashbang.objects.SceneObject;
 
 public class FramerateView extends SceneObject
 {
