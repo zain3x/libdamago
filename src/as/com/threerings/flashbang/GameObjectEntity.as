@@ -317,11 +317,6 @@ package com.threerings.flashbang {
             }
         }
 
-        internal function removeEvents () :void
-        {
-            _events.freeAllHandlers();
-        }
-
         internal function destroyComponents () :void
         {
             _components = null;

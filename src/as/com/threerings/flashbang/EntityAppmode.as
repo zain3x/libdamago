@@ -198,9 +198,6 @@ public class EntityAppmode extends AppMode
         if (null != ref && null != ref.object && ref.object is GameObjectEntity) {
 
             var entity :GameObjectEntity = ref.object as GameObjectEntity;
-            //Detach events before removing components so that removal of one component doesn't
-            //trigger events on another component
-            entity.removeEvents();
 
             // if the object is attached to a DisplayObject, and if that
             // DisplayObject is in a display list, remove it from the display list
