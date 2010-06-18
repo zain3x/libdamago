@@ -2,6 +2,7 @@ package com.threerings.ui {
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
+import flash.display.InteractiveObject;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -45,6 +46,12 @@ public class SimpleButtonPanel
         _events.registerListener(b, MouseEvent.CLICK, F.adapt(onClick));
         _arrayView.add(b);
         return b;
+    }
+
+    public function createAndAddInteractiveObject (b :InteractiveObject, onClick :Function) :void
+    {
+        _events.registerListener(b, MouseEvent.CLICK, F.adapt(onClick));
+        _arrayView.add(b);
     }
 
     public function createAndAddMouseDownButton (name :String, onMouseDown :Function) :Sprite
