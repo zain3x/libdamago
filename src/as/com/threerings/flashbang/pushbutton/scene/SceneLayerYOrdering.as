@@ -69,7 +69,7 @@ public class SceneLayerYOrdering extends SceneLayer
 
     protected function updateZOrdering () :void
     {
-        //Bubble sort
+        //Pair-wise comparisons until sorted.
         var idx :int = 1;
         while (idx < numChildren) {
             if (getChildAt(idx).y < getChildAt(idx - 1).y) {
