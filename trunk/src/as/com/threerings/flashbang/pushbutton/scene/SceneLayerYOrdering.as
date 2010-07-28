@@ -1,11 +1,9 @@
 package com.threerings.flashbang.pushbutton.scene {
-import com.threerings.util.ArrayUtil;
-import com.threerings.util.Map;
-import com.threerings.util.Maps;
-import com.threerings.util.MathUtil;
-
 import flash.display.DisplayObject;
 import flash.geom.Point;
+
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 
 /**
  * Sorts DisplayObjects by the y coordinate.  Caches values so only changed objects
@@ -38,7 +36,6 @@ public class SceneLayerYOrdering extends SceneLayer
     override public function clear () :void
     {
         super.clear();
-        _componentsToReorder = null;
         _locationCache.clear();
     }
 
@@ -50,7 +47,6 @@ public class SceneLayerYOrdering extends SceneLayer
         //We add one to the x to force sorting of this new child.
         var loc :Point = new Point(disp.x + 1, disp.y);
         _locationCache.put(obj, loc);
-        _componentsToReorder.push(obj);
         dirty = true;
     }
 
@@ -59,45 +55,35 @@ public class SceneLayerYOrdering extends SceneLayer
     {
         super.objectRemoved(obj);
         _locationCache.remove(obj);
-        ArrayUtil.removeFirst(_componentsToReorder, obj);
     }
 
-    protected function checkSceneComponentForLocationChange (obj :SceneEntityComponent, previousLoc :Point) :void
+    protected function checkSceneComponentForLocationChange (obj :SceneEntityComponent,
+                                                             previousLoc :Point) :Boolean
     {
         if (previousLoc.y != obj.y) {
             dirty = true;
             previousLoc.y = obj.y;
-            if (!ArrayUtil.contains(_componentsToReorder, obj)) {
-                _componentsToReorder.push(obj);
-            }
         }
+        return dirty;
     }
 
     protected function updateZOrdering () :void
     {
-        if (_sceneComponents.length <= 1) {
-            _componentsToReorder.splice(0);
-            dirty = false;
-            return;
+        //Bubble sort
+        var idx :int = 1;
+        while (idx < numChildren) {
+            if (getChildAt(idx).y < getChildAt(idx - 1).y) {
+                swapChildrenAt(idx, idx - 1);
+                if (idx > 1) {
+                    idx--;
+                }
+            } else {
+                idx++
+            }
         }
-        //Only reorder the changed components.
-        var sortedComponents :Array = _sceneComponents;
-        ArrayUtil.sortOn(sortedComponents, SORT_ARGS);
-        for each (var dirtyObj :SceneEntityComponent in _componentsToReorder) {
-            var disp :DisplayObject = dirtyObj.displayObject;
-            var idx :int = ArrayUtil.indexOf(sortedComponents, dirtyObj);
-            idx = MathUtil.clamp(idx, 0, numChildren - 1);
-            setChildIndex(disp, idx);
-        }
-
-        dirty = false;
-        _componentsToReorder.splice(0);
     }
-
-    protected var _componentsToReorder :Array = [];
 
     /** Object -> Point for updating Y ordering only when positions area changed.*/
     protected var _locationCache :Map = Maps.newMapOf(Object);
-    protected static const SORT_ARGS :Array = [ "y" ];
 }
 }
