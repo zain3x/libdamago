@@ -1,0 +1,27 @@
+<things version="1">
+
+  <entity name="Dude">
+    <component type="net.amago.pathfinding.navmesh.pbe.PolygonRenderer" name="Render">
+      <scene entityName="SceneDB" componentName="Scene" />
+      <positionProperty>@Spatial.position</positionProperty>
+      <vertices childType="com.threerings.geom.Vector2">
+                     <_><x>-10</x><y>-10</y></_>
+                     <_><x>-10</x><y>10</y></_>
+                     <_><x>10</x><y>10</y></_>
+                     <_><x>10</x><y>-10</y></_>
+                  </vertices>
+    </component>
+    <component type="com.pblabs.rendering2D.SimpleSpatialComponent" name="Spatial">
+      <spatialManager entityName="SceneDB" componentName="Spatial"/>
+      <position>
+        <x>40</x>
+        <y>10</y>
+      </position>
+    </component>
+  </entity>
+  
+  
+  <group name="Everything">
+    <objectReference name="Dude"/>
+  </group>
+</things>

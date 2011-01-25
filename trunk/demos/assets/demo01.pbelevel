@@ -1,0 +1,103 @@
+
+<things version="1">
+
+	<entity name="Traveller">
+		<component type="net.amago.pbe.debug.SpriteBlobComponent" name="Render">
+			<scene entityName="SceneDB" componentName="Scene" />
+			<positionProperty>@Spatial.position</positionProperty>
+		</component>
+		<component type="com.pblabs.rendering2D.SimpleSpatialComponent" name="Spatial">
+			<spatialManager entityName="SceneDB" componentName="Spatial"/>
+			<position>
+				<x>55</x>
+				<y>20</y>
+			</position>
+		</component>
+		<component type="net.amago.pathfinding.navmesh.pbe.PathFindingComponent" name="path">
+			<managerProperty>#NavMesh.manager</managerProperty>
+			<xProperty>@Spatial.position.x</xProperty>
+			<yProperty>@Spatial.position.y</yProperty>
+		</component>
+		<component type="net.amago.pathfinding.navmesh.pbe.debug.PathDisplayComponent" name="pathRender">
+			<scene entityName="SceneDB" componentName="Scene" />
+			<pathProperty>@path.path</pathProperty>
+		</component>
+	</entity>
+
+	<!-- The manager that handles all the obstacles and pathfinding	-->
+	<entity name="NavMesh">
+		<component type="net.amago.pathfinding.navmesh.pbe.NavMeshManager" name="manager"/>
+		<!-- Uncomment this component to show the nav mesh paths -->
+		<!--<component type="net.amago.pathfinding.navmesh.pbe.debug.NavMeshDebugComponent" name="pathRender">
+			<scene entityName="SceneDB" componentName="Scene" />
+			<managerProperty>@manager</managerProperty>
+		</component>-->
+	</entity>
+	
+	<template name="obstacle">
+		<component type="net.amago.pathfinding.navmesh.pbe.ExclusionComponent" name="Obstacle">
+			<managerProperty>#NavMesh.manager</managerProperty>
+		</component>
+		<component type="net.amago.pathfinding.navmesh.pbe.PolygonRenderer" name="Render">
+			<scene entityName="SceneDB" componentName="Scene" />
+			<polygonProperty>@Obstacle.polygon</polygonProperty>
+		</component>
+		<component type="com.pblabs.rendering2D.SimpleSpatialComponent" name="Spatial">
+			<spatialManager entityName="SceneDB" componentName="Spatial"/>
+		</component>
+	</template>
+	
+	<entity name="obstacle1" template="obstacle">
+		<component name="Obstacle">
+		<vertices childType="com.threerings.geom.Vector2">
+				<_>
+					<x>50.1</x>
+					<y>50.4</y>
+				</_>
+				<_>
+					<x>150.5</x>
+					<y>50.9</y>
+				</_>
+				<_>
+					<x>150</x>
+					<y>150</y>
+				</_>
+				<_>
+					<x>50</x>
+					<y>150.7</y>
+				</_>
+			</vertices>
+		</component>
+	</entity>
+	
+	<entity name="obstacle2" template="obstacle">
+		<component name="Obstacle">
+		<vertices childType="com.threerings.geom.Vector2">
+				<_>
+					<x>75</x>
+					<y>200</y>
+				</_>
+				<_>
+					<x>225</x>
+					<y>200</y>
+				</_>
+				<_>
+					<x>225</x>
+					<y>250</y>
+				</_>
+				<_>
+					<x>75</x>
+					<y>250</y>
+				</_>
+			</vertices>
+		</component>
+	</entity>
+  
+
+	<group name="Everything">
+		<objectReference name="Traveller"/>
+		<objectReference name="NavMesh"/>
+		<objectReference name="obstacle1"/>
+		<objectReference name="obstacle2"/>
+	</group>
+</things>
